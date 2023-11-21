@@ -10,7 +10,7 @@ const config: DocsThemeConfig = {
   alt="Poly Hammer"
   className="w-48 h-48"
 />,
-  logoLink: 'https://www.polyhammer.com/logo.svg',
+  logoLink: 'https://www.polyhammer.com',
   project: {
     link: 'https://github.com/shuding/nextra-docs-template',
   },
