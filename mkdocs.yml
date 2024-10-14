@@ -1,0 +1,13 @@
+site_name: Poly Hammer Docs
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quick-start.md
+
+theme: 
+  name: material
+
+extra_css:
+  - stylesheets/extra.css
