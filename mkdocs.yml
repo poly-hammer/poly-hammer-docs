@@ -22,13 +22,13 @@ theme:
     code: Roboto Mono
 
   palette:
-    - scheme: polyhammer-light
+    - scheme: polyhammer-dark
       toggle:
         icon: material/toggle-switch 
         name: Switch to dark mode
 
     # Palette toggle for dark mode
-    - scheme: polyhammer-dark
+    - scheme: polyhammer-light
       toggle:
         icon: material/toggle-switch-off-outline
         name: Switch to light mode
