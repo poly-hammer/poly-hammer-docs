@@ -1,19 +1,10 @@
 {
-    "builds": [
-      {
-        "src": "package.json",
-        "use": "@vercel/static-build",
-        "config": {
-          "distDir": "site"
-        }
-      }
-    ],
+    "buildCommand": "pip3 install -r requirements.txt && mkdocs build",
+    "outputDirectory": "site",
     "routes": [
       {
         "src": "/(.*)",
         "dest": "/site/$1"
       }
-    ],
-    "buildCommand": "pip3 install -r requirements.txt && mkdocs build"
-
+    ]
   }
