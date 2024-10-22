@@ -16,5 +16,7 @@
         "dest": "/site/$1"
       }
     ],
-    "buildCommand": "pip3 install -r requirements.txt && mkdocs build"
+    "buildCommand": "pip3 install -r requirements.txt && mkdocs build",
+    "outputDirectory": "site"
+
   }

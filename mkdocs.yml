@@ -1,4 +1,5 @@
 site_name: Poly Hammer Docs
+site_dir: site
 
 nav:
   - Home: index.md
