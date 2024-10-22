@@ -11,6 +11,7 @@ This page is designed to test all the colors used in the Poly Hammer Docs theme.
 * `mkdocs build` - Build the documentation site.
 * `mkdocs -h` - Print help message and exit.
 
+
 ## Project layout 1
 
 ```yaml
@@ -74,7 +75,7 @@ This page is designed to test all the colors used in the Poly Hammer Docs theme.
 ## Links
 
 - [External Link](https://www.mkdocs.org)
-- [Internal Link](../index.md)
+- [Internal Link (Installation)](getting-started/installation.md)
 
 ## Lists
 
