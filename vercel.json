@@ -1,7 +1,7 @@
 {
     "builds": [
       {
-        "src": "mkdocs.yml",
+        "src": "package.json",
         "use": "@vercel/static-build",
         "config": {
           "distDir": "site"
