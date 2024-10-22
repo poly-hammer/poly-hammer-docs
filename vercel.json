@@ -1,5 +1,15 @@
 {
     "version": 2,
+    "builds": [
+    {
+      "src": "mkdocs.yml",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "site/**/*",
+      "use": "@vercel/static"
+    }
+  ],
     "routes": [
       {
         "src": "/(.*)",
