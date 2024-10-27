@@ -1,25 +1,10 @@
-# Poly Hammer Documentation Site
+# Poly Hammer Documentation
 
-## Local Development
+This is where we host all the documentation for our products. Contributions are welcome. If you see something that needs to be changed or updated, feel free to open a Pull request.
 
-First, create  `.venv` and select `requirements.txt` to install the dependencies.
-
+## Usage
+First, create a virtual environment `.venv` then run `pip install -r requirements.txt` to install the dependencies.
 Then, run the command below to start the development server and visit localhost:8000.
 ```sh 
 mkdocs serve
 ```
-
-To build the project, run:
-``` sh
-mkdocs build
-```
-
-
-
-# Theme
-
-This site uses a customized version of [Material for MkDocs](https://github.com/squidfunk/mkdocs-material)
-
-## License
-
-This project is licensed under the MIT License.
