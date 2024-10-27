@@ -4,19 +4,19 @@ site_dir: site
 nav:
   - Home: index.md
   - Getting Started:
-    - Installation: getting-started/installation.md
-    - Quick Start: getting-started/quick-start.md
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quick-start.md
 
-theme: 
+theme:
   name: material
-  custom_dir: 'overrides'
+  custom_dir: "overrides"
   logo: assets/polyhammer.svg
   favicon: assets/images/favicon.ico
   features:
     - content.code.copy
     - navigation.footer
     - search.suggest
-  
+
   font:
     text: Roboto
     code: Roboto Mono
@@ -24,7 +24,7 @@ theme:
   palette:
     - scheme: polyhammer-dark
       toggle:
-        icon: material/toggle-switch 
+        icon: material/toggle-switch
         name: Switch to dark mode
 
     # Palette toggle for dark mode
@@ -33,11 +33,14 @@ theme:
         icon: material/toggle-switch-off-outline
         name: Switch to light mode
 
-
 extra_css:
   - stylesheets/extra.css
 
 extra:
+  extra:
+    analytics:
+      provider: google
+      property: !ENV GA_ID
   social:
     - icon: simple/x
       link: https://x.com/PolyHammerTools
