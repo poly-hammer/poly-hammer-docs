@@ -1,2 +1,5 @@
 .venv
 .env
+site
+*.pyc
+__pycache__
