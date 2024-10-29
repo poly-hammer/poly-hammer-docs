@@ -37,10 +37,10 @@ extra_css:
   - stylesheets/extra.css
 
 extra:
-  extra:
-    analytics:
-      provider: google
-      property: !ENV GA_ID
+  analytics:
+    provider: google
+    property: !ENV ${GA_ID}
+
   social:
     - icon: simple/x
       link: https://x.com/PolyHammerTools
