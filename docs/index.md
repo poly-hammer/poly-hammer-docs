@@ -134,7 +134,7 @@ this is __bold__ and so is **this**
 ==*you* **can** ^^combine^^ `too`==
 
 
-![Test Image](../assets/polyhammer_logo.png)
+![Test Image](./assets/polyhammer_logo.png)
 
 
 
