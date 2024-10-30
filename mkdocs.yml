@@ -39,7 +39,7 @@ extra_css:
 extra:
   analytics:
     provider: google
-    property: ${GA_ID}
+    property: !ENV GA_ID
 
   social:
     - icon: simple/x
