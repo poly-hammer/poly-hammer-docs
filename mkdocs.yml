@@ -6,6 +6,10 @@ nav:
   - Getting Started:
       - Installation: getting-started/installation.md
       - Quick Start: getting-started/quick-start.md
+  - Meta-Human DNA Addon: '!include ./meta-human-dna-addon/mkdocs.yml'
+
+plugins:
+  - monorepo
 
 theme:
   name: material
