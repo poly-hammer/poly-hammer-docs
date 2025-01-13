@@ -1,0 +1,3 @@
+[submodule "meta-human-dna-addon"]
+	path = meta-human-dna-addon
+	url = https://github.com/poly-hammer/meta-human-dna-addon.git
