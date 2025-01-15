@@ -11,7 +11,7 @@ Some of our tools require dependencies that we are not allowed to re-distribute 
 
 ## What are the dependencies?
 
-1. You must be a part of the [Poly Hammer GitHub org](https://github.com/poly-hammer). Individuals, Small Teams, and Enterprise customers can [purchase access](https://www.polyhammer.com/metahuman-addon) to a particular build workflow and gain access to the Org.
+1. You must be a part of the [Poly Hammer GitHub org](https://github.com/poly-hammer). Individuals, Small Teams, and Enterprise customers can [purchase access](https://www.polyhammer.com) to a particular build workflow and gain access to the Org.
 
 2. You must be a part of the [Epic Games GitHub org](https://github.com/EpicGames). The build tool needs to be able to pull down Unreal Engine source code, so it can compile parts of it for you and your tools.
 
@@ -23,7 +23,7 @@ Some of our tools require dependencies that we are not allowed to re-distribute 
 
 ### Join Poly Hammer GitHub Org
 
-1. Purchase a product from the [Poly Hammer website](https://www.polyhammer.com/metahuman-addon) and receive the confirmation email with your product id.
+1. Purchase a product from the [Poly Hammer website](https://www.polyhammer.com) and receive the confirmation email with your product id.
 
 2. Verify your GitHub account by clicking on the `GitHub Verification` button. 
 
