@@ -3,9 +3,10 @@ site_dir: site
 
 nav:
   - Home: index.md
-  - Getting Started:
-      - Installation: getting-started/installation.md
-      - Quick Start: getting-started/quick-start.md
+  - Quick Start: quick-start.md
+  - Build Tool:
+    - Setup: build-tool/setup.md
+    - Running Workflows: build-tool/run-workflows.md
   - Meta-Human DNA Addon: '!include ./meta-human-dna-addon/mkdocs.yml'
 
 plugins:
