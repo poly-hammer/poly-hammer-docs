@@ -3,9 +3,16 @@ site_dir: site
 
 nav:
   - Home: index.md
+<<<<<<< Updated upstream
   - Getting Started:
     - Installation: getting-started/installation.md
     - Quick Start: getting-started/quick-start.md
+=======
+  - Hammer Build Tool:
+    - Setup: hammer-build-tool/setup.md
+    - Create Releases: hammer-build-tool/create-releases.md
+  - Meta-Human DNA Addon: '!include ./meta-human-dna-addon/mkdocs.yml'
+>>>>>>> Stashed changes
 
 theme: 
   name: material
