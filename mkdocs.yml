@@ -3,9 +3,14 @@ site_dir: site
 
 nav:
   - Home: index.md
-  - Getting Started:
-      - Installation: getting-started/installation.md
-      - Quick Start: getting-started/quick-start.md
+  - Hammer Build Tool:
+    - Setup: hammer-build-tool/setup.md
+    - Create Releases: hammer-build-tool/create-releases.md
+    - Fine Grain Access Tokens: hammer-build-tool/fine-grain-access-tokens.md
+  - Meta-Human DNA Addon: '!include ./meta-human-dna-addon/mkdocs.yml'
+
+plugins:
+  - monorepo
 
 theme:
   name: material
@@ -52,8 +57,13 @@ extra:
       link: https://www.youtube.com/channel/UCBJMFeZQpXmsfR__Ep8Uxow
 
 markdown_extensions:
+  - attr_list
   - admonition
   - footnotes
+  - sane_lists
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
