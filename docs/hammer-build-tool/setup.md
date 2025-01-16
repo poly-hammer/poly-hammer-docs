@@ -79,8 +79,8 @@ Your GitHub account has been verified and you are now a member of the Poly Hamme
 
         - repo > `full control of private repositories`
         - read:packagers > `Download packages from GitHub Package Registry`
-        - read:org > `REad org and team membership, read org projects`
-        - read:user > `REad ALL user profile data`
+        - read:org > `Read org and team membership, read org projects`
+        - read:user > `Read ALL user profile data`
         - user:email > `Access user email addresses (read-only)`
 
 4. Add your newly generated GitHub Token as a secret in your build tool's repo settings.  
