@@ -39,3 +39,6 @@ Click on this release and download the release attachments. In this example, we 
 <div style="text-align: center;">
     <img class="rounded-image" src="/assets/images/hammer-build-tool/create-releases/4.png" alt="Download Meta-Human addon"/>
 </div>
+
+## Success! 🎉
+Good work! You have now successfully built and downloaded the release for your product using the [Hammer Build Tool](setup.md)!

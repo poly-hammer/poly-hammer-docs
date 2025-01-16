@@ -6,11 +6,7 @@ nav:
   - Hammer Build Tool:
     - Setup: hammer-build-tool/setup.md
     - Create Releases: hammer-build-tool/create-releases.md
-    - Fine Grain Access Tokens: hammer-build-tool/fine-grain-access-tokens.md
   - Meta-Human DNA Addon: '!include ./meta-human-dna-addon/mkdocs.yml'
-
-plugins:
-  - monorepo
 
 theme:
   name: material

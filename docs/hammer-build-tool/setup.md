@@ -74,8 +74,14 @@ Your GitHub account has been verified and you are now a member of the Poly Hamme
 
 3. Now create a GitHub access token that gives the build tool the proper permissions. To make things simple, you can use this **<a href="https://github.com/settings/tokens/new?description=poly-hammer-build-tool&scopes=repo,read:packages,read:org,read:user,user:email" target="_blank">pre-configured link</a>** to generate a classic token, then copy your token and **hold on to it for a future step**.
 
-    !!!Optional
-        :thinking: If you are reading this, and are concerned about about letting the build tool have read access to your repos. Then good for you! GitHub actually has [**Fine Grain Access Tokens**](https://github.com/settings/personal-access-tokens) as an alternative. These let you be very specific about what repos the token can read. Check out [this page](./fine-grain-access-tokens.md) on how you can configure one of those instead of the classic access tokens.
+    !!! Note
+        Here are the permissions that the token will need if the **<a href="https://github.com/settings/tokens/new?description=poly-hammer-build-tool&scopes=repo,read:packages,read:org,read:user,user:email" target="_blank">pre-configured link</a>** does not work:
+
+        - repo > `full control of private repositories`
+        - read:packagers > `Download packages from GitHub Package Registry`
+        - read:org > `Read org and team membership, read org projects`
+        - read:user > `Read ALL user profile data`
+        - user:email > `Access user email addresses (read-only)`
 
 4. Add your newly generated GitHub Token as a secret in your build tool's repo settings.  
 <div style="text-align: center;">
