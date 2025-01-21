@@ -1,10 +1,10 @@
 # Setup
 
-Welcome to the hammer build tool setup guide. You can also view our [video tutorial]() here as well.
+Welcome to the hammer build tool setup guide. You can also view our [video tutorial](https://youtu.be/BAyCV8GwmCM) here as well.
 
 ## Why do I need this?
 
-Some of our tools require dependencies that we are not allowed to re-distribute with our code. However, these dependencies are freely available to you online, but can be complex to compile. That's why we created this build tool. You can run a Github workflow and compile all the dependencies needed for our tools yourself. Once you have it configured, it makes it super easy!
+Some of our tools require additional dependencies that we are not allowed to re-distribute with our code. However, these dependencies can be complex to compile. That's why we created this build tool. You can run a Github workflow and compile all the dependencies needed for our tools yourself. Once you have it configured, it makes it super easy!
 
 ![1](/assets/images/hammer-build-tool/setup/1.gif){: class="rounded-image"}
 
@@ -95,6 +95,6 @@ You now have an actions secret named `GH_PAT`.
 </div>
 
 ### Start Building!
-:confused: If you still need help configuring your build tool after reading this guide, try watching our [video]() about it, which goes through the process step by step.
+:confused: If you still need help configuring your build tool after reading this guide, try watching our [video](https://youtu.be/BAyCV8GwmCM) about it, which goes through the process step by step.
 
 Whew! :sweat_smile: If you have made it this far, congratulations! Your ready to start to [creating your own releases](./create-releases.md). 
