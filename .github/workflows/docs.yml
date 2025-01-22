@@ -3,7 +3,12 @@ name: Docs
 on:
   # Runs on pushes targeting the release branch
   push:
-    branches: ["main"]
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - 'overrides/**'
+      - 'mkdocs.yml'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -38,6 +43,12 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           submodules: true
 
+      # Update references
+      - name:  Update Git Submodules
+        run: |
+          git pull --recurse-submodules
+          git submodule update --remote --recursive
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -68,3 +79,9 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      # Push the updated references
+      - name: Commit & Push changes
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GH_PAT }}
