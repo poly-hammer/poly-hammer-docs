@@ -1,0 +1,3 @@
+[mkdocs.plugins]
+monorepo = mkdocs_monorepo_plugin.plugin:MonorepoPlugin
+
