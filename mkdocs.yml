@@ -52,6 +52,9 @@ extra:
     - icon: simple/youtube
       link: https://www.youtube.com/channel/UCBJMFeZQpXmsfR__Ep8Uxow
 
+plugins:
+- monorepo
+
 markdown_extensions:
   - attr_list
   - admonition
