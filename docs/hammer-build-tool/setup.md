@@ -4,14 +4,14 @@ Welcome to the hammer build tool setup guide. You can also view our [video tutor
 
 ## Why do I need this?
 
-Some of our tools require additional dependencies that we are not allowed to re-distribute with our code. However, these dependencies can be complex to compile. That's why we created this build tool. You can run a Github workflow and compile all the dependencies needed for our tools yourself. Once you have it configured, it makes it super easy!
+Some of our tools require additional dependencies that we are not allowed to be re-distributed with our code. However, these dependencies can be complex to compile. That's why we created this build tool. You can run a GitHub workflow and compile all the dependencies needed for our tools yourself. Once you have it configured, it makes it super easy!
 
 ![1](/assets/images/hammer-build-tool/setup/1.gif){: class="rounded-image"}
 
 
 ## What are the dependencies?
 
-1. You must be a part of the [Poly Hammer GitHub org](https://github.com/poly-hammer). Individuals, Small Teams, and Enterprise customers can [purchase access](https://www.polyhammer.com) to a particular build workflow and gain access to the Org.
+1. You must be a part of the [Poly Hammer GitHub org](https://github.com/poly-hammer). Individuals, Small Teams, and Enterprise customers can [purchase access](https://www.polyhammer.com) for a particular build workflow and gain access to the Poly Hammer Org.
 
 2. You must be a part of the [Epic Games GitHub org](https://github.com/EpicGames). The build tool needs to be able to pull down Unreal Engine source code, so it can compile parts of it for you and your tools.
 
@@ -23,7 +23,7 @@ Some of our tools require additional dependencies that we are not allowed to re-
 
 ### Join Poly Hammer GitHub Org
 
-1. Purchase a product from the [Poly Hammer website](https://www.polyhammer.com) and receive the confirmation email with your product id.
+1. Purchase a product from the [Poly Hammer website](https://www.polyhammer.com) and open the confirmation email.
 
 2. Verify your GitHub account by clicking on the `GitHub Verification` button. 
 
@@ -36,7 +36,7 @@ Some of our tools require additional dependencies that we are not allowed to re-
     <img class="rounded-image" src="/assets/images/hammer-build-tool/setup/3.png" alt="GitHub authorize" width="500" />
 </div>
 !!! Warning
-    Your email tied to your GitHub account must match the one you used when you purchased the product.
+    Your email tied to your GitHub account must match the one you used when you purchased the product from the Poly Hammer website.
 
 
 4. After a successful authorization, you will see the page below.
@@ -57,7 +57,7 @@ Your GitHub account has been verified and you are now a member of the Poly Hamme
 2. Verify that you can now access the source code for [Unreal Engine](https://github.com/EpicGames/UnrealEngine).
 
 !!! Warning
-    If you receive a 404 when clicking on [this link](https://github.com/EpicGames/UnrealEngine) while you are logged into GitHub, then your account is not linked to correctly to the Epic Games Org, and the build tool will fail.
+    If you receive a 404 when clicking on [this link](https://github.com/EpicGames/UnrealEngine) while you are logged into GitHub, then your account is not linked correctly to the Epic Games Org, and the build tool will fail.
 
 
 ### Copy the Template Repo
@@ -72,7 +72,7 @@ Your GitHub account has been verified and you are now a member of the Poly Hamme
     <img class="rounded-image" src="/assets/images/hammer-build-tool/setup/7.png" alt="Create new repository" width="700" />
 </div>
 
-3. Now create a GitHub access token that gives the build tool the proper permissions. To make things simple, you can use this **<a href="https://github.com/settings/tokens/new?description=poly-hammer-build-tool&scopes=repo,read:packages,read:org,read:user,user:email" target="_blank">pre-configured link</a>** to generate a classic token, then copy your token and **hold on to it for a future step**.
+3. Now create a GitHub access token that gives the build tool the proper permissions. To make things simple, you can use this **<a href="https://github.com/settings/tokens/new?description=poly-hammer-build-tool&scopes=repo,read:packages,read:org,read:user,user:email" target="_blank">pre-configured link</a>** to generate a classic token. Copy your token and **hold on to it for a future step**.
 
 4. Add your newly generated GitHub Token as a secret in your build tool's repo settings.  
 <div style="text-align: center;">
@@ -97,4 +97,4 @@ You now have an actions secret named `GH_PAT`.
 ### Start Building!
 :confused: If you still need help configuring your build tool after reading this guide, try watching our [video](https://youtu.be/BAyCV8GwmCM) about it, which goes through the process step by step.
 
-Whew! :sweat_smile: If you have made it this far, congratulations! Your ready to start to [creating your own releases](./create-releases.md). 
+Whew! :sweat_smile: If you have made it this far, congratulations! You are ready to start [creating your own releases](./create-releases.md)!

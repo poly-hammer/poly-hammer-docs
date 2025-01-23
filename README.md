@@ -4,6 +4,12 @@ This is where we host all the documentation for our products. Contributions are 
 
 ## Usage
 First, create a virtual environment `.venv` then run `pip install -r requirements.txt` to install the dependencies.
+
+Run the command below to pull down the submodules.
+```sh
+git submodule update --init --recursive
+```
+
 Then, run the command below to start the development server and visit localhost:8000.
 ```sh 
 mkdocs serve

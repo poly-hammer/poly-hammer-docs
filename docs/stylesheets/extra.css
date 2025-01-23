@@ -14,10 +14,27 @@
 }
 
 .rounded-image {
-    border-radius: 15px;
-    border: #ffffff69 1px solid;
+    border-radius: 5px;
+    border: #ffffff42 1px solid;
 }
 
+.center-image {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.red {
+    color: #d52a2a;
+}
+
+.green {
+    color: #0bd570;
+}
+
+.blue {
+    color: #4287ff;
+}
 
 /*
     Gradient coming from header
