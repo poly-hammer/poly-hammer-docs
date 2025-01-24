@@ -8,6 +8,7 @@ on:
     paths:
       - 'docs/**'
       - 'overrides/**'
+      - '.github/workflows/**'
       - 'mkdocs.yml'
 
   # Allows you to run this workflow manually from the Actions tab
