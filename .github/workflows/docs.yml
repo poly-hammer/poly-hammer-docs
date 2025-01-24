@@ -42,13 +42,19 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_PAT }}
-          submodules: true
+          submodules: recursive
 
-      # Update references
-      - name:  Update Git Submodules
+      - name: Remove submodule directory
         run: |
-          git pull --recurse-submodules --force
-          git submodule update --remote --recursive  --force
+          rm -rf meta-human-dna-addon
+          git submodule deinit -f meta-human-dna-addon
+          git rm -f meta-human-dna-addon
+          git submodule update --init --recursive
+
+      - name: Reinitialize submodule
+        run: |
+          git submodule add https://github.com/poly-hammer/meta-human-dna-addon.git meta-human-dna-addon
+          git submodule update --init --recursive
 
       - name: Setup Python
         uses: actions/setup-python@v4
