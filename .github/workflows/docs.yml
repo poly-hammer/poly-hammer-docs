@@ -53,7 +53,7 @@ jobs:
 
       - name: Reinitialize submodule
         run: |
-          git submodule add https://github.com/poly-hammer/meta-human-dna-addon.git meta-human-dna-addon
+          git submodule add --force https://github.com/poly-hammer/meta-human-dna-addon.git meta-human-dna-addon
           git submodule update --init --recursive
 
       - name: Setup Python
