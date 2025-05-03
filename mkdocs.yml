@@ -57,6 +57,8 @@ extra:
 
 plugins:
 - monorepo
+- search:
+    separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
 
 markdown_extensions:
   - attr_list
