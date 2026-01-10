@@ -20,7 +20,7 @@ on:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -43,18 +43,15 @@ jobs:
         with:
           token: ${{ secrets.GH_PAT }}
           submodules: recursive
+          fetch-depth: 0
 
-      - name: Remove submodule directory
+      - name: Update submodules to latest
         run: |
-          rm -rf meta-human-dna-addon
-          git submodule deinit -f meta-human-dna-addon
-          git rm -f meta-human-dna-addon
-          git submodule update --init --recursive
-
-      - name: Reinitialize submodule
-        run: |
-          git submodule add --force https://github.com/poly-hammer/meta-human-dna-addon.git meta-human-dna-addon
-          git submodule update --init --recursive
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git submodule update --init --recursive --remote
+          git add -A
+          git diff --cached --quiet || git commit -m "Update submodules to latest"
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -87,8 +84,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      # Push the updated references
-      - name: Commit & Push changes
-        uses: actions-js/push@master
-        with:
-          github_token: ${{ secrets.GH_PAT }}
+      # Push the updated submodule references
+      - name: Push submodule updates
+        run: |
+          git push origin main || echo "Nothing to push"
