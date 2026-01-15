@@ -6,7 +6,7 @@ nav:
   - Hammer Build Tool:
     - Setup: hammer-build-tool/setup.md
     - Create Releases: hammer-build-tool/create-releases.md
-  - Meta-Human DNA Addon: '!include ./meta-human-dna-addon/mkdocs.yml'
+  - MetaHuman DNA Addon: '!include ./meta-human-dna-addon/mkdocs.yml'
 
 plugins:
   - monorepo

@@ -37,7 +37,7 @@ After starting the workflow, you will need to wait for the build to complete. Th
 ## Download the Release
 Click on this release and download the release attachments. In this example, we can download the addon `meta_human_dna.zip` file here.
 <div style="text-align: center;">
-    <img class="rounded-image" src="/assets/images/hammer-build-tool/create-releases/4.png" alt="Download Meta-Human addon"/>
+    <img class="rounded-image" src="/assets/images/hammer-build-tool/create-releases/4.png" alt="Download MetaHuman addon"/>
 </div>
 
 ## Success! 🎉

@@ -1,4 +1,4 @@
-This guide will give you step-by-step instructions on how to download and build the [Meta-Human DNA Addon](https://www.polyhammer.com/metahuman-addon) using the **Poly Hammer Build Tool**
+This guide will give you step-by-step instructions on how to download and build the [MetaHuman DNA Addon](https://www.polyhammer.com/metahuman-addon) using the **Poly Hammer Build Tool**
 
 ## Headings
 
