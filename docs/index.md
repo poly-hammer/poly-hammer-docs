@@ -2,7 +2,7 @@
 
 ## Getting Started
 
-Welcome to the official documentation for Poly Hammer. Here you'll find everything you need to get started and make the most out of our tool.
+Welcome to the official documentation for Poly Hammer. Here you'll find everything you need to get started and make the most out of our tools.
 
 ## Useful Links
 
