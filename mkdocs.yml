@@ -1,88 +1,71 @@
-site_name: Poly Hammer Docs
+site_name: Poly Hammer
 site_dir: site
+repo_url: "https://github.com/poly-hammer/poly-hammer-docs"
 
 nav:
   - Home: index.md
   - Hammer Build Tool:
     - Setup: hammer-build-tool/setup.md
     - Create Releases: hammer-build-tool/create-releases.md
-  - Character DNA Addon: '!include ./meta-human-dna-addon/mkdocs.yml'
-
-plugins:
-  - monorepo
+  # BEGIN EXTERNAL DOCS
+  - Character DNA Addon:
+    - Quick Start: meta-human-dna-addon/index.md
+    - Terminology: meta-human-dna-addon/terminology.md
+    - Helpful Resources: meta-human-dna-addon/helpful-resources.md
+    - Unreal Configuration: meta-human-dna-addon/unreal-configuration.md
+    - Textures: meta-human-dna-addon/textures.md
+    - User Interface:
+      - Import: meta-human-dna-addon/user-interface/import.md
+      - Face Board: meta-human-dna-addon/user-interface/face-board.md
+      - Utilities: meta-human-dna-addon/user-interface/utilities.md
+      - View Options: meta-human-dna-addon/user-interface/view-options.md
+      - Rig Logic: meta-human-dna-addon/user-interface/rig-logic.md
+      - Shape Keys: meta-human-dna-addon/user-interface/shape-keys.md
+      - Output: meta-human-dna-addon/user-interface/output.md
+    - Workflows:
+      - Face Form Wrap: meta-human-dna-addon/workflows/face-form-wrap.md
+    - Contributing:
+      - Development: meta-human-dna-addon/contributing/development.md
+      - Documentation: meta-human-dna-addon/contributing/documentation.md
+      - Testing: meta-human-dna-addon/contributing/testing.md
+  # END EXTERNAL DOCS
 
 theme:
-  name: material
-  custom_dir: "overrides"
-  logo: assets/polyhammer.svg
-  favicon: assets/images/favicon.ico
-  features:
-    - content.code.copy
-    - navigation.footer
-    - search.suggest
+  name: shadcn
+  custom_dir: overrides
+  icon: assets/polyhammer.svg
+  favicon: assets/favicon.ico
+  show_title: true
+  topbar_sections: false
+  katex_options: {}
+  pygments_style:
+    light: shadcn-light
+    dark: github-dark
 
-  font:
-    text: Roboto
-    code: Roboto Mono
+plugins:
+  - search
 
-  palette:
-    - scheme: polyhammer-dark
-      toggle:
-        icon: material/toggle-switch
-        name: Switch to dark mode
-
-    # Palette toggle for dark mode
-    - scheme: polyhammer-light
-      toggle:
-        icon: material/toggle-switch-off-outline
-        name: Switch to light mode
+extra:
+  analytics:
+    id: !ENV GA_ID
 
 extra_css:
   - stylesheets/extra.css
 
-extra:
-  analytics:
-    provider: google
-    property: !ENV GA_ID
-
-  social:
-    - icon: simple/x
-      link: https://x.com/PolyHammerTools
-    - icon: simple/linkedin
-      link: https://www.linkedin.com/company/poly-hammer
-    - icon: simple/github
-      link: https://github.com/poly-hammer
-    - icon: simple/youtube
-      link: https://www.youtube.com/channel/UCBJMFeZQpXmsfR__Ep8Uxow
-
-plugins:
-- monorepo
-- search:
-    separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
-
 markdown_extensions:
-  - attr_list
   - admonition
+  - codehilite
+  - fenced_code
   - footnotes
-  - sane_lists
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
-  - pymdownx.highlight:
-      anchor_linenums: true
-      line_spans: __span
-      pygments_lang_class: true
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - pymdownx.superfences
+  - attr_list
+  - pymdownx.tabbed
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.details
   - pymdownx.tilde
-  - pymdownx.emoji
   - pymdownx.mark
-  - pymdownx.tasklist
-  - pymdownx.magiclink
+  - pymdownx.keys
   - pymdownx.caret
   - pymdownx.smartsymbols
-  - pymdownx.tabbed
-  - pymdownx.details
-  - pymdownx.keys
-  - pymdownx.arithmatex
+  - pymdownx.tasklist
+  - pymdownx.magiclink

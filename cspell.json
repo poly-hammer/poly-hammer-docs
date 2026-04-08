@@ -1,0 +1,29 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "ignorePaths": [
+    ".venv",
+    "site",
+    ".git",
+    "uv.lock",
+    "repos/",
+    "docs/meta-human-dna-addon/"
+  ],
+  "words": [
+    "mkdocs",
+    "polyhammer",
+    "shadcn",
+    "pymdownx",
+    "pygments",
+    "codehilite",
+    "metahuman",
+    "topbar",
+    "iconify",
+    "oklch"
+  ],
+  "enabledLanguageIds": [
+    "markdown",
+    "yaml",
+    "json"
+  ]
+}

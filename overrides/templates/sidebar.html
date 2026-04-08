@@ -1,0 +1,95 @@
+{% macro render_section(section, depth=0) %}
+{% set child_pages = section.children|selectattr("is_page")|sort(attribute="meta.order")|list %}
+{% set child_sections = section.children|rejectattr("is_page")|list %}
+
+{% if depth == 0 %}
+{# Top-level sections: collapsible group #}
+<div data-slot="sidebar-group" data-sidebar="group" class="relative flex w-full min-w-0 flex-col p-2">
+    <details class="sidebar-collapsible group/collapsible" {{ "open" if section.active else "" }}>
+        <summary data-slot="sidebar-group-label" data-sidebar="group-label"
+            class="flex h-8 shrink-0 items-center rounded-md px-2 text-xs ring-sidebar-ring outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0 font-medium text-muted-foreground cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden hover:text-foreground">
+            <span class="flex-1">{{ section.title }}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="sidebar-chevron shrink-0 transition-transform duration-200">
+                <path d="m9 18 6-6-6-6"/>
+            </svg>
+        </summary>
+        <div data-slot="sidebar-group-content" data-sidebar="group-content" class="w-full text-sm">
+            <ul data-slot="sidebar-menu" data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-0.5">
+                {% for sidebar_item in child_pages %}
+                {% include "components/sidebar_item.html" %}
+                {% endfor %}
+                {% for subsection in child_sections %}
+                {{ render_section(subsection, depth + 1) }}
+                {% endfor %}
+            </ul>
+        </div>
+    </details>
+</div>
+
+{% else %}
+{# Nested sub-sections: collapsible within parent #}
+<li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <details class="sidebar-collapsible w-full" {{ "open" if section.active else "" }}>
+        <summary
+            class="flex items-center gap-2 rounded-md p-2 text-left text-[0.8rem] font-medium text-muted-foreground cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors">
+            <span class="flex-1 truncate">{{ section.title }}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="sidebar-chevron shrink-0 transition-transform duration-200">
+                <path d="m9 18 6-6-6-6"/>
+            </svg>
+        </summary>
+        <ul data-slot="sidebar-menu" data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-0.5 pl-2 border-l border-border ml-2 mt-0.5">
+            {% for sidebar_item in child_pages %}
+            {% include "components/sidebar_item.html" %}
+            {% endfor %}
+            {% for subsection in child_sections %}
+            {{ render_section(subsection, depth + 1) }}
+            {% endfor %}
+        </ul>
+    </details>
+</li>
+{% endif %}
+{% endmacro %}
+
+{% if nav|length > 1 %}
+
+{% if config.theme.topbar_sections %}
+{% set current = nav|active_section|attr('children') %}
+{% else %}
+{% set current = nav %}
+{% endif %}
+
+{% if not current %}
+{% set current = nav|selectattr("is_page") %}
+{% endif %}
+
+{% set pages = current|selectattr("is_page")|sort(attribute="meta.order") %}
+{% set sections = current|rejectattr("is_page")|list %}
+
+{# Top-level pages (e.g. Home) #}
+{% if pages|length > 0 %}
+<div data-slot="sidebar-group" data-sidebar="group" class="relative flex w-full min-w-0 flex-col p-2 pt-6">
+    <div data-slot="sidebar-group-content" data-sidebar="group-content" class="w-full text-sm">
+        <ul data-slot="sidebar-menu" data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-0.5">
+            {% for page in pages %}
+            {% with sidebar_item = page %}
+            {% include "components/sidebar_item.html" %}
+            {% endwith %}
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+{# Collapsible sections #}
+{% for section in sections %}
+{% if section.children %}
+{{ render_section(section, 0) }}
+{% endif %}
+{% endfor %}
+
+{% endif %}
+<div class="sticky -bottom-1 z-10 h-16 shrink-0 bg-gradient-to-t from-background via-background/80 to-background/50 blur-xs"></div>

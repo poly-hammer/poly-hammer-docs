@@ -5,7 +5,7 @@
 	"tasks": [
         {
             "label": "Mkdocs Serve",
-            "command": "mkdocs serve --dev-addr localhost:8080",
+            "command": "uv run python scripts/sync_docs.py; uv run mkdocs serve --dev-addr localhost:8080",
             "type": "shell",
             "group": {
                 "kind": "build"
@@ -14,6 +14,22 @@
                 "reveal": "always",
                 "panel": "shared",
                 "focus": true
+            }
+        },
+        {
+            "label": "Mkdocs Build",
+            "command": "uv run python scripts/sync_docs.py; uv run mkdocs build",
+            "type": "shell",
+            "group": {
+                "kind": "build"
+            }
+        },
+        {
+            "label": "Pre-commit",
+            "command": "uv run pre-commit run --all-files",
+            "type": "shell",
+            "group": {
+                "kind": "test"
             }
         }
 	],
