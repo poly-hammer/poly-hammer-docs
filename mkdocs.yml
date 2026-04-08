@@ -1,6 +1,10 @@
-site_name: Poly Hammer
+site_name: Poly Hammer Documentation
+site_description: Comprehensive documentation for Poly Hammer's tools and platform.
 site_dir: site
 repo_url: "https://github.com/poly-hammer/poly-hammer-docs"
+
+watch:
+  - overrides
 
 nav:
   - Home: index.md
@@ -9,31 +13,31 @@ nav:
     - Create Releases: hammer-build-tool/create-releases.md
   # BEGIN EXTERNAL DOCS
   - Character DNA Addon:
-    - Quick Start: meta-human-dna-addon/index.md
-    - Terminology: meta-human-dna-addon/terminology.md
-    - Helpful Resources: meta-human-dna-addon/helpful-resources.md
-    - Unreal Configuration: meta-human-dna-addon/unreal-configuration.md
-    - Textures: meta-human-dna-addon/textures.md
+    - Quick Start: character-dna/index.md
+    - Terminology: character-dna/terminology.md
+    - Helpful Resources: character-dna/helpful-resources.md
+    - Unreal Configuration: character-dna/unreal-configuration.md
+    - Textures: character-dna/textures.md
     - User Interface:
-      - Import: meta-human-dna-addon/user-interface/import.md
-      - Face Board: meta-human-dna-addon/user-interface/face-board.md
-      - Utilities: meta-human-dna-addon/user-interface/utilities.md
-      - View Options: meta-human-dna-addon/user-interface/view-options.md
-      - Rig Logic: meta-human-dna-addon/user-interface/rig-logic.md
-      - Shape Keys: meta-human-dna-addon/user-interface/shape-keys.md
-      - Output: meta-human-dna-addon/user-interface/output.md
+      - Import: character-dna/user-interface/import.md
+      - Face Board: character-dna/user-interface/face-board.md
+      - Utilities: character-dna/user-interface/utilities.md
+      - View Options: character-dna/user-interface/view-options.md
+      - Rig Logic: character-dna/user-interface/rig-logic.md
+      - Shape Keys: character-dna/user-interface/shape-keys.md
+      - Output: character-dna/user-interface/output.md
     - Workflows:
-      - Face Form Wrap: meta-human-dna-addon/workflows/face-form-wrap.md
+      - Face Form Wrap: character-dna/workflows/face-form-wrap.md
     - Contributing:
-      - Development: meta-human-dna-addon/contributing/development.md
-      - Documentation: meta-human-dna-addon/contributing/documentation.md
-      - Testing: meta-human-dna-addon/contributing/testing.md
+      - Development: character-dna/contributing/development.md
+      - Documentation: character-dna/contributing/documentation.md
+      - Testing: character-dna/contributing/testing.md
   # END EXTERNAL DOCS
 
 theme:
   name: shadcn
   custom_dir: overrides
-  icon: assets/polyhammer.svg
+  icon: assets/poly-hammer-icon-light.svg
   favicon: assets/favicon.ico
   show_title: true
   topbar_sections: false
@@ -51,6 +55,11 @@ extra:
 
 extra_css:
   - stylesheets/extra.css
+
+extra_javascript:
+  - js/theme-icon.js
+  - js/particles-init.js
+  - js/glowing-cursor.js
 
 markdown_extensions:
   - admonition

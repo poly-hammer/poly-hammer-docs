@@ -6,11 +6,13 @@ clones each repo, copies its docs/ directory, and patches the
 mkdocs.yml nav section using BEGIN/END markers.
 
 Usage:
-    uv run python scripts/sync_docs.py [--token GH_PAT]
+    uv run python scripts/sync_docs.py [--token GH_PAT] [--force]
 """
 
 import argparse
+import os
 import shutil
+import stat
 import subprocess
 import sys
 import tomllib
@@ -22,6 +24,12 @@ ROOT = Path(__file__).resolve().parent.parent
 REPOS_DIR = ROOT / "repos"
 DOCS_DIR = ROOT / "docs"
 MKDOCS_YML = ROOT / "mkdocs.yml"
+
+# Remap repo names to different folder names in the built docs.
+# Key = repo name (as listed in pyproject.toml), Value = output folder name.
+FOLDER_REMAP: dict[str, str] = {
+    "meta-human-dna-addon": "character-dna",
+}
 
 BEGIN_MARKER = "  # BEGIN EXTERNAL DOCS"
 END_MARKER = "  # END EXTERNAL DOCS"
@@ -35,11 +43,25 @@ def read_config() -> dict:
     return data.get("tool", {}).get("poly-hammer-docs", {})
 
 
-def clone_repo(org: str, repo: str, token: str | None = None) -> Path:
-    """Shallow-clone a repo into repos/{repo}/."""
+def _rm_readonly(func, path, _exc_info):
+    """Handle read-only files (e.g. .git pack files on Windows)."""
+    os.chmod(path, stat.S_IWRITE)
+    func(path)
+
+
+def clone_repo(
+    org: str, repo: str, token: str | None = None, force: bool = False
+) -> Path:
+    """Shallow-clone a repo into repos/{repo}/.
+
+    Skips cloning if the local folder already exists, unless *force* is True.
+    """
     dest = REPOS_DIR / repo
+    if dest.exists() and not force:
+        print(f"  Using cached clone at {dest}")
+        return dest
     if dest.exists():
-        shutil.rmtree(dest)
+        shutil.rmtree(dest, onexc=_rm_readonly)
 
     if token:
         url = f"https://x-access-token:{token}@github.com/{org}/{repo}.git"
@@ -167,6 +189,11 @@ def main() -> None:
     parser.add_argument(
         "--token", help="GitHub personal access token for private repos"
     )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Re-clone repos even if the local folder already exists",
+    )
     args = parser.parse_args()
 
     config = read_config()
@@ -183,10 +210,10 @@ def main() -> None:
     slugs = []
 
     for repo in repos:
-        slug = repo
+        slug = FOLDER_REMAP.get(repo, repo)
         print(f"Syncing {org}/{repo} → docs/{slug}/")
 
-        repo_dir = clone_repo(org, repo, token=args.token)
+        repo_dir = clone_repo(org, repo, token=args.token, force=args.force)
 
         repo_config = read_repo_mkdocs(repo_dir)
         site_name = repo_config["site_name"]

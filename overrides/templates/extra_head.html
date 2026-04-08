@@ -8,3 +8,23 @@
   gtag('config', '{{ config.extra.analytics.id }}');
 </script>
 {% endif %}
+
+{#
+  Synchronous pre-paint script: if we just navigated from another page,
+  block the article from flashing at full opacity before JS runs.
+  sessionStorage flag is set by the click handler in particles-init.js.
+#}
+<script>
+(function () {
+  if (sessionStorage.getItem('ph-navigating')) {
+    sessionStorage.removeItem('ph-navigating');
+    var s = document.createElement('style');
+    s.id = 'ph-nav-block';
+    s.textContent = 'article[view-transition-name="page"],#toc{opacity:0!important}';
+    document.head.appendChild(s);
+  }
+})();
+</script>
+
+{# tsParticles — gold particle network background #}
+<script src="https://cdn.jsdelivr.net/npm/@tsparticles/slim@3.7.1/tsparticles.slim.bundle.min.js"></script>

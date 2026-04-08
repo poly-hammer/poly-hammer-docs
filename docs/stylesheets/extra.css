@@ -22,6 +22,41 @@
     --sidebar-ring: oklch(60% 0.14 65);
 }
 
+/* ============================================
+   Z-Index Fix — particles & cursor glow
+   The shadcn theme wraps content in #inner-body
+   with bg-background and z-10 which hides elements
+   with negative z-index. Move the actual background
+   to <html> and make body/#inner-body transparent.
+   ============================================ */
+html {
+    background-color: var(--background) !important;
+}
+
+body {
+    background: transparent !important;
+}
+
+#inner-body {
+    background: transparent !important;
+}
+
+/* Header stays opaque */
+header {
+    background-color: var(--background) !important;
+}
+
+/* Remove sidebar gradient blur shadow artifacts (top & bottom) but keep the separator line */
+[data-slot="sidebar"] .blur-xs {
+    background: none !important;
+    filter: none !important;
+}
+
+/* Remove TOC "On This Page" opaque background block */
+#toc .bg-background {
+    background: transparent !important;
+}
+
 /* Dark mode overrides */
 .dark {
     --background: oklch(0% 0 0);           /* #000000 */
@@ -84,6 +119,96 @@
 
 details.sidebar-collapsible[open] > summary .sidebar-chevron {
     transform: rotate(90deg);
+}
+
+/* ============================================
+   Golden Hover Glow Effects
+   Matches polyhammer.com frontend
+   ============================================ */
+
+/* Sidebar nav links */
+[data-slot="sidebar-menu-button"]:hover {
+    color: #e8b900 !important;
+    text-shadow: 0 0 6px rgba(232, 185, 0, 0.3);
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+/* Sidebar collapsible section headers */
+details.sidebar-collapsible > summary:hover {
+    color: #e8b900 !important;
+    text-shadow: 0 0 6px rgba(232, 185, 0, 0.3);
+}
+
+/* Content area links */
+article a:hover {
+    color: #e8b900 !important;
+    text-shadow: 0 0 4px rgba(232, 185, 0, 0.25);
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+/* TOC links */
+[data-slot="toc"] a:hover {
+    color: #e8b900 !important;
+    text-shadow: 0 0 4px rgba(232, 185, 0, 0.25);
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+/* Search input gold focus ring */
+input[type="search"]:focus,
+[data-slot="search"] input:focus {
+    border-color: #e8b900 !important;
+    box-shadow: 0 0 0 2px rgba(232, 185, 0, 0.25) !important;
+    outline: none;
+}
+
+/* Footer social links */
+footer a:hover {
+    color: #e8b900 !important;
+    transition: color 0.2s ease;
+}
+
+/* Admonitions / details blocks — subtle gold shadow on hover */
+.admonition:hover,
+details.note:hover,
+details.warning:hover,
+details.tip:hover,
+details.info:hover {
+    box-shadow: 0 0 12px rgba(232, 185, 0, 0.12);
+    transition: box-shadow 0.3s ease;
+}
+
+/* Code blocks — subtle gold shadow on hover */
+pre:hover {
+    box-shadow: 0 0 10px rgba(232, 185, 0, 0.08);
+    transition: box-shadow 0.3s ease;
+}
+
+/* Header nav links */
+header a:hover,
+header button:hover {
+    color: #e8b900 !important;
+    transition: color 0.2s ease;
+}
+
+/* Light mode: final resting opacity set by JS after fade-in */
+/* Dark mode: final resting opacity set by JS after fade-in */
+
+/* Particles: always start invisible; JS fades in at same rate as fade-out. */
+#tsparticles {
+    opacity: 0;
+}
+
+/* Vignette: applied to the canvas (which is fullscreen fixed) not the container.
+   The container has zero dimensions in fullScreen mode so the mask would collapse. */
+#tsparticles canvas {
+    -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 35%, transparent 75%);
+    mask-image: radial-gradient(ellipse at 50% 50%, black 35%, transparent 75%);
+}
+
+/* Page content + right TOC: held at opacity 0 until JS fades them in (no FOUC jitter) */
+article[view-transition-name="page"],
+#toc {
+    opacity: 0;
 }
 
 /* ============================================

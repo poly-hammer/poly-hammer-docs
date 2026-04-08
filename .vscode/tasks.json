@@ -5,7 +5,7 @@
 	"tasks": [
         {
             "label": "Mkdocs Serve",
-            "command": "uv run python scripts/sync_docs.py; uv run mkdocs serve --dev-addr localhost:8080",
+            "command": "uv run python scripts/sync_docs.py ${input:force-flag}; uv run mkdocs serve --watch-theme --dev-addr localhost:8080",
             "type": "shell",
             "group": {
                 "kind": "build"
@@ -18,7 +18,7 @@
         },
         {
             "label": "Mkdocs Build",
-            "command": "uv run python scripts/sync_docs.py; uv run mkdocs build",
+            "command": "uv run python scripts/sync_docs.py ${input:force-flag}; uv run mkdocs build",
             "type": "shell",
             "group": {
                 "kind": "build"
@@ -33,5 +33,16 @@
             }
         }
 	],
-    "inputs": []
+    "inputs": [
+        {
+            "id": "force-flag",
+            "type": "pickString",
+            "description": "Re-clone repos even if already cached?",
+            "options": [
+                { "label": "No — use cached clones (fast)", "value": "" },
+                { "label": "Yes — force re-clone (--force)", "value": "--force" }
+            ],
+            "default": ""
+        }
+    ]
 }
