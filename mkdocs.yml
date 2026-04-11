@@ -46,6 +46,9 @@ theme:
     light: shadcn-light
     dark: github-dark
 
+hooks:
+  - scripts/hooks.py
+
 plugins:
   - search
 

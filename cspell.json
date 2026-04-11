@@ -11,6 +11,11 @@
   ],
   "words": [
     "mkdocs",
+    "katex",
+    "magiclink",
+    "tasklist",
+    "smartsymbols",
+    "arithmatex",
     "polyhammer",
     "shadcn",
     "pymdownx",
