@@ -1,5 +1,6 @@
 site_name: Poly Hammer Documentation
 site_description: Comprehensive documentation for Poly Hammer's tools and platform.
+site_url: "https://docs.polyhammer.com/"
 site_dir: site
 repo_url: "https://github.com/poly-hammer/poly-hammer-docs"
 
