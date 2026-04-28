@@ -44,12 +44,19 @@ body {
 /* Header stays opaque */
 header {
     background-color: var(--background) !important;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
 }
 
 /* Remove sidebar gradient blur shadow artifacts (top & bottom) but keep the separator line */
 [data-slot="sidebar"] .blur-xs {
     background: none !important;
     filter: none !important;
+}
+
+/* Gradual fade at top and bottom of sidebar scroll area */
+[data-slot="sidebar-content"] {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 50px, black calc(100% - 50px), transparent);
+    mask-image: linear-gradient(to bottom, transparent, black 50px, black calc(100% - 50px), transparent);
 }
 
 /* Remove TOC "On This Page" opaque background block */
@@ -114,14 +121,6 @@ header {
 }
 
 /* ============================================
-   Collapsible Sidebar
-   ============================================ */
-
-details.sidebar-collapsible[open] > summary .sidebar-chevron {
-    transform: rotate(90deg);
-}
-
-/* ============================================
    Golden Hover Glow Effects
    Matches polyhammer.com frontend
    ============================================ */
@@ -131,12 +130,6 @@ details.sidebar-collapsible[open] > summary .sidebar-chevron {
     color: #e8b900 !important;
     text-shadow: 0 0 6px rgba(232, 185, 0, 0.3);
     transition: color 0.2s ease, text-shadow 0.2s ease;
-}
-
-/* Sidebar collapsible section headers */
-details.sidebar-collapsible > summary:hover {
-    color: #e8b900 !important;
-    text-shadow: 0 0 6px rgba(232, 185, 0, 0.3);
 }
 
 /* Content area links */

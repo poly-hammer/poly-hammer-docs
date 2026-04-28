@@ -3,6 +3,9 @@ name = "poly-hammer-docs"
 version = "1.0.0"
 description = "Poly Hammer documentation site"
 requires-python = ">=3.13"
+dependencies = [
+    "python-dotenv>=1.2.2",
+]
 
 [dependency-groups]
 dev = [
@@ -16,4 +19,7 @@ dev = [
 
 [tool.poly-hammer-docs]
 github_org = "poly-hammer"
-repos = ["meta-human-dna-addon"]
+repos = [
+    "meta-human-dna-addon",
+    "character-control-rig-addon"
+]

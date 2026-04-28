@@ -23,6 +23,7 @@
     "codehilite",
     "metahuman",
     "topbar",
+    "dotenv",
     "iconify",
     "oklch"
   ],

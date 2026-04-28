@@ -19,8 +19,10 @@ import tomllib
 from pathlib import Path
 
 import yaml
+from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parent.parent
+load_dotenv(ROOT / ".env")
 REPOS_DIR = ROOT / "repos"
 DOCS_DIR = ROOT / "docs"
 MKDOCS_YML = ROOT / "mkdocs.yml"
@@ -28,7 +30,7 @@ MKDOCS_YML = ROOT / "mkdocs.yml"
 # Remap repo names to different folder names in the built docs.
 # Key = repo name (as listed in pyproject.toml), Value = output folder name.
 FOLDER_REMAP: dict[str, str] = {
-    "meta-human-dna-addon": "character-dna",
+    "meta-human-dna-addon": "character-dna-addon",
 }
 
 BEGIN_MARKER = "  # BEGIN EXTERNAL DOCS"
@@ -68,12 +70,28 @@ def clone_repo(
     else:
         url = f"https://github.com/{org}/{repo}.git"
 
-    subprocess.run(
-        ["git", "clone", "--depth", "1", "--single-branch", url, str(dest)],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
+    safe_url = f"https://github.com/{org}/{repo}.git"
+    # Skip Git LFS smudge: docs builds don't need binary LFS objects (test
+    # fixtures, etc.) and fetching them requires extra auth that may not be
+    # available to the docs PAT.
+    env = {**os.environ, "GIT_LFS_SKIP_SMUDGE": "1"}
+    try:
+        subprocess.run(
+            ["git", "clone", "--depth", "1", "--single-branch", url, str(dest)],
+            check=True,
+            capture_output=True,
+            text=True,
+            env=env,
+        )
+    except subprocess.CalledProcessError as e:
+        stderr = (e.stderr or "").replace(url, safe_url)
+        stdout = (e.stdout or "").replace(url, safe_url)
+        print(f"\n  git clone failed for {safe_url} (exit {e.returncode})", file=sys.stderr)
+        if stdout.strip():
+            print(f"  stdout:\n{stdout}", file=sys.stderr)
+        if stderr.strip():
+            print(f"  stderr:\n{stderr}", file=sys.stderr)
+        raise SystemExit(1) from None
     return dest
 
 
@@ -196,6 +214,8 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    token = args.token or os.environ.get("GH_PAT")
+
     config = read_config()
     org = config.get("github_org", "poly-hammer")
     repos = config.get("repos", [])
@@ -213,7 +233,7 @@ def main() -> None:
         slug = FOLDER_REMAP.get(repo, repo)
         print(f"Syncing {org}/{repo} → docs/{slug}/")
 
-        repo_dir = clone_repo(org, repo, token=args.token, force=args.force)
+        repo_dir = clone_repo(org, repo, token=token, force=args.force)
 
         repo_config = read_repo_mkdocs(repo_dir)
         site_name = repo_config["site_name"]

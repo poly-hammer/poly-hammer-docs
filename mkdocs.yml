@@ -1,6 +1,6 @@
-site_name: Poly Hammer Documentation
+site_name: Poly Hammer
 site_description: Comprehensive documentation for Poly Hammer's tools and platform.
-site_url: "https://docs.polyhammer.com/"
+site_url: "https://polyhammer.com"
 site_dir: site
 repo_url: "https://github.com/poly-hammer/poly-hammer-docs"
 
@@ -14,25 +14,42 @@ nav:
     - Create Releases: hammer-build-tool/create-releases.md
   # BEGIN EXTERNAL DOCS
   - Character DNA Addon:
-    - Quick Start: character-dna/index.md
-    - Terminology: character-dna/terminology.md
-    - Helpful Resources: character-dna/helpful-resources.md
-    - Unreal Configuration: character-dna/unreal-configuration.md
-    - Textures: character-dna/textures.md
+    - Quick Start: character-dna-addon/index.md
+    - Terminology: character-dna-addon/terminology.md
+    - Helpful Resources: character-dna-addon/helpful-resources.md
+    - Unreal Configuration: character-dna-addon/unreal-configuration.md
+    - Textures: character-dna-addon/textures.md
     - User Interface:
-      - Import: character-dna/user-interface/import.md
-      - Face Board: character-dna/user-interface/face-board.md
-      - Utilities: character-dna/user-interface/utilities.md
-      - View Options: character-dna/user-interface/view-options.md
-      - Rig Logic: character-dna/user-interface/rig-logic.md
-      - Shape Keys: character-dna/user-interface/shape-keys.md
-      - Output: character-dna/user-interface/output.md
+      - Import: character-dna-addon/user-interface/import.md
+      - Face Board: character-dna-addon/user-interface/face-board.md
+      - Utilities: character-dna-addon/user-interface/utilities.md
+      - View Options: character-dna-addon/user-interface/view-options.md
+      - Rig Logic: character-dna-addon/user-interface/rig-logic.md
+      - Shape Keys: character-dna-addon/user-interface/shape-keys.md
+      - Output: character-dna-addon/user-interface/output.md
     - Workflows:
-      - Face Form Wrap: character-dna/workflows/face-form-wrap.md
+      - Face Form Wrap: character-dna-addon/workflows/face-form-wrap.md
     - Contributing:
-      - Development: character-dna/contributing/development.md
-      - Documentation: character-dna/contributing/documentation.md
-      - Testing: character-dna/contributing/testing.md
+      - Development: character-dna-addon/contributing/development.md
+      - Documentation: character-dna-addon/contributing/documentation.md
+      - Testing: character-dna-addon/contributing/testing.md
+  - Character Control Rig Addon:
+    - Home: character-control-rig-addon/index.md
+    - Getting Started: character-control-rig-addon/getting-started.md
+    - Core Concepts: character-control-rig-addon/concepts.md
+    - Guides:
+      - Adjusting the Metarig: character-control-rig-addon/guides/adjusting-the-metarig.md
+      - Export Body Animation: character-control-rig-addon/guides/export-body-animation.md
+      - Export Face Board Animation: character-control-rig-addon/guides/export-face-board-animation.md
+      - Import FK Animation: character-control-rig-addon/guides/import-body-fk-animation.md
+      - Import Face Board Animation: character-control-rig-addon/guides/import-face-board-animation.md
+      - Multi-Character Scenes: character-control-rig-addon/guides/multi-character-scenes.md
+    - Reference:
+      - Operators: character-control-rig-addon/reference/operators.md
+      - Properties: character-control-rig-addon/reference/properties.md
+      - Bone Mappings: character-control-rig-addon/reference/bone-mappings.md
+    - Contributing:
+      - Development: character-control-rig-addon/contributing/development.md
   # END EXTERNAL DOCS
 
 theme:

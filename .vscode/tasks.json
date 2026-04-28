@@ -5,7 +5,7 @@
 	"tasks": [
         {
             "label": "Mkdocs Serve",
-            "command": "uv run python scripts/sync_docs.py ${input:force-flag}; uv run mkdocs serve --watch-theme --dev-addr localhost:8080",
+            "command": "uv run python scripts/sync_docs.py ${input:force-flag}; uv run mkdocs serve --watch-theme --dev-addr localhost:8080 --livereload --watch docs --watch mkdocs.yml",
             "type": "shell",
             "group": {
                 "kind": "build"

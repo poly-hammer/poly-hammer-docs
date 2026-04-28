@@ -6,7 +6,7 @@ Welcome to the hammer build tool setup guide. You can also view our [video tutor
 
 Some of our tools require additional dependencies that we are not allowed to be re-distributed with our code. However, these dependencies can be complex to compile. That's why we created this build tool. You can run a GitHub workflow and compile all the dependencies needed for our tools yourself. Once you have it configured, it makes it super easy!
 
-![1](/assets/images/hammer-build-tool/setup/1.gif){: class="rounded-image"}
+![1](../assets/images/hammer-build-tool/setup/1.gif){: class="rounded-image"}
 
 
 ## What are the dependencies?
