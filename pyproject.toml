@@ -20,6 +20,6 @@ dev = [
 [tool.poly-hammer-docs]
 github_org = "poly-hammer"
 repos = [
-    "meta-human-dna-addon",
+    "character-dna-addon",
     "character-control-rig-addon"
 ]

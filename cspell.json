@@ -7,7 +7,7 @@
     ".git",
     "uv.lock",
     "repos/",
-    "docs/meta-human-dna-addon/"
+    "docs/character-dna-addon/"
   ],
   "words": [
     "mkdocs",
