@@ -9,6 +9,8 @@ watch:
 
 nav:
   - Home: index.md
+  - Poly Hammer Portal:
+    - Blender Extension Repo: poly-hammer-portal/blender-extension-repo.md
   - Hammer Build Tool:
     - Setup: hammer-build-tool/setup.md
     - Create Releases: hammer-build-tool/create-releases.md
