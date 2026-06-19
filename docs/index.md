@@ -1,13 +1,13 @@
-# Welcome to the Poly Hammer Docs
+# Poly Hammer Documentation
 
 ## Getting Started
 
 Welcome to the official documentation for Poly Hammer. Here you'll find everything you need to get started and make the most out of our tools.
 
-## Useful Links
+## Addons
 
-- [Poly Hammer Website](https://www.polyhammer.com/)
-- [Poly Hammer GitHub Org](https://github.com/poly-hammer)
+- [Character DNA Addon](./character-dna-addon)
+- [Character Control Rig Addon](./character-control-rig-addon)
 
 ## Something missing?🤷‍♂️
 
