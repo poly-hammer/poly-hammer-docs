@@ -13,25 +13,29 @@ nav:
     - Blender Extension Repo: poly-hammer-portal/blender-extension-repo.md
   # BEGIN EXTERNAL DOCS
   - Character DNA Addon:
-    - Quick Start: character-dna-addon/index.md
+    - Getting Started: character-dna-addon/index.md
     - Terminology: character-dna-addon/terminology.md
-    - Helpful Resources: character-dna-addon/helpful-resources.md
-    - Unreal Configuration: character-dna-addon/unreal-configuration.md
-    - Textures: character-dna-addon/textures.md
-    - User Interface:
-      - Import: character-dna-addon/user-interface/import.md
-      - Face Board: character-dna-addon/user-interface/face-board.md
-      - Utilities: character-dna-addon/user-interface/utilities.md
-      - View Options: character-dna-addon/user-interface/view-options.md
-      - Rig Logic: character-dna-addon/user-interface/rig-logic.md
-      - Shape Keys: character-dna-addon/user-interface/shape-keys.md
-      - Output: character-dna-addon/user-interface/output.md
+    - Free Features:
+      - Rig Instances: character-dna-addon/free-features/rig-instances.md
+      - View Options: character-dna-addon/free-features/view-options.md
+      - Face Board: character-dna-addon/free-features/face-board.md
+      - Animation: character-dna-addon/free-features/animation.md
+      - Output: character-dna-addon/free-features/output.md
+    - Pro Features:
+      - Converter: character-dna-addon/pro-features/converter.md
+      - Raw Editor: character-dna-addon/pro-features/raw-editor.md
+      - Shape Key Editor: character-dna-addon/pro-features/shape-key-editor.md
+      - RBF Editor: character-dna-addon/pro-features/rbf-editor.md
+      - Backup Manager: character-dna-addon/pro-features/backup-manager.md
     - Workflows:
-      - Face Form Wrap: character-dna-addon/workflows/face-form-wrap.md
+      - Append & Link: character-dna-addon/workflows/append-link.md
+      - Mesh Wrapping: character-dna-addon/workflows/mesh-wrapping.md
+      - Customizing Materials: character-dna-addon/workflows/customizing-materials.md
     - Contributing:
       - Development: character-dna-addon/contributing/development.md
       - Documentation: character-dna-addon/contributing/documentation.md
       - Testing: character-dna-addon/contributing/testing.md
+    - FAQ: character-dna-addon/faq.md
   - Character Control Rig Addon:
     - Home: character-control-rig-addon/index.md
     - Getting Started: character-control-rig-addon/getting-started.md
