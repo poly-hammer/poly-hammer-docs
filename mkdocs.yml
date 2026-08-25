@@ -11,6 +11,8 @@ nav:
   - Home: index.md
   - Poly Hammer Portal:
     - Blender Extension Repo: poly-hammer-portal/blender-extension-repo.md
+  - Poly Hammer Interchange:
+    - Blender Extension Repo: poly-hammer-interchange/getting-started.md
   # BEGIN EXTERNAL DOCS
   - Character DNA Addon:
     - Getting Started: character-dna-addon/index.md
