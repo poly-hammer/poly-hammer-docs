@@ -36,7 +36,7 @@
         {% with section_title = section.title %}
         {% include "components/section_icon.html" %}
         {% endwith %}
-        {{ section.title }}</div>
+        {{ config.extra.get('section_labels', {}).get(section.title, section.title) }}</div>
     <div data-slot="sidebar-group-content" data-sidebar="group-content" class="w-full text-sm">
         <ul data-slot="sidebar-menu" data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-0.5">
             {% for sidebar_item in section.children %}

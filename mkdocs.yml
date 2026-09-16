@@ -80,6 +80,10 @@ plugins:
   - search
 
 extra:
+  section_labels:
+    Character DNA Addon: Character DNA
+    Character Control Rig Addon: Character Control Rig
+    Character Assembly Addon: Character Assembly
   section_icons:
     Poly Hammer Portal: assets/section-icons/web.svg
     Poly Hammer Interchange: assets/section-icons/unreal.png

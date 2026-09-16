@@ -34,7 +34,7 @@
                         {% with section_title = top_item.title %}
                         {% include "components/section_icon.html" %}
                         {% endwith %}
-                        {{ top_item.title }}
+                        {{ config.extra.get('section_labels', {}).get(top_item.title, top_item.title) }}
                     </div>
                     {% if top_item.children %}
                     <div class="flex flex-col gap-3">

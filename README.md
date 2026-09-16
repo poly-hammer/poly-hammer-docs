@@ -31,3 +31,7 @@ Use an SVG or transparent PNG. Icons render as white silhouettes in fixed
 16-by-16-pixel boxes on desktop and mobile, in both themes. Sections without a mapping
 keep their text-only headings; nested navigation is unchanged. Keep this setting
 outside the generated navigation block so syncing add-on docs preserves it.
+
+To shorten navigation headings, map the original section titles to display names
+under `extra.section_labels` in `mkdocs.yml`. This applies to desktop and mobile
+menus without changing source titles, icon mappings, or generated navigation.
