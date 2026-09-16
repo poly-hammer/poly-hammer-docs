@@ -17,6 +17,7 @@ nav:
   - Character DNA Addon:
     - Getting Started: character-dna-addon/index.md
     - Terminology: character-dna-addon/terminology.md
+    - FAQ: character-dna-addon/faq.md
     - Free Features:
       - Rig Instances: character-dna-addon/free-features/rig-instances.md
       - View Options: character-dna-addon/free-features/view-options.md
@@ -37,7 +38,6 @@ nav:
       - Development: character-dna-addon/contributing/development.md
       - Documentation: character-dna-addon/contributing/documentation.md
       - Testing: character-dna-addon/contributing/testing.md
-    - FAQ: character-dna-addon/faq.md
   - Character Control Rig Addon:
     - Home: character-control-rig-addon/index.md
     - Getting Started: character-control-rig-addon/getting-started.md
@@ -55,6 +55,10 @@ nav:
       - Bone Mappings: character-control-rig-addon/reference/bone-mappings.md
     - Contributing:
       - Development: character-control-rig-addon/contributing/development.md
+  - Character Assembly Addon:
+    - Getting Started: character-assembly-addon/index.md
+    - Lighting: character-assembly-addon/lighting.md
+    - Physics: character-assembly-addon/physics.md
   # END EXTERNAL DOCS
 
 theme:

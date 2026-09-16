@@ -21,5 +21,6 @@ dev = [
 github_org = "poly-hammer"
 repos = [
     "character-dna-addon",
-    "character-control-rig-addon"
+    "character-control-rig-addon",
+    "character-assembly-addon"
 ]

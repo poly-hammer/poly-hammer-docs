@@ -8,6 +8,7 @@ Welcome to the official documentation for Poly Hammer. Here you'll find everythi
 
 - [Character DNA Addon](./character-dna-addon)
 - [Character Control Rig Addon](./character-control-rig-addon)
+- [Character Assembly Addon](character-assembly-addon/index.md)
 
 ## Something missing?🤷‍♂️
 

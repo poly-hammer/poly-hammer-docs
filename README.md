@@ -3,14 +3,13 @@
 This is where we host all the documentation for our products. Contributions are welcome. If you see something that needs to be changed or updated, feel free to open a Pull request.
 
 ## Usage
-First, create a virtual environment `.venv` then run `pip install -r requirements.txt` to install the dependencies.
 
-Run the command below to pull down the submodules.
+Install Python 3.13 or newer and uv, then run these commands from this repository:
+
 ```sh
-git submodule update --init --recursive
+uv sync
+uv run python -X utf8 scripts/sync_docs.py
+uv run mkdocs serve
 ```
 
-Then, run the command below to start the development server and visit localhost:8000.
-```sh 
-mkdocs serve
-```
+Visit <http://localhost:8000>.
