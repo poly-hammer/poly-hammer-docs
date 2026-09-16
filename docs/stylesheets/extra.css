@@ -226,3 +226,24 @@ article[view-transition-name="page"],
     height: 100%;
     border: 0;
 }
+/* Configurable app icons for top-level sidebar sections. */
+.section-icon-label,
+[data-slot="sidebar-group-label"] {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sidebar-section-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+    background-color: #fff;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+}

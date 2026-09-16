@@ -4,12 +4,17 @@
   "ignorePaths": [
     ".venv",
     "site",
+    "docs/assets/section-icons/",
     ".git",
     "uv.lock",
     "repos/",
     "docs/character-dna-addon/"
   ],
   "words": [
+    "selectattr",
+    "rejectattr",
+    "tsparticles",
+    "FOUC",
     "mkdocs",
     "autoplay",
     "katex",

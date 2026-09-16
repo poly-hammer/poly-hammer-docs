@@ -13,3 +13,21 @@ uv run mkdocs serve
 ```
 
 Visit <http://localhost:8000>.
+
+## Section icons
+
+Set `extra.section_icons` in `mkdocs.yml` to map an exact top-level navigation
+section title to an image path relative to `docs/`:
+
+```yaml
+extra:
+  section_icons:
+    Poly Hammer Portal: assets/section-icons/web.svg
+    Poly Hammer Interchange: assets/section-icons/unreal.png
+    Character Assembly Addon: assets/section-icons/blender.svg
+```
+
+Use an SVG or transparent PNG. Icons render as white silhouettes in fixed
+16-by-16-pixel boxes on desktop and mobile, in both themes. Sections without a mapping
+keep their text-only headings; nested navigation is unchanged. Keep this setting
+outside the generated navigation block so syncing add-on docs preserves it.

@@ -80,6 +80,12 @@ plugins:
   - search
 
 extra:
+  section_icons:
+    Poly Hammer Portal: assets/section-icons/web.svg
+    Poly Hammer Interchange: assets/section-icons/unreal.png
+    Character DNA Addon: assets/section-icons/blender.svg
+    Character Control Rig Addon: assets/section-icons/blender.svg
+    Character Assembly Addon: assets/section-icons/blender.svg
   analytics:
     id: !ENV GA_ID
 

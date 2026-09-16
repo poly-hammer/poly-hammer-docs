@@ -1,0 +1,5 @@
+{% set section_icon = config.extra.get('section_icons', {}).get(section_title) %}
+{% if section_icon %}
+<span class="sidebar-section-icon" aria-hidden="true"
+    style="-webkit-mask-image: url('{{ section_icon | url | e }}'); mask-image: url('{{ section_icon | url | e }}')"></span>
+{% endif %}
