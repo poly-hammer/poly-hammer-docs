@@ -1,0 +1,190 @@
+name: Reusable documentation publication
+on:
+  workflow_call:
+    inputs:
+      channel:
+        type: string
+        required: true
+      command:
+        type: string
+        default: sync
+      site_commit:
+        type: string
+        default: ''
+env:
+  DOCS_ARCHIVE_REPO: ${{ github.repository_owner }}/${{ vars.DOCS_ARCHIVE_REPO_NAME }}
+  DOCS_CHANNEL: ${{ inputs.channel }}
+  DOCS_SITE_URL: ${{ inputs.channel == 'production' && vars.DOCS_PRODUCTION_URL || vars.DOCS_STAGING_URL }}
+  NEXT_PUBLIC_GA_ID: ${{ inputs.channel == 'production' && vars.DOCS_GA_ID || '' }}
+  VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ inputs.channel == 'production' && vars.VERCEL_PRODUCTION_PROJECT_ID || vars.VERCEL_STAGING_PROJECT_ID }}
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    outputs:
+      changed: ${{ steps.sync.outputs.changed }}
+      site_commit: ${{ steps.sync.outputs.site_commit }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: '3.13'
+      - uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        id: source
+        with:
+          app-id: ${{ vars.DOCS_READER_APP_ID }}
+          private-key: ${{ secrets.DOCS_READER_APP_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            character-dna-addon
+            character-control-rig-addon
+            character-assembly-addon
+            ph-motion-addon
+          permission-contents: read
+      - uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        id: archive
+        with:
+          app-id: ${{ vars.DOCS_ARCHIVE_APP_ID }}
+          private-key: ${{ secrets.DOCS_ARCHIVE_APP_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ vars.DOCS_ARCHIVE_REPO_NAME }}
+          permission-contents: write
+      - id: sync
+        name: Verify source events and persist the desired catalog
+        env:
+          DOCS_READER_TOKEN: ${{ steps.source.outputs.token }}
+          DOCS_ARCHIVE_TOKEN: ${{ steps.archive.outputs.token }}
+          DOCS_STATE_TOKEN: ${{ github.token }}
+          SYNC_COMMAND: ${{ inputs.command }}
+          SITE_COMMIT: ${{ inputs.site_commit }}
+        run: python scripts/sync_catalog.py "$SYNC_COMMAND" --channel "$DOCS_CHANNEL" --site-commit "$SITE_COMMIT"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: steps.sync.outputs.changed == 'true'
+        with:
+          name: docs-input-${{ inputs.channel }}
+          path: .docs-build/
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: error
+  settings:
+    needs: collect
+    if: needs.collect.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: docs-${{ inputs.channel }}
+    permissions: {}
+    steps:
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - run: npm install --global vercel@65.16.0
+      - name: Fetch project settings only
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=production
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: docs-project-${{ inputs.channel }}
+          path: .vercel/project.json
+          include-hidden-files: true
+          retention-days: 1
+          if-no-files-found: error
+  build:
+    needs: [collect, settings]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ needs.collect.outputs.site_commit }}
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: docs-input-${{ inputs.channel }}
+          path: .docs-build
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: docs-project-${{ inputs.channel }}
+          path: .vercel
+      - run: npm ci
+      - run: python -m unittest discover -s tests -p 'test_*.py'
+      - run: npm test
+      - run: npm run docs:prepare && npm run docs:validate && npm run typecheck
+      # No source/archive/state/Vercel credentials are available to MDX or the build.
+      - run: npm install --global vercel@65.16.0
+      - run: vercel build --prod
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: docs-output-${{ inputs.channel }}
+          path: .vercel/output/
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: error
+  deploy:
+    needs: [collect, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: docs-${{ inputs.channel }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: '3.13'
+      - run: npm install --global vercel@65.16.0
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: docs-output-${{ inputs.channel }}
+          path: .vercel/output
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: docs-project-${{ inputs.channel }}
+          path: .vercel
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: docs-input-${{ inputs.channel }}
+          path: .docs-build
+      - name: Stage the production-target build without assigning domains
+        id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          url=$(vercel deploy --prebuilt --prod --skip-domain --yes)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+      - name: Test HTML, agent interfaces, version isolation, and metadata
+        env:
+          DOCS_TEST_URL: ${{ steps.deploy.outputs.url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: node scripts/smoke.mjs
+      - name: Assign this channel's domains to the tested build
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
+        run: vercel promote "$DEPLOYMENT_URL" --yes
+      - name: Record successful publication
+        env:
+          DOCS_STATE_TOKEN: ${{ github.token }}
+          DOCS_DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
+        run: python scripts/sync_catalog.py finish --channel "$DOCS_CHANNEL"

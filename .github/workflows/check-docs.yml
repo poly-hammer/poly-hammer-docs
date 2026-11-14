@@ -1,0 +1,39 @@
+name: Check documentation
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        channel: [staging, production]
+    env:
+      DOCS_CHANNEL: ${{ matrix.channel }}
+      DOCS_SITE_URL: http://localhost:3005
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: '3.13'
+      - run: npm ci
+      - run: python -m unittest discover -s tests -p 'test_*.py'
+      - run: npm test
+      - run: npx tsx scripts/create-fixture.ts
+      - run: npm run docs:prepare && npm run docs:validate && npm run typecheck && npm run build
+      - name: Exercise two released versions and the staging/production boundary
+        run: |
+          npm start -- --port 3005 &
+          trap 'kill $!' EXIT
+          for i in {1..30}; do curl -fsS http://localhost:3005/api/versions >/dev/null && break; sleep 1; done
+          node scripts/smoke.mjs

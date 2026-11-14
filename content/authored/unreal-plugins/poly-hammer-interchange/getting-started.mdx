@@ -1,0 +1,36 @@
+---
+title: Getting Started
+description: Export your MetaHuman from Unreal Engine and assemble it in Blender
+  with Poly Hammer Interchange.
+---
+
+Export your MetaHuman from Unreal Engine and assemble it in Blender with Poly Hammer Interchange.
+
+**[Get Poly Hammer Interchange free on Fab](https://fab.com/s/820c139d9bc5).**
+
+Install and enable the plugin in your Unreal Engine project.
+
+<DocVideo src="/assets/interchange/full-component-assembly.webm" poster="/assets/interchange/full-component-assembly.avif" title="Exporting a MetaHuman from Unreal Engine and dragging its assembly manifest into Blender" autoPlay loop muted />
+
+## 1. Export from Unreal Engine
+
+Use Poly Hammer Interchange to export your MetaHuman Blueprint. It collects the DNA,
+grooms, clothing, props, and textures into one folder and creates
+`CharacterAssemblyManifest.json`. Keep the exported folder together.
+
+## 2. Drop into Blender
+
+Drag `CharacterAssemblyManifest.json` into Blender's 3D Viewport, review the import
+options, and confirm. Character Assembly builds the character for you.
+
+See [Character Assembly setup](/blender-addons/character-assembly/latest) for installation
+and import options.
+
+<Callout type="info" title="Note">
+
+**Requirements:** Unreal Engine 5.8+; Blender 5.2+ with
+[Character Assembly](/blender-addons/character-assembly/latest) and
+[Character DNA](/blender-addons/character-dna/latest) installed and enabled.
+The free edition of Character DNA is sufficient.
+
+</Callout>

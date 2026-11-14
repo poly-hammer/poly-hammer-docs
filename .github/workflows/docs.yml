@@ -1,61 +1,58 @@
-name: Deploy Docs
-
+name: Publish documentation
 on:
   push:
     branches: [main]
-    paths:
-      - 'docs/**'
-      - '.github/workflows/**'
-      - 'mkdocs.yml'
-      - 'scripts/**'
-      - 'pyproject.toml'
-
-  workflow_dispatch:
-
   repository_dispatch:
-    types: [dispatch-event]
-
+    types: [docs-main-v1, docs-release-v1]
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+    inputs:
+      channel:
+        type: choice
+        options: [staging, production]
+        default: staging
+      command:
+        type: choice
+        options: [sync, bootstrap]
+        default: sync
+      site_commit:
+        description: 'Full main SHA: required for bootstrap; optional for production site promotion'
+        type: string
+        default: ''
+concurrency:
+  group: docs-publication
+  cancel-in-progress: false
+  queue: max
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Setup UV
-        uses: astral-sh/setup-uv@v7
-
-      - name: Install dependencies
-        run: uv sync
-
-      - name: Clone external repos & sync docs
-        run: uv run python scripts/sync_docs.py --token ${{ secrets.GH_PAT }}
-
-      - name: Build site
-        run: uv run mkdocs build
-        env:
-          GA_ID: ${{ secrets.GA_ID }}
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v6
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: './site'
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
+  production:
+    if: >-
+      vars.DOCS_PIPELINE_ENABLED == 'true' && github.ref == 'refs/heads/main' &&
+      (github.event_name == 'schedule' || github.event.action == 'docs-release-v1' ||
+      (github.event_name == 'workflow_dispatch' && inputs.channel == 'production'))
+    permissions:
+      contents: write
+    uses: ./.github/workflows/publish-docs.yml
+    with:
+      channel: production
+      command: ${{ inputs.command || 'sync' }}
+      site_commit: ${{ inputs.site_commit || '' }}
+    secrets: inherit
+  staging:
+    # Serializing both jobs also prevents state-branch compare-and-swap collisions.
+    needs: production
+    if: >-
+      always() && vars.DOCS_PIPELINE_ENABLED == 'true' && github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'schedule' ||
+      github.event.action == 'docs-main-v1' || github.event.action == 'docs-release-v1' ||
+      (github.event_name == 'workflow_dispatch' && inputs.channel == 'staging'))
+    permissions:
+      contents: write
+    uses: ./.github/workflows/publish-docs.yml
+    with:
+      channel: staging
+      command: ${{ inputs.command || 'sync' }}
+      site_commit: ${{ inputs.site_commit || '' }}
+    secrets: inherit

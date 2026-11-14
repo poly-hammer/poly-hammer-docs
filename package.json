@@ -1,0 +1,48 @@
+{
+  "name": "poly-hammer-docs",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.16.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "postinstall": "fumadocs-mdx",
+    "typecheck": "fumadocs-mdx && next typegen && tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "docs:prepare": "tsx scripts/prepare-content.ts",
+    "docs:validate": "tsx scripts/validate-content.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.4.0",
+    "fumadocs-core": "16.19.3",
+    "fumadocs-mdx": "15.6.2",
+    "fumadocs-ui": "16.19.3",
+    "next": "16.4.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@mdx-js/mdx": "^3.1.0",
+    "@tailwindcss/postcss": "^4.1.0",
+    "@types/mdx": "^2.0.13",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "gray-matter": "^4.0.3",
+    "remark-gfm": "^4.0.1",
+    "remark-mdx": "3.1.1",
+    "remark-parse": "^11.0.0",
+    "tailwindcss": "^4.1.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.0.0",
+    "vite": "8.3.8",
+    "yaml": "^2.8.0"
+  }
+}
