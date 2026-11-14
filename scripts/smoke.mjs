@@ -49,6 +49,16 @@ for (const [product, entry] of Object.entries(versions.products)) {
   const read = await rpc('tools/call', { name: 'read_doc', arguments: { url: pages[0].url } });
   assert(!read.isError);
   assert.equal(JSON.parse(read.content[0].text).version, version);
+  const first = JSON.parse((await rpc('tools/call', { name: 'list_docs', arguments: { product, version, limit: 1 } })).content[0].text);
+  assert.equal(first.documents.length, 1);
+  assert.equal(first.nextOffset, first.total > 1 ? 1 : null);
+  if (first.nextOffset !== null) {
+    const second = JSON.parse((await rpc('tools/call', { name: 'list_docs', arguments: { product, version, offset: first.nextOffset, limit: 1 } })).content[0].text);
+    assert.notEqual(second.documents[0].url, first.documents[0].url);
+  }
+  const chunk = JSON.parse((await rpc('tools/call', { name: 'read_doc', arguments: { url: pages[0].url, limit: 100 } })).content[0].text);
+  assert.equal(chunk.nextOffset, 100);
+  assert.equal(chunk.markdown.length, 100);
   const unknown = await rpc('tools/call', { name: 'search_docs', arguments: { product, version: '999999.0.0', query: 'install' } });
   assert(unknown.isError);
   await get(`/api/docs?product=${product}&version=999999.0.0`, 404);
