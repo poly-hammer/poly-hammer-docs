@@ -29,7 +29,8 @@ permissions:
 jobs:
   production:
     if: >-
-      vars.DOCS_PIPELINE_ENABLED == 'true' && github.ref == 'refs/heads/main' &&
+      vars.DOCS_PIPELINE_ENABLED == 'true' && vars.DOCS_PRODUCTION_ENABLED == 'true' &&
+      github.ref == 'refs/heads/main' &&
       (github.event_name == 'schedule' || github.event.action == 'docs-release-v1' ||
       (github.event_name == 'workflow_dispatch' && inputs.channel == 'production'))
     permissions:

@@ -4,6 +4,8 @@
 
 The Fumadocs application, converted add-on content, agent instructions, collector, immutable catalogs, release notifier, publication workflows, MCP, Markdown endpoints, SEO metadata, and smoke checks are implemented on isolated migration branches. The pipeline remains disabled by default. No live domain has been moved and no real release history has been fabricated. `0.15.0`/`0.14.0` in automated fixtures are synthetic test versions; they do not assert that these add-on releases exist.
 
+All seven branches are pushed and have open PRs. The private snapshot archive and main-only `docs-staging` GitHub environment now exist. Vercel project creation returned HTTP 403, and the local CLI has no saved login; no Vercel project or deployment exists yet. See [STAGING_SETUP.md](STAGING_SETUP.md) for current resources, PR links, credentials, and the staging-only activation sequence.
+
 The existing MkDocs site is recoverable from docs commit `a6482a790a40ab0f63b4e515027712d51e863fb4`; the original checkout remains on main. The converted central docs and media live in `content/authored` and `public`. Custom background animation code is retired. Legacy MkDocs packages remain in the add-ons' existing Python development locks: regenerating those locks requires native wheel files absent from the isolated documentation worktrees. They are not used by the new authoring or publishing paths. Remove them during the next full-checkout dependency refresh.
 
 ## Merge and enable order
@@ -37,6 +39,7 @@ GitHub does not provide a docs-directory-only repository token. The reader app c
 | Location | Variable/secret | Value |
 | --- | --- | --- |
 | Docs repository variable | `DOCS_PIPELINE_ENABLED` | `true` after setup and bootstrap planning |
+| Docs repository variable | `DOCS_PRODUCTION_ENABLED` | Keep `false` during staging setup; enable only after production resources and historical backfill are ready |
 | Docs repository variable | `DOCS_ARCHIVE_REPO_NAME` | `poly-hammer-docs-snapshots` |
 | Docs repository variable | `DOCS_READER_APP_ID` | Reader app ID |
 | Docs repository secret | `DOCS_READER_APP_KEY` | Reader app private key |
@@ -67,6 +70,8 @@ Retain the existing GA4 property. Enable page views for browser history changes 
 ## Bootstrap and historical backfill
 
 Run **Publish documentation** on main with `command=bootstrap`, `channel=staging`, and `site_commit=<full reviewed main SHA>`. It creates an orphan `docs-state` journal if absent and initializes the production site pin without deploying production. Staging then collects current main documentation for all registered products.
+
+For staging-only activation, set `DOCS_PIPELINE_ENABLED=true` and keep `DOCS_PRODUCTION_ENABLED=false`. This permits staging main events, manual builds, and scheduled reconciliation without attempting a deployment to an unconfigured production project. After provisioning production and reviewing the historical backfill policy, enable `DOCS_PRODUCTION_ENABLED` before its first manual sync; stable-release events and schedules can then publish production.
 
 Run the same workflow with `command=sync`, `channel=production`. It enumerates every published, non-draft, non-prerelease stable tag and resolves the exact commit. New snapshots are archived, verified, and added without changing other products or the site pin. Annotated tags are resolved through GitHub's commit API. Backfilled older versions cannot replace a newer `latest`.
 

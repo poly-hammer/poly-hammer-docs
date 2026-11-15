@@ -1,6 +1,6 @@
 # Fumadocs implementation status
 
-Updated November 14, 2026. This is an implemented, locally verified migration awaiting infrastructure activation and deployment, not a claim that production has already moved.
+Updated November 14, 2026 (America/Chicago). The migration branches are pushed with open PRs, and local plus GitHub documentation CI checks passed. Staging infrastructure setup has started; no Vercel deployment or production cutover has occurred.
 
 ## Branches and worktrees
 
@@ -9,14 +9,14 @@ All worktrees are under `E:\repos\poly-hammer-workflows\.worktrees\`. Original w
 | Repository | Branch | Worktree | Commit |
 | --- | --- | --- | --- |
 | poly-hammer-docs | `codex/fumadocs-site` | `docs-site` | See branch HEAD |
-| character-dna-addon | `codex/fumadocs-dna-docs` | `dna-docs` | `b207aeee6fa0e3ae29b76e0fd18b6d3ed69696c8` |
-| character-control-rig-addon | `codex/fumadocs-control-rig-docs` | `control-rig-docs` | `167132e71dd04dd203c3b1597f842e7278349be7` |
+| character-dna-addon | `codex/fumadocs-dna-docs` | `dna-docs` | `a1d617c7e2a5161c8e4c2f253673d61653ab20a0` |
+| character-control-rig-addon | `codex/fumadocs-control-rig-docs` | `control-rig-docs` | `465b6cdcb9b33eee14f94d3344f086b0a981a295` |
 | character-assembly-addon | `codex/fumadocs-assembly-docs` | `assembly-docs` | `7f2535e371c69f43e79ca2eda6e6445b21f8b274` |
 | ph-motion-addon (Motion and Generate) | `codex/fumadocs-motion-docs` | `motion-docs` | `3f479c3d4888eafbd8393345419a965f4ebb090e` |
 | poly-hammer-workflows | `codex/fumadocs-notifications` | `docs-workflows` | `39a8928ba112ccf9d3054f6659bd8be7e6f9e667` |
 | poly-hammer-utils | `codex/fumadocs-release-identity` | `docs-utils` | `2354d851722599b4b16ad414b764eb50ab3ff66e` |
 
-Branches are local until explicitly pushed. The utility/workflow pins must be available remotely before merging their callers; merge without squashing or update the pins to the reviewed resulting commits.
+All branches are pushed; [STAGING_SETUP.md](STAGING_SETUP.md) links all seven open PRs. The utility/workflow pins are available remotely. Merge without squashing or update callers to the reviewed resulting commits. Control Rig's new 0.5.0 main release was merged into its documentation branch, retaining its new authoring content and converting the added callout to MDX.
 
 ## Implemented
 
@@ -39,12 +39,13 @@ Branches are local until explicitly pushed. The utility/workflow pins must be av
 - Browser checked the Black theme, add-on navigation, product-specific version dropdown, historical-version navigation, and older-version notice. Two fixture version numbers are test data, not real archived releases.
 - Workflow YAML parses; actionlint passes with shellcheck/pyflakes unavailable and one narrow suppression for its outdated schema warning on GitHub's officially documented `concurrency.queue` property.
 - Application dependency audit reports zero vulnerabilities. Deployment CLI dependencies are isolated from the app and need an upstream advisory review before activation.
+- GitHub's staging and production docs CI jobs passed after repairing optional dependency entries in the lockfile with the runner's npm version. The DNA spelling configuration now recognizes Fumadocs and preserves the legacy media filename. The composed 44-page validator passed again after incorporating Control Rig 0.5.0 documentation.
 - Add-on pre-commit checks passed. Only auto-version hooks were skipped: they watch unchanged add-on/native source files and cannot initialize in sparse worktrees without native wheels. Blender runtime tests were not needed for documentation-only source changes; release helper behavior was tested separately.
 
 ## Remaining before launch
 
-Follow [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md): configure the three scoped GitHub Apps, private snapshot archive, two Vercel projects, protected environments, credentials, canonical origins, and analytics property; push/review/merge the branches in dependency order; bootstrap real release history; resolve historical missing docs/media and ambiguous old Motion tags; verify legacy sitemap URLs/anchors; test a real cross-repository main event and stable release; rehearse rollback; then switch DNS.
+Follow [STAGING_SETUP.md](STAGING_SETUP.md) and [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md): configure scoped GitHub Apps, Vercel access/projects, credentials, canonical origins, and analytics; review/merge the PRs in dependency order; bootstrap staging and real release history; resolve historical missing docs/media and ambiguous old Motion tags; verify legacy sitemap URLs/anchors; test a real cross-repository main event and stable release; rehearse rollback; then switch DNS.
 
-No live credentials, GitHub Apps, archive repository, Vercel project, deployment, domain, or DNS record was created or modified. Read-only Vercel discovery found the Poly Hammer team (`team_2AUg4TXhG3hWfKBugsYxrB2T`) and no projects. The publication workflows are disabled unless `DOCS_PIPELINE_ENABLED=true` is explicitly configured.
+Created private `poly-hammer/poly-hammer-docs-snapshots`, the main-only `docs-staging` GitHub environment, and the known non-secret archive/team variables. Publication remains disabled with `DOCS_PIPELINE_ENABLED=false`; production has a separate `DOCS_PRODUCTION_ENABLED=false` gate for staging-only activation. Vercel creation in team `team_2AUg4TXhG3hWfKBugsYxrB2T` failed with HTTP 403; the supported CLI fallback had no saved credentials and its login flow was cancelled. No Vercel project, deployment, GitHub App, credential, domain, or DNS record was created or modified.
 
 The add-ons still carry unused MkDocs development dependencies in their existing locked Python environments. The runtime/docs workflows no longer use them; remove those packages when refreshing locks in full checkouts with their native wheels available. The source utility checkout also lacks Motion/Generate packager modules; verify the currently installed packaging distribution before enabling those product release jobs.
