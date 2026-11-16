@@ -1,6 +1,6 @@
 .venv
 .*-venv
-.env
+.env*
 site
 *.pyc
 __pycache__

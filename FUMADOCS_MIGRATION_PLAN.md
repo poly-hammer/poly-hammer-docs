@@ -4,7 +4,7 @@
 
 **Target repository:** `E:\repos\poly-hammer-docs`
 
-**Status:** All seven `codex/fumadocs-*` branches are pushed with open PRs. Local validation and the GitHub staging/production documentation CI matrix passed. The private snapshot archive and main-only GitHub staging environment are configured; Vercel project creation is blocked by account permissions and missing CLI authentication. Credentials, real historical backfill, staging deployment, and production cutover remain. See [STAGING_SETUP.md](STAGING_SETUP.md), [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md), and [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md).
+**Status (November 16):** All seven `codex/fumadocs-*` branches are pushed with PRs. Local validation and the GitHub staging/production documentation CI matrix passed. The private snapshot archive, main-only GitHub staging environment, and protected Vercel staging project are configured. The user authorized the CLI, which successfully created the project; MCP still has a project-access limitation. CI credentials, real historical backfill, the first staging deployment, and production cutover remain. See [STAGING_SETUP.md](STAGING_SETUP.md), [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md), and [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md).
 
 **Agent compatibility is a primary requirement.** The implementation includes a read-only Streamable HTTP MCP endpoint, version-aware Markdown, `llms.txt`/`llms-full.txt`, exact-version bundles, canonical URLs, structured metadata, and updated add-on agent instructions. Search visibility and answer-engine rankings are goals measured after publication, not guaranteed scores.
 

@@ -1,6 +1,6 @@
 # Staging setup and credential checklist
 
-Updated November 14, 2026 (America/Chicago). All migration branches are pushed. No PR has been merged, no Vercel deployment is live, and production DNS is unchanged.
+Updated November 16, 2026 (America/Chicago). The Vercel CLI is authenticated and the protected staging project is configured. The docs migration PR remains open, no docs deployment is live, and production DNS is unchanged.
 
 ## Pull requests
 
@@ -23,17 +23,19 @@ The docs CI matrix passed on Linux for both staging and production, including bu
 - Private [poly-hammer-docs-snapshots](https://github.com/poly-hammer/poly-hammer-docs-snapshots), initialized with a README. It does not contain source snapshots yet.
 - GitHub environment `docs-staging` in the docs repository, restricted to the `main` branch.
 - Docs repository variables `DOCS_ARCHIVE_REPO_NAME=poly-hammer-docs-snapshots` and `VERCEL_ORG_ID=team_2AUg4TXhG3hWfKBugsYxrB2T`.
+- Vercel [polyhammer-docs-staging](https://vercel.com/poly-hammers-projects/polyhammer-docs-staging), project ID `prj_Id78qUcRHvH0zxvJY1aGfHnDdPbl`, with Next.js, Node.js 24, standard build resources, and Vercel Authentication for all deployments. No Git repository is connected, so Vercel does not automatically deploy source pushes.
+- Docs repository variables `VERCEL_STAGING_PROJECT_ID=prj_Id78qUcRHvH0zxvJY1aGfHnDdPbl` and `DOCS_STAGING_URL=https://polyhammer-docs-staging.vercel.app`. The hostname is assigned and verified, but no documentation deployment serves it yet.
 - `DOCS_PIPELINE_ENABLED=false` and `DOCS_PRODUCTION_ENABLED=false`. These remain off until setup and review are complete.
 
 The docs repository still has its existing `GA_ID` and `GH_PAT` secret names. Their values were not read or changed, and the new pipeline does not use them. No new secrets have been configured.
 
 ## Vercel access and project
 
-The connected Vercel account can list the Poly Hammer team, but creating `polyhammer-docs-staging` returned **HTTP 403: no permission to create the project**. The supported CLI fallback had no saved login; its device-login flow was cancelled. The project was not created, so there is no project ID or staging URL to configure yet.
+Followed [Vercel's agent setup guide](https://vercel.com/get-started.md). Installed the latest global CLI, version `65.16.0`, and completed the user-approved device login. `vercel whoami` verifies account `poly-hammer` with Owner access to `poly-hammers-projects`. The Vercel plugin is already enabled globally; no duplicate skills/plugin installation was added.
 
-Use an account allowed to create projects in **Poly Hammer's projects** (`poly-hammers-projects`, team ID above), or have a team administrator create the project. Vercel documents a Create Project extended permission for Developer roles in [project management](https://vercel.com/docs/projects/managing-projects). An existing authorized user can run `npx vercel@65.16.0 login` locally to authenticate the CLI; do not share its credential in chat.
+The user-wide Codex MCP entry is enabled with OAuth at `https://mcp.vercel.com` in `C:\Users\james\.codex\config.toml`. Documentation search and authenticated team listing both pass. MCP still rejects project creation with HTTP 403 and cannot see the newly created staging project, despite the CLI's Owner access. Treat this as an unresolved MCP access limitation; use the authenticated CLI for staging operations. No unrelated MCP configuration or approval policy was changed.
 
-Create the staging project with:
+The project was created through the authenticated CLI and verified with these settings:
 
 | Setting | Value |
 | --- | --- |
@@ -49,7 +51,7 @@ Create the staging project with:
 
 The project uses Vercel's production target as a persistent **staging** environment. The future production website uses a different project. Do not connect `docs.polyhammer.com` to this staging project.
 
-Record its project ID as docs repository variable `VERCEL_STAGING_PROJECT_ID`. Record the actual assigned HTTPS origin as `DOCS_STAGING_URL`, without a trailing slash. Do not assume a particular `.vercel.app` hostname until Vercel confirms it.
+The project ID and assigned origin above are already saved in GitHub. The isolated `docs-site` worktree is linked to this staging project in its ignored `.vercel/project.json`. Vercel link also generated a local OIDC environment file; that unused file was removed without reading or exposing its value. The CLI login is separate from the deployment token needed by GitHub Actions.
 
 ## Credentials needed for the first staging build
 
@@ -77,7 +79,7 @@ The dispatch app is not required for the initial manual staging bootstrap or sch
 ## Activate staging
 
 1. Review/merge the PRs in dependency order. Keep both docs enable variables false during this step.
-2. Finish Vercel project/access setup and configure the four staging credentials, app IDs, project ID, and origin above. Review the pinned deployment CLI advisories described in [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md) before activation.
+2. Configure the four staging credentials and GitHub App IDs above. The Vercel project, project ID, and origin are already configured. Review the pinned deployment CLI advisories described in [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md) before activation.
 3. Set docs repository `DOCS_PIPELINE_ENABLED=true`; leave `DOCS_PRODUCTION_ENABLED=false`. Scheduled and release-triggered production jobs remain off while staging can build.
 4. On docs **main**, run **Publish documentation** with `command=bootstrap`, `channel=staging`, and `site_commit` equal to the full reviewed main SHA. This initializes `docs-state` and collects current source docs. It does not deploy production.
 5. Confirm the protected deployment's page/media rendering, product version selectors, search, Markdown, and `/api/mcp`. Verify protection with a logged-out browser. The workflow smoke tests use the automation bypass secret.

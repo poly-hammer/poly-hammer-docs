@@ -1,6 +1,6 @@
 # Fumadocs implementation status
 
-Updated November 14, 2026 (America/Chicago). The migration branches are pushed with open PRs, and local plus GitHub documentation CI checks passed. Staging infrastructure setup has started; no Vercel deployment or production cutover has occurred.
+Updated November 16, 2026 (America/Chicago). The migration branches are pushed, and local plus GitHub documentation CI checks passed. The protected Vercel staging project is configured and the CLI is authenticated; no docs deployment or production cutover has occurred.
 
 ## Branches and worktrees
 
@@ -46,6 +46,6 @@ All branches are pushed; [STAGING_SETUP.md](STAGING_SETUP.md) links all seven op
 
 Follow [STAGING_SETUP.md](STAGING_SETUP.md) and [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md): configure scoped GitHub Apps, Vercel access/projects, credentials, canonical origins, and analytics; review/merge the PRs in dependency order; bootstrap staging and real release history; resolve historical missing docs/media and ambiguous old Motion tags; verify legacy sitemap URLs/anchors; test a real cross-repository main event and stable release; rehearse rollback; then switch DNS.
 
-Created private `poly-hammer/poly-hammer-docs-snapshots`, the main-only `docs-staging` GitHub environment, and the known non-secret archive/team variables. Publication remains disabled with `DOCS_PIPELINE_ENABLED=false`; production has a separate `DOCS_PRODUCTION_ENABLED=false` gate for staging-only activation. Vercel creation in team `team_2AUg4TXhG3hWfKBugsYxrB2T` failed with HTTP 403; the supported CLI fallback had no saved credentials and its login flow was cancelled. No Vercel project, deployment, GitHub App, credential, domain, or DNS record was created or modified.
+Created private `poly-hammer/poly-hammer-docs-snapshots`, the main-only `docs-staging` GitHub environment, and the non-secret archive/team/project/origin variables. On November 16, the user authorized Vercel CLI login; the authenticated Owner account created `polyhammer-docs-staging` (`prj_Id78qUcRHvH0zxvJY1aGfHnDdPbl`) in team `team_2AUg4TXhG3hWfKBugsYxrB2T`. The project uses Node.js 24, Next.js, standard resources, all-deployment authentication, and assigned hostname `polyhammer-docs-staging.vercel.app`. The migration worktree is linked to it. MCP read checks pass, but MCP project creation still returns 403; CLI operations work. Publication remains disabled with `DOCS_PIPELINE_ENABLED=false` and `DOCS_PRODUCTION_ENABLED=false`. GitHub App credentials and CI deployment secrets remain unconfigured. No documentation deployment, production domain mapping, or production DNS change has occurred.
 
 The add-ons still carry unused MkDocs development dependencies in their existing locked Python environments. The runtime/docs workflows no longer use them; remove those packages when refreshing locks in full checkouts with their native wheels available. The source utility checkout also lacks Motion/Generate packager modules; verify the currently installed packaging distribution before enabling those product release jobs.
