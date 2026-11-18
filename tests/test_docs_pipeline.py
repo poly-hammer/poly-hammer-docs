@@ -68,11 +68,19 @@ class PipelineTests(unittest.TestCase):
                 calls.append(path)
                 if "/git/commits/" in path: return {"tree": {"sha": "root"}}
                 if path.endswith("/trees/root"): return {"tree": [{"path": "docs", "type": "tree", "sha": "docs"}, {"path": "src", "type": "tree", "sha": "private-code"}]}
-                if path.endswith("/trees/docs"): return {"tree": [{"path": "index.mdx", "type": "blob", "mode": "100644", "sha": blob_sha}]}
+                if path.endswith("/trees/docs"): return {"tree": [
+                    {"path": "index.mdx", "type": "blob", "mode": "100644", "sha": blob_sha},
+                    {"path": "plans", "type": "tree", "mode": "040000", "sha": "internal-plans"},
+                    {"path": "guides", "type": "tree", "mode": "040000", "sha": "guides"},
+                ]}
+                if path.endswith("/trees/guides"): return {"tree": [
+                    {"path": "Plans", "type": "tree", "mode": "040000", "sha": "nested-internal-plans"},
+                ]}
                 if path.endswith("/blobs/" + blob_sha): return {"encoding": "base64", "content": base64.b64encode(content).decode()}
                 raise AssertionError(path)
         self.assertEqual(fetch_docs(Fake(), {"id": "test", "repository": "org/private", "directory": "docs"}, "a" * 40), {"index.mdx": content})
         self.assertFalse(any("private-code" in call for call in calls))
+        self.assertFalse(any("internal-plans" in call for call in calls))
 
     def test_dispatch_requires_registered_source(self):
         with self.assertRaises(ValueError):

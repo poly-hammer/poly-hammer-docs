@@ -182,7 +182,7 @@ def fetch_docs(api: GitHub, source: dict, commit: str) -> dict[str, bytes]:
             raise ValueError("Documentation tree response was truncated")
         for item in tree["tree"]:
             name = prefix + item["path"]
-            if item["path"].startswith("."):
+            if item["path"].startswith(".") or (item["type"] == "tree" and item["path"].casefold() == "plans"):
                 continue
             safe_path(name)
             if item["mode"] in {"120000", "160000"}:

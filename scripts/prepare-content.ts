@@ -9,7 +9,7 @@ import { CatalogSchema, compareVersions, type Catalog, type Snapshot } from '../
 const root = process.cwd();
 const registry = JSON.parse(fs.readFileSync('docs-sources.json', 'utf8')) as { sources: Source[] };
 type Source = { id: string; title: string; repository: string; directory: string; mount: string; include: string[]; exclude?: string[]; entry?: string; private?: boolean };
-function walk(directory: string): string[] { return fs.readdirSync(directory, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name)).flatMap(entry => { if (entry.isSymbolicLink()) throw new Error(`Symlink in docs: ${entry.name}`); return entry.isDirectory() ? walk(path.join(directory, entry.name)) : [path.join(directory, entry.name)]; }); }
+function walk(directory: string): string[] { return fs.readdirSync(directory, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name)).flatMap(entry => { if (entry.isDirectory() && entry.name.toLowerCase() === 'plans') return []; if (entry.isSymbolicLink()) throw new Error(`Symlink in docs: ${entry.name}`); return entry.isDirectory() ? walk(path.join(directory, entry.name)) : [path.join(directory, entry.name)]; }); }
 function sha(directory: string): string { return execFileSync('git', ['-c', `safe.directory=${directory}`, '-C', directory, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(); }
 function write(file: string, value: string) { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, value); }
 function selected(source: Source, file: string) { return !source.exclude?.includes(file) && (source.include.includes('**') || source.include.includes(file)); }
