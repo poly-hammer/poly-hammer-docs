@@ -57,4 +57,6 @@ CI uses synthetic two-version fixtures for untrusted pull requests and never gra
 
 Add-on main pushes notify staging; stable published releases notify production. An hourly reconciliation repairs missed notifications and retries failed publications. Python reads GitHub directory trees and downloads approved docs/media blobs only. A dedicated archive repository holds immutable content-addressed bundles; `docs-state` holds durable catalogs and deployment records. Production retains its approved site commit until explicit promotion, so releasing an add-on cannot publish unrelated central edits.
 
+Use one `DOCS_GITHUB_TOKEN` Actions secret across the docs repository and four add-on repositories. A fine-grained PAT with the six registered source/archive/destination repositories and Contents read/write is recommended; a classic PAT with `repo` scope also works. GitHub Apps are not required. See [STAGING_SETUP.md](STAGING_SETUP.md) for exact token scope and secret placement. Build jobs never receive this token.
+
 The pipeline is disabled until `DOCS_PIPELINE_ENABLED=true` and the runbook's GitHub/Vercel setup is complete. Existing deployments and domains are not changed by checking out these branches.

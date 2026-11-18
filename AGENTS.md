@@ -26,4 +26,4 @@ Production search and default agent indexes select the latest stable version of 
 
 ## Validation
 
-Read `README.md` and `DEPLOYMENT_RUNBOOK.md` for commands. Run `npm test`, Python pipeline tests, content preparation/validation, typechecking, and a production build. Use `scripts/smoke.mjs` against the running build for HTML, Markdown, MCP, search, and version isolation. Never deploy synthetic fixtures or local overrides. Keep operational secrets in the documented GitHub environments/apps, not in files.
+Read `README.md` and `DEPLOYMENT_RUNBOOK.md` for commands. Run `npm test`, Python pipeline tests, content preparation/validation, typechecking, and a production build. Use `scripts/smoke.mjs` against the running build for HTML, Markdown, MCP, search, and version isolation. Never deploy synthetic fixtures or local overrides. Use the shared `DOCS_GITHUB_TOKEN` Actions secret for private documentation collection, archive writes, and notifications. Keep it out of build jobs and Vercel; store Vercel credentials in the documented GitHub environments. Do not add GitHub App setup requirements.

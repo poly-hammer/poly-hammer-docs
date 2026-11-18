@@ -1,6 +1,6 @@
 # Fumadocs implementation status
 
-Updated November 16, 2026 (America/Chicago). The migration branches are pushed, and local plus GitHub documentation CI checks passed. The protected Vercel staging project is configured and the CLI is authenticated; no docs deployment or production cutover has occurred.
+Updated November 18, 2026 (America/Chicago). The migration uses one shared GitHub PAT, `DOCS_GITHUB_TOKEN`, instead of three GitHub Apps. Fine-grained and classic tokens are supported. The protected Vercel staging project is configured, its two environment secret names are verified, and the CLI is authenticated; no docs deployment or production cutover has occurred.
 
 ## Branches and worktrees
 
@@ -9,11 +9,11 @@ All worktrees are under `E:\repos\poly-hammer-workflows\.worktrees\`. Original w
 | Repository | Branch | Worktree | Commit |
 | --- | --- | --- | --- |
 | poly-hammer-docs | `codex/fumadocs-site` | `docs-site` | See branch HEAD |
-| character-dna-addon | `codex/fumadocs-dna-docs` | `dna-docs` | `a1d617c7e2a5161c8e4c2f253673d61653ab20a0` |
-| character-control-rig-addon | `codex/fumadocs-control-rig-docs` | `control-rig-docs` | `465b6cdcb9b33eee14f94d3344f086b0a981a295` |
-| character-assembly-addon | `codex/fumadocs-assembly-docs` | `assembly-docs` | `7f2535e371c69f43e79ca2eda6e6445b21f8b274` |
-| ph-motion-addon (Motion and Generate) | `codex/fumadocs-motion-docs` | `motion-docs` | `3f479c3d4888eafbd8393345419a965f4ebb090e` |
-| poly-hammer-workflows | `codex/fumadocs-notifications` | `docs-workflows` | `39a8928ba112ccf9d3054f6659bd8be7e6f9e667` |
+| character-dna-addon | `codex/fumadocs-dna-docs` | `dna-docs` | `9692de07224f2ad041e15b9fad09824fc6ccff58` |
+| character-control-rig-addon | `codex/fumadocs-control-rig-docs` | `control-rig-docs` | `4ccd05842c668b75717c6b440e35b5dd3fc33d4c` |
+| character-assembly-addon | `codex/fumadocs-assembly-docs` | `assembly-docs` | `6f8f31fda7b639e208e0485f3c60a07d0bc184e9` |
+| ph-motion-addon (Motion and Generate) | `codex/fumadocs-motion-docs` | `motion-docs` | `f5179316bfc41c145b6fab2b804ed1bef99577d7` |
+| poly-hammer-workflows | `codex/fumadocs-notifications` | `docs-workflows` | `ccb30bb5af689b9e0f8a7e2600fcf537c3c35607` |
 | poly-hammer-utils | `codex/fumadocs-release-identity` | `docs-utils` | `2354d851722599b4b16ad414b764eb50ab3ff66e` |
 
 All branches are pushed; [STAGING_SETUP.md](STAGING_SETUP.md) links all seven open PRs. The utility/workflow pins are available remotely. Merge without squashing or update callers to the reviewed resulting commits. Control Rig's new 0.5.0 main release was merged into its documentation branch, retaining its new authoring content and converting the added callout to MDX.
@@ -44,8 +44,8 @@ All branches are pushed; [STAGING_SETUP.md](STAGING_SETUP.md) links all seven op
 
 ## Remaining before launch
 
-Follow [STAGING_SETUP.md](STAGING_SETUP.md) and [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md): configure scoped GitHub Apps, Vercel access/projects, credentials, canonical origins, and analytics; review/merge the PRs in dependency order; bootstrap staging and real release history; resolve historical missing docs/media and ambiguous old Motion tags; verify legacy sitemap URLs/anchors; test a real cross-repository main event and stable release; rehearse rollback; then switch DNS.
+Follow [STAGING_SETUP.md](STAGING_SETUP.md) and [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md): configure the shared `DOCS_GITHUB_TOKEN` PAT, production Vercel resources/credentials, canonical origins, and analytics; review/merge the PRs in dependency order; bootstrap staging and real release history; resolve historical missing docs/media and ambiguous old Motion tags; verify legacy sitemap URLs/anchors; test a real cross-repository main event and stable release; rehearse rollback; then switch DNS.
 
-Created private `poly-hammer/poly-hammer-docs-snapshots`, the main-only `docs-staging` GitHub environment, and the non-secret archive/team/project/origin variables. On November 16, the user authorized Vercel CLI login; the authenticated Owner account created `polyhammer-docs-staging` (`prj_Id78qUcRHvH0zxvJY1aGfHnDdPbl`) in team `team_2AUg4TXhG3hWfKBugsYxrB2T`. The project uses Node.js 24, Next.js, standard resources, all-deployment authentication, and assigned hostname `polyhammer-docs-staging.vercel.app`. The migration worktree is linked to it. MCP read checks pass, but MCP project creation still returns 403; CLI operations work. Publication remains disabled with `DOCS_PIPELINE_ENABLED=false` and `DOCS_PRODUCTION_ENABLED=false`. GitHub App credentials and CI deployment secrets remain unconfigured. No documentation deployment, production domain mapping, or production DNS change has occurred.
+Created private `poly-hammer/poly-hammer-docs-snapshots`, the main-only `docs-staging` GitHub environment, and the non-secret archive/team/project/origin variables. On November 16, the user authorized Vercel CLI login; the authenticated Owner account created `polyhammer-docs-staging` (`prj_Id78qUcRHvH0zxvJY1aGfHnDdPbl`) in team `team_2AUg4TXhG3hWfKBugsYxrB2T`. The project uses Node.js 24, Next.js, standard resources, all-deployment authentication, and assigned hostname `polyhammer-docs-staging.vercel.app`. The migration worktree is linked to it. MCP read checks pass, but MCP project creation still returns 403; CLI operations work. Publication remains disabled with `DOCS_PIPELINE_ENABLED=false` and `DOCS_PRODUCTION_ENABLED=false`. Both Vercel secret names are verified in `docs-staging`; their values remain untested until deployment. The shared `DOCS_GITHUB_TOKEN` PAT is the remaining staging credential to configure. No documentation deployment, production domain mapping, or production DNS change has occurred.
 
 The add-ons still carry unused MkDocs development dependencies in their existing locked Python environments. The runtime/docs workflows no longer use them; remove those packages when refreshing locks in full checkouts with their native wheels available. The source utility checkout also lacks Motion/Generate packager modules; verify the currently installed packaging distribution before enabling those product release jobs.

@@ -4,15 +4,15 @@
 
 The Fumadocs application, converted add-on content, agent instructions, collector, immutable catalogs, release notifier, publication workflows, MCP, Markdown endpoints, SEO metadata, and smoke checks are implemented on isolated migration branches. The pipeline remains disabled by default. No live domain has been moved and no real release history has been fabricated. `0.15.0`/`0.14.0` in automated fixtures are synthetic test versions; they do not assert that these add-on releases exist.
 
-All seven branches are pushed with PRs. The private snapshot archive, main-only `docs-staging` GitHub environment, and protected Vercel staging project now exist. On November 16, the user authorized the CLI login and the CLI created/configured `polyhammer-docs-staging`; MCP project creation still returns HTTP 403. The staging project ID and assigned origin are configured in GitHub, but CI credentials and the first docs deployment remain pending. See [STAGING_SETUP.md](STAGING_SETUP.md) for current resources, PR links, credentials, and the staging-only activation sequence.
+All seven branches are pushed with PRs. The private snapshot archive, main-only `docs-staging` GitHub environment, and protected Vercel staging project now exist. On November 16, the user authorized the CLI login and the CLI created/configured `polyhammer-docs-staging`; MCP project creation still returns HTTP 403. The staging project ID, assigned origin, and both Vercel environment secret names are verified in GitHub. The shared documentation PAT and first docs deployment remain pending; deployment will verify the Vercel secret values. See [STAGING_SETUP.md](STAGING_SETUP.md) for current resources, PR links, credentials, and the staging-only activation sequence.
 
 The existing MkDocs site is recoverable from docs commit `a6482a790a40ab0f63b4e515027712d51e863fb4`; the original checkout remains on main. The converted central docs and media live in `content/authored` and `public`. Custom background animation code is retired. Legacy MkDocs packages remain in the add-ons' existing Python development locks: regenerating those locks requires native wheel files absent from the isolated documentation worktrees. They are not used by the new authoring or publishing paths. Remove them during the next full-checkout dependency refresh.
 
 ## Merge and enable order
 
 1. Review/push the `poly-hammer-utils` release-identity branch, commit `2354d851722599b4b16ad414b764eb50ab3ff66e`. It refuses moved tags and uses `GITHUB_SHA`. Motion and Generate use `ph-motion/<version>` and `ph-generate/<version>` tags. Existing ambiguous Motion tags need an explicit historical ownership decision before backfill.
-2. Review/push the shared workflows branch, commit `39a8928ba112ccf9d3054f6659bd8be7e6f9e667`. Add-on workflows pin it. The release workflow overlays only the tested identity helper, preserving each installed product-specific packager. Verify the installed utility package contains the Motion/Generate packaging modules; they are absent from the inspected local utility main checkout and are an existing packaging dependency.
-3. Merge the docs site branch with the enable variable still unset. Create the archive repository, apps, Vercel projects, and environments below.
+2. Review the shared workflows branch, commit `ccb30bb5af689b9e0f8a7e2600fcf537c3c35607`. All four add-on documentation notifiers pin this PAT-based revision. Their package-release workflows retain the earlier `39a8928ba112ccf9d3054f6659bd8be7e6f9e667` pin because the release helper is unchanged. The release workflow overlays only the tested identity helper, preserving each installed product-specific packager. Verify the installed utility package contains the Motion/Generate packaging modules; they are absent from the inspected local utility main checkout and are an existing packaging dependency.
+3. Merge the docs site branch with the enable variable still unset. Configure the shared documentation PAT, archive repository, Vercel projects, and environments below.
 4. Merge each add-on's separate documentation branch. Its notifier is also disabled until the repository variable is enabled. Source MDX requires the new collector; do not reconnect the old MkDocs build.
 5. Run the synthetic CI matrix, then test real source snapshots and review legacy redirects. Bootstrap staging with the full reviewed docs main SHA. Inspect it with a human and an MCP client.
 6. Bootstrap/sync production against a temporary production hostname; verify all historical versions and assets. Only then assign `docs.polyhammer.com`, remove its old GitHub Pages domain mapping, update DNS, and verify TLS. Retain the old site deployment for rollback.
@@ -24,42 +24,39 @@ Push the pinned utility/workflow commits before merging their callers; immutable
 
 Create a **private** `poly-hammer/poly-hammer-docs-snapshots` repository initialized with a README. Use it only for documentation bundles, never addon packages or private code. Release assets are named by their content digest. Preserve published assets indefinitely; repository administrators must not replace/delete assets or tags in routine maintenance. Copies are digest-verified every time they are materialized.
 
-Use separate GitHub Apps/installations:
+Use **one personal access token (PAT)**, saved as `DOCS_GITHUB_TOKEN`. This replaces the three-App setup at the user's request. A fine-grained PAT is recommended; a classic PAT is also supported without workflow changes.
 
-| App | Installed repositories | Permission | Credentials stored in |
-| --- | --- | --- | --- |
-| Docs Reader | Four registered Blender repositories | Contents: read; metadata | Docs repository only |
-| Docs Archive | `poly-hammer-docs-snapshots` | Contents: write; metadata | Docs repository only |
-| Docs Dispatch | `poly-hammer-docs` | Contents: write for `repository_dispatch`; metadata | Four source repositories only |
+For a fine-grained PAT, select resource owner `poly-hammer`, **Only select repositories**, and these six repositories: `character-dna-addon`, `character-control-rig-addon`, `character-assembly-addon`, `ph-motion-addon`, `poly-hammer-docs-snapshots`, and `poly-hammer-docs`. Set repository **Contents: Read and write**; Metadata read access is automatic. Contents write is needed for archive release assets and destination repository dispatch. It applies to every selected repository, including the source repositories, although the collector only reads their registered docs folders. Complete organization approval if GitHub marks the token pending.
+
+For a classic PAT, select the **`repo`** scope and authorize it for the organization through SSO if required. A classic token cannot be restricted to six selected repositories; it can reach repositories the issuing account can access, subject to organization policy. The docs automation does not need `admin:org` or `workflow` scopes. Keep the snapshots repository for documentation bundles, without workflow files; publishing a release on a workflow-changing commit can require additional workflow permission. This docs token does not replace the add-ons' existing package-release credentials.
+
+Save the token once as an organization Actions secret named `DOCS_GITHUB_TOKEN`, with selected-repository visibility limited to the docs repository and the four add-on repositories. The snapshots repository needs to be in the token's access list, but does not need a copy of the secret. If organization secret access is unavailable on the account's plan, save the same value as a repository Actions secret in each of those five consumers. Do not put it only in `docs-staging`: the collector and source notifiers do not use that environment.
+
+Choose an expiration permitted by organization policy and replace the secret before expiry. For organization secrets, one update rotates all consumers; for repository copies, update all five before revoking the old token. The token owner must retain access to all six repositories. No App registration, App ID, private key, installation, or installation-token action is required. See [GitHub PAT setup](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) and [dispatch permissions](https://docs.github.com/en/rest/repos/repos#create-a-repository-dispatch-event).
 
 The built-in docs `GITHUB_TOKEN` writes only the `docs-state` branch during collection/deployment. Protect main, require reviewed workflow changes, and restrict `docs-staging`/`docs-production` environments to main. Allow the workflow identity to update `docs-state` without allowing force pushes. Do not make pull-request workflows privileged. Stable release publication is automatic after tests; manual reviewers are optional organizational policy, not required by this implementation.
 
-GitHub does not provide a docs-directory-only repository token. The reader app can read its installed repositories, but the collector traverses only the registered docs trees and fetches approved document/media blobs. Never pass this credential into npm, MDX, or Vercel.
+GitHub does not provide a docs-directory-only repository token. The collector traverses only registered docs trees and fetches approved document/media blobs. Its reader and archive environment variables receive the same `DOCS_GITHUB_TOKEN`; the state writer still uses the built-in `GITHUB_TOKEN`. Never pass the PAT into npm, MDX compilation, or Vercel.
 
 | Location | Variable/secret | Value |
 | --- | --- | --- |
 | Docs repository variable | `DOCS_PIPELINE_ENABLED` | `true` after setup and bootstrap planning |
 | Docs repository variable | `DOCS_PRODUCTION_ENABLED` | Keep `false` during staging setup; enable only after production resources and historical backfill are ready |
 | Docs repository variable | `DOCS_ARCHIVE_REPO_NAME` | `poly-hammer-docs-snapshots` |
-| Docs repository variable | `DOCS_READER_APP_ID` | Reader app ID |
-| Docs repository secret | `DOCS_READER_APP_KEY` | Reader app private key |
-| Docs repository variable | `DOCS_ARCHIVE_APP_ID` | Archive app ID |
-| Docs repository secret | `DOCS_ARCHIVE_APP_KEY` | Archive app private key |
+| Organization secret available to docs + four add-ons, or a repository secret in each | `DOCS_GITHUB_TOKEN` | One fine-grained PAT with selected repositories and Contents read/write, or a classic PAT with `repo` scope |
 | Docs repository variable | `VERCEL_ORG_ID` | Poly Hammer Vercel team ID |
 | Docs repository variables | `VERCEL_STAGING_PROJECT_ID`, `VERCEL_PRODUCTION_PROJECT_ID` | Separate project IDs |
 | Docs repository variables | `DOCS_STAGING_URL`, `DOCS_PRODUCTION_URL` | Canonical HTTPS origins, no trailing slash |
 | Docs repository variable | `DOCS_GA_ID` | Existing `G-...` GA4 ID, optional; production only |
 | Each docs GitHub environment secret | `VERCEL_TOKEN` | Scoped deployment credential |
 | Each docs GitHub environment secret | `VERCEL_AUTOMATION_BYPASS_SECRET` | For smoke tests against protected deployment URLs |
-| Each add-on variable | `DOCS_DISPATCH_APP_ID` | Dispatch app ID |
-| Each add-on secret | `DOCS_DISPATCH_APP_KEY` | Dispatch app private key |
 | Each add-on variable | `DOCS_PIPELINE_ENABLED` | `true` once the receiver works |
 
 Configure secrets directly in GitHub/Vercel; never paste credentials into chat or commit them. These administrative credentials are not supplied by the implementation.
 
 ## Vercel configuration
 
-Create separate Next.js projects named `polyhammer-docs-staging` and `polyhammer-docs-production` in the Poly Hammer team. Use Node.js 24 and standard resources. Disable automatic Git deployments: only the catalog-driven workflow may publish. Do not add GitHub reader/archive credentials to Vercel. Keep project environment variables empty except intentional public configuration; the pipeline passes channel/origin/analytics explicitly and transfers only `project.json` from `vercel pull`, never pulled environment files.
+Create separate Next.js projects named `polyhammer-docs-staging` and `polyhammer-docs-production` in the Poly Hammer team. Use Node.js 24 and standard resources. Disable automatic Git deployments: only the catalog-driven workflow may publish. Do not add `DOCS_GITHUB_TOKEN` to Vercel. Keep project environment variables empty except intentional public configuration; the pipeline passes channel/origin/analytics explicitly and transfers only `project.json` from `vercel pull`, never pulled environment files.
 
 Protect **all staging deployments**, including its production-target deployment. Production custom domains must allow anonymous readers and MCP clients; protect production candidate URLs until tested. Configure automation bypass credentials in the matching GitHub environment. Verify protection settings with a logged-out browser, because noindex does not provide access control.
 

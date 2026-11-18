@@ -4,7 +4,7 @@
 
 **Target repository:** `E:\repos\poly-hammer-docs`
 
-**Status (November 16):** All seven `codex/fumadocs-*` branches are pushed with PRs. Local validation and the GitHub staging/production documentation CI matrix passed. The private snapshot archive, main-only GitHub staging environment, and protected Vercel staging project are configured. The user authorized the CLI, which successfully created the project; MCP still has a project-access limitation. CI credentials, real historical backfill, the first staging deployment, and production cutover remain. See [STAGING_SETUP.md](STAGING_SETUP.md), [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md), and [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md).
+**Status (November 18):** All seven `codex/fumadocs-*` branches are pushed with PRs. Local validation and the GitHub staging/production documentation CI matrix passed. The private archive, GitHub staging environment, and protected Vercel staging project are configured; both Vercel secrets are present in `docs-staging`. At the user's request, GitHub authentication now uses one shared PAT, `DOCS_GITHUB_TOKEN`, instead of three GitHub Apps. Fine-grained and classic PATs are supported. The PAT, real historical backfill, first staging deployment, and production cutover remain pending. See [STAGING_SETUP.md](STAGING_SETUP.md), [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md), and [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md).
 
 **Agent compatibility is a primary requirement.** The implementation includes a read-only Streamable HTTP MCP endpoint, version-aware Markdown, `llms.txt`/`llms-full.txt`, exact-version bundles, canonical URLs, structured metadata, and updated add-on agent instructions. Search visibility and answer-engine rankings are goals measured after publication, not guaranteed scores.
 
@@ -368,17 +368,20 @@ GitHub's blob API supports read access using repository Contents permissions and
 
 ## 9. Authentication and build isolation
 
-Replace the broad docs PAT with scoped GitHub App identities where practical:
+Use **one shared personal access token**, `DOCS_GITHUB_TOKEN`, for source reads, archive writes, and add-on notifications. This is the user-approved simplification of the earlier three-App design; App registrations, IDs, PEM keys, and installation-token actions are not needed.
 
-| Identity | Scope |
+The recommended fine-grained PAT belongs to resource owner `poly-hammer` and selects exactly six repositories: `character-dna-addon`, `character-control-rig-addon`, `character-assembly-addon`, `ph-motion-addon`, `poly-hammer-docs-snapshots`, and `poly-hammer-docs`. Grant repository **Contents: Read and write**; Metadata read is automatic. GitHub applies that permission to every selected repository, so this simpler credential can also write source repositories even though the collector only performs reads there. A classic PAT with **`repo`** scope is supported as an alternative; its access is broader because classic tokens cannot select individual repositories. Organization policy, approval, SSO authorization, expiry, and the issuing user's membership can affect either token's availability. [PAT setup](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
+
+Store it as one organization Actions secret with access restricted to the docs repository and the four add-on repositories, or as the same repository secret in those five consumers. The archive is an API target and does not need the secret stored in it. Repository dispatch supports both token types and requires destination Contents write for fine-grained tokens or `repo` for classic tokens. The built-in source `GITHUB_TOKEN` does not supply cross-repository access. [Dispatch permissions](https://docs.github.com/en/rest/repos/repos#create-a-repository-dispatch-event).
+
+| Credential | Use and job boundary |
 | --- | --- |
-| Source reader | Contents read on the selected source repositories; private archive read where necessary |
-| Event notifier | Dispatch permission to the docs destination, with credentials exposed only to trusted source workflows |
-| State writer | Required write access for docs state, without source-repository write access |
-| Archive writer | Required write access to the private archive, limited to archival/publish jobs |
-| Deployment identity | Vercel access for the selected target; no source-reader credentials needed |
+| `DOCS_GITHUB_TOKEN` in the docs repository | Source reads and archive writes only in the collection job |
+| `DOCS_GITHUB_TOKEN` in each add-on | Typed repository-dispatch requests from trusted main/release workflows |
+| Docs repository's built-in `GITHUB_TOKEN` | Durable `docs-state` writes; remains separate from the PAT |
+| Environment-scoped Vercel credentials | Project settings, deployment, smoke checks, and promotion for the selected target |
 
-Repository dispatch requires destination Contents write permission. Scope its identity narrowly rather than distributing a general organization PAT. A source repository's automatic `GITHUB_TOKEN` does not supply cross-repository access. [Dispatch permissions](https://docs.github.com/en/rest/repos/repos#create-a-repository-dispatch-event).
+Choose a token expiry and rotate the organization secret, or all five repository copies, before expiry. A missing token fails with a configuration error. The archive uses documentation-only release assets and no workflow files, so the documentation PAT does not require `workflow` or `admin:org`. Existing package-release credentials remain separate. Never expose the PAT to the compilation or Vercel deployment jobs.
 
 Separate synchronization, compilation, and deployment jobs. Pass approved docs-only artifacts between them. Remove source-reader credentials before compiling content. Treat MDX as executable input: permit the agreed components, validate imports and expressions, and reject scripts, executable metadata, and includes outside allowed documentation roots. Fumadocs' include facilities are not a security boundary. [Include behavior](https://www.fumadocs.dev/docs/mdx/include).
 
@@ -437,7 +440,7 @@ For main events, verify the source branch and ancestry/current-head relationship
 
 ### 10.4 Release trigger and package identity
 
-Use `release: published` with stable-release filtering as the normal release event. GitHub suppresses most workflow events caused by `GITHUB_TOKEN`; either publish with an appropriate App token or explicitly dispatch after successful production publication. Deduplicate when both paths exist. [Release events](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#release), [token behavior](https://docs.github.com/en/actions/concepts/security/github_token).
+Use `release: published` with stable-release filtering as the normal release event. GitHub suppresses most workflow events caused by `GITHUB_TOKEN`; publish package releases with the existing appropriate PAT or explicitly dispatch after successful production publication. Deduplicate when both paths exist. [Release events](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#release), [token behavior](https://docs.github.com/en/actions/concepts/security/github_token).
 
 Update release creation so that:
 
@@ -587,7 +590,7 @@ Deploy the new application to staging before removing the current production pip
 
 Allow approximately **15–23 engineering days** for the initial 38-page migration, version catalogs, durable archives, and CI/CD redesign, followed by several days of shadow operation. This combines the earlier 12–18-day migration estimate with roughly 3–5 additional days for versioning-related pipeline work. Historical backfill beyond the pilot is additional and depends on release count, missing assets, and legacy content quality.
 
-The estimate assumes no major prose rewrite and straightforward GitHub App, archive-repository, Vercel, and domain setup. It is a planning estimate, not a measured implementation schedule.
+The estimate assumes no major prose rewrite and straightforward PAT, archive-repository, Vercel, and domain setup. It is a planning estimate, not a measured implementation schedule.
 
 ### 15.2 Main risks and mitigations
 

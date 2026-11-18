@@ -11,6 +11,15 @@ on:
       site_commit:
         type: string
         default: ''
+    secrets:
+      DOCS_GITHUB_TOKEN:
+        required: true
+      VERCEL_TOKEN:
+        description: Supplied by the selected docs environment
+        required: false
+      VERCEL_AUTOMATION_BYPASS_SECRET:
+        description: Supplied by the selected docs environment
+        required: false
 env:
   DOCS_ARCHIVE_REPO: ${{ github.repository_owner }}/${{ vars.DOCS_ARCHIVE_REPO_NAME }}
   DOCS_CHANNEL: ${{ inputs.channel }}
@@ -35,35 +44,20 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: '3.13'
-      - uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
-        id: source
-        with:
-          app-id: ${{ vars.DOCS_READER_APP_ID }}
-          private-key: ${{ secrets.DOCS_READER_APP_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: |
-            character-dna-addon
-            character-control-rig-addon
-            character-assembly-addon
-            ph-motion-addon
-          permission-contents: read
-      - uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
-        id: archive
-        with:
-          app-id: ${{ vars.DOCS_ARCHIVE_APP_ID }}
-          private-key: ${{ secrets.DOCS_ARCHIVE_APP_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: ${{ vars.DOCS_ARCHIVE_REPO_NAME }}
-          permission-contents: write
       - id: sync
         name: Verify source events and persist the desired catalog
         env:
-          DOCS_READER_TOKEN: ${{ steps.source.outputs.token }}
-          DOCS_ARCHIVE_TOKEN: ${{ steps.archive.outputs.token }}
+          DOCS_READER_TOKEN: ${{ secrets.DOCS_GITHUB_TOKEN }}
+          DOCS_ARCHIVE_TOKEN: ${{ secrets.DOCS_GITHUB_TOKEN }}
           DOCS_STATE_TOKEN: ${{ github.token }}
           SYNC_COMMAND: ${{ inputs.command }}
           SITE_COMMIT: ${{ inputs.site_commit }}
-        run: python scripts/sync_catalog.py "$SYNC_COMMAND" --channel "$DOCS_CHANNEL" --site-commit "$SITE_COMMIT"
+        run: |
+          if [ -z "$DOCS_READER_TOKEN" ]; then
+            echo "::error::Configure DOCS_GITHUB_TOKEN as a repository or organization Actions secret."
+            exit 1
+          fi
+          python scripts/sync_catalog.py "$SYNC_COMMAND" --channel "$DOCS_CHANNEL" --site-commit "$SITE_COMMIT"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: steps.sync.outputs.changed == 'true'
         with:
