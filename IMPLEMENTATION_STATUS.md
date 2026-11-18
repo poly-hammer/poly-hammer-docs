@@ -32,7 +32,7 @@ All branches are pushed. Utility PR #3, docs PR #76, and staging compatibility/a
 ## Verification completed
 
 - Real converted content: preparation, 44-page validation (frontmatter, restricted MDX, compilation, internal routes, and media), TypeScript checks, and optimized Next.js build passed.
-- Eleven TypeScript catalog/adapter tests and ten Python collector/integrity/event/artifact tests passed.
+- Eleven TypeScript catalog/adapter tests and fourteen Python collector/integrity/event/artifact/promotion tests passed.
 - All 88 existing/new utility tests passed, including five new immutable-release tests.
 - Local HTTP smoke tests passed for real docs and synthetic production/staging catalogs containing two stable versions plus staging `next`.
 - MCP initialize, tool discovery, version listing, scoped search/read, pagination contracts, unknown-version errors, and external-URL refusal exercised. Markdown output preserves media as usable absolute links.

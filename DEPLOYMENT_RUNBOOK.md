@@ -63,6 +63,8 @@ Protect **all staging deployments**, including its production-target deployment.
 
 Both projects use Vercel's production build target, with different `DOCS_CHANNEL` values. The pipeline stages a prebuilt production-target deployment with `--skip-domain`, tests that exact deployment, then promotes it without rebuilding. Do not promote a Preview build into production: that can rebuild with different variables. The deployment CLI is pinned separately from the application; its upstream transitive dependencies currently report advisories, so review/refresh that tool pin before activation. The application dependency audit is separate and passed with zero advisories during implementation.
 
+Promotion uses `scripts/promote_vercel.py` and Vercel's project-scoped promotion API. The pinned CLI's `promote` command attempts a user-profile lookup that fails with the CI credential, although project deployment works. The script checks the owning team, project, ready state, and build target before promotion, then verifies both the project target and channel hostname point to the tested deployment. The workflow repeats smoke tests on the channel hostname before recording success. No broader account permission is required for a user-profile lookup.
+
 Retain the existing GA4 property. Enable page views for browser history changes in its enhanced measurement settings and verify navigation in DebugView. Staging never loads the analytics component. Confirm the current privacy/consent configuration before carrying it across the domain cutover.
 
 ## Bootstrap and historical backfill
