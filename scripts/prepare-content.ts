@@ -86,7 +86,7 @@ for (const source of registry.sources) {
       const relative = path.relative(directory, file).replaceAll('\\', '/');
       const input = fs.readFileSync(file, 'utf8');
       const legacy = !input.startsWith('---');
-      const parsed = normalizeLegacy(input);
+      const parsed = normalizeLegacy(input, { directory: source.directory, relativePage: relative, private: source.private });
       const rewrite = (target: string, html = false): string => {
         if (/^https?:|^\//.test(target)) return externalLink(target);
         if (target.startsWith('#')) return target;

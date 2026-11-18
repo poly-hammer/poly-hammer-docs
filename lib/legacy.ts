@@ -1,9 +1,48 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import matter from 'gray-matter';
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkGfm from 'remark-gfm';
+import { SKIP, visit } from 'unist-util-visit';
 
 const posix = path.posix;
 const quote = (text: string) => JSON.stringify(text);
+
+type LegacyContext = { directory: string; relativePage: string; private?: boolean };
+
+function normalizeMarkdownText(content: string, context?: LegacyContext): string {
+  const edits: { start: number; end: number; value: string }[] = [];
+  const tree = unified().use(remarkParse).use(remarkGfm).parse(content);
+  visit(tree, node => {
+    const start = node.position?.start.offset, end = node.position?.end.offset;
+    if (start === undefined || end === undefined) return;
+    const raw = content.slice(start, end);
+    if (node.type === 'link' && context?.private && raw.startsWith('[') && raw.includes('](') && !/^(?:[a-z]+:|[/#])/i.test(node.url)) {
+      const target = posix.normalize(posix.join(posix.dirname(context.relativePage), decodeURIComponent(node.url.split(/[?#]/)[0])));
+      const repositoryPath = posix.normalize(posix.join(context.directory, target));
+      if (target.startsWith('../') && repositoryPath !== '..' && !repositoryPath.startsWith('../')) {
+        const label = raw.slice(1, raw.lastIndexOf(']('));
+        const reference = repositoryPath.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('{', '&#123;').replaceAll('}', '&#125;');
+        edits.push({ start, end, value: `${label} in the source repository (${reference})` });
+        return SKIP;
+      }
+    }
+    if (node.type === 'link' && raw.startsWith('<') && raw.endsWith('>')) {
+      const label = raw.slice(1, -1).replace(/[\\[\]]/g, '\\$&');
+      edits.push({ start, end, value: `[${label}](<${node.url}>)` });
+      return SKIP;
+    }
+    if (node.type !== 'text') return;
+    // Preserve code, HTML, and existing Markdown escapes; only escape prose.
+    const entities: Record<string, string> = { '<': '&lt;', '{': '&#123;', '}': '&#125;' };
+    const value = raw.replace(/(\\*)([<{}])/g, (_, slashes: string, character: string) =>
+      slashes + (slashes.length % 2 ? character : entities[character]));
+    if (value !== raw) edits.push({ start, end, value });
+  });
+  for (const edit of edits.sort((a, b) => b.start - a.start)) content = content.slice(0, edit.start) + edit.value + content.slice(edit.end);
+  return content;
+}
 
 export function convertAdmonitions(text: string): string {
   const lines = text.split('\n');
@@ -27,13 +66,14 @@ function attributes(tag: string): Record<string, string> {
   return Object.fromEntries([...tag.matchAll(/([\w-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g)].map(m => [m[1], m[2] ?? m[3]]));
 }
 
-export function normalizeLegacy(input: string): { title: string; description: string; content: string; metadata: Record<string, unknown> } {
+export function normalizeLegacy(input: string, context?: LegacyContext): { title: string; description: string; content: string; metadata: Record<string, unknown> } {
   const parsed = matter(input.replaceAll('\r\n', '\n'));
   const h1 = /^#\s+(.+)$/m.exec(parsed.content);
   const title = String(parsed.data.title ?? h1?.[1] ?? 'Documentation');
   let content = parsed.content;
   if (h1 && content.slice(0, h1.index).trim() === '') content = content.slice(h1.index + h1[0].length).trimStart();
   if (parsed.data.title && parsed.data.description) return { title, description: String(parsed.data.description), content: content.trim() + '\n', metadata: parsed.data };
+  content = normalizeMarkdownText(content, context);
   const code: string[] = [];
   content = content.replace(/^(`{3,}|~{3,})[^\n]*\n[\s\S]*?^\1[^\n]*$/gm, block => `CODEBLOCKTOKEN${code.push(block) - 1}ENDTOKEN`);
   content = convertAdmonitions(content);
