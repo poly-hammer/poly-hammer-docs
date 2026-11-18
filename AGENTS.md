@@ -8,6 +8,8 @@ Use **Poly Hammer** (two words, capital P and H) in all visible text and metadat
 
 - Author Portal, Unreal plugin, CLI, and shared pages in `content/authored/`.
 - Blender add-on documentation is owned by each add-on repository's `docs/` folder. Change its source repository, not generated `content/synced/` or `public/docs-assets/`.
+- Keep internal plans outside `docs/`. Directories named `plans` are excluded from collection and publication, including historical snapshots and local previews.
+- Use **Blender Addons** for the section name. Major navigation icons inherit text color to work in both themes; mark decorative icons as hidden from assistive technology.
 - `docs-sources.json` registers products and their approved documentation subtrees. Never clone private add-on code into this site or expose credentials in a catalog, URL, artifact, or build log.
 - Use YAML `title` and `description`, one layout H1, descriptive H2/H3 headings, fenced examples, relative source links, and `meta.json` navigation. Synced MDX is restricted data: no imports, exports, executable expressions, or scripts. Existing literal JSON style objects are allowed by the validator.
 - Shared media components are `DocVideo`, `DocImage`, and `YouTubeEmbed`; use `Callout` for notes. Include useful alt text and explain instructional media in surrounding prose. Do not invent transcripts.

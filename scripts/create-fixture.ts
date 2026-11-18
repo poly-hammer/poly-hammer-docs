@@ -13,6 +13,10 @@ for (const product of ['character-dna', 'character-control-rig', 'character-asse
     if (version === 'next') Object.assign(entry, { next: record }); else (entry.versions as Record<string, typeof record>)[version] = record;
     const directory = path.join('.docs-build/snapshots', product, version);
     fs.mkdirSync(directory, { recursive: true });
+    // Simulate an older snapshot that accidentally included internal planning material.
+    const plans = path.join(directory, 'plans');
+    fs.mkdirSync(plans, { recursive: true });
+    fs.writeFileSync(path.join(plans, 'internal.mdx'), '---\ntitle: Internal plan\ndescription: Never publish this page.\n---\n\ninternalplanfixture\n');
     fs.writeFileSync(path.join(directory, 'index.mdx'), `---\ntitle: ${product} test fixture\ndescription: Synthetic documentation used only for automated tests.\n---\n\nInstall this test fixture for ${product} ${version}.\n\n## Test instructions\n\nFixture marker: ${version === '0.14.0' ? 'historicfixture' : version === 'next' ? 'unreleasedfixture' : 'currentfixture'}.\n`);
   }
 }

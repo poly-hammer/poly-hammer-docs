@@ -1,1 +1,1 @@
-{ "title": "Poly Hammer Portal", "root": true, "pagesIndex": "index", "pages": ["blender-extension-repo"] }
+{ "title": "Poly Hammer Portal", "icon": "portal", "root": true, "pagesIndex": "index", "pages": ["blender-extension-repo"] }

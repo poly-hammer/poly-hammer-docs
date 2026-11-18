@@ -6,3 +6,18 @@
 body { font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
 figcaption { color: var(--color-fd-muted-foreground); font-size: .875rem; margin-top: .5rem; }
 video { max-height: 75vh; }
+
+.docs-section-icon {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  background-color: currentColor;
+  mask-mode: alpha;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+}
