@@ -181,7 +181,12 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
-        run: vercel promote "$DEPLOYMENT_URL" --scope "$VERCEL_ORG_ID" --yes
+        run: python scripts/promote_vercel.py
+      - name: Verify the published channel hostname
+        env:
+          DOCS_TEST_URL: ${{ env.DOCS_SITE_URL }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: node scripts/smoke.mjs
       - name: Record successful publication
         env:
           DOCS_STATE_TOKEN: ${{ github.token }}
