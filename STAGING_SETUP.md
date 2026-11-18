@@ -1,6 +1,6 @@
 # Staging setup and credential checklist
 
-Updated November 18, 2026 (America/Chicago). GitHub authentication uses the docs repository's `GH_PAT` and each add-on's existing `GH_PAT`; no GitHub Apps or duplicate add-on secrets are needed. All five repository secret names are verified. Both Vercel secrets are confirmed in `docs-staging`. The Vercel CLI is authenticated and the protected staging project is configured. The docs migration PR remains open, no docs deployment is live, and production DNS is unchanged.
+Updated November 18, 2026 (America/Chicago). The protected [staging site](https://polyhammer-docs-staging.vercel.app) is deployed and passed HTTP, Markdown, search, and MCP checks. All repositories use `GH_PAT`; the docs collector's permissions and both staging Vercel credentials are verified. Production remains disabled, and production DNS is unchanged.
 
 ## Pull requests
 
@@ -20,14 +20,14 @@ The docs CI matrix passed on Linux for both staging and production, including bu
 
 ## Resources already configured
 
-- Private [poly-hammer-docs-snapshots](https://github.com/poly-hammer/poly-hammer-docs-snapshots), initialized with a README. It does not contain source snapshots yet.
+- Private [poly-hammer-docs-snapshots](https://github.com/poly-hammer/poly-hammer-docs-snapshots), initialized with a README. It contains documentation-only `next` snapshots for all five products.
 - GitHub environment `docs-staging` in the docs repository, restricted to the `main` branch.
 - Docs repository variables `DOCS_ARCHIVE_REPO_NAME=poly-hammer-docs-snapshots` and `VERCEL_ORG_ID=team_2AUg4TXhG3hWfKBugsYxrB2T`.
 - Vercel [polyhammer-docs-staging](https://vercel.com/poly-hammers-projects/polyhammer-docs-staging), project ID `prj_Id78qUcRHvH0zxvJY1aGfHnDdPbl`, with Next.js, Node.js 24, standard build resources, and Vercel Authentication for all deployments. No Git repository is connected, so Vercel does not automatically deploy source pushes.
-- Docs repository variables `VERCEL_STAGING_PROJECT_ID=prj_Id78qUcRHvH0zxvJY1aGfHnDdPbl` and `DOCS_STAGING_URL=https://polyhammer-docs-staging.vercel.app`. The hostname is assigned and verified, but no documentation deployment serves it yet.
-- `DOCS_PIPELINE_ENABLED=false` and `DOCS_PRODUCTION_ENABLED=false`. These remain off until setup and review are complete.
+- Docs repository variables `VERCEL_STAGING_PROJECT_ID=prj_Id78qUcRHvH0zxvJY1aGfHnDdPbl` and `DOCS_STAGING_URL=https://polyhammer-docs-staging.vercel.app`. The hostname serves the verified protected staging deployment.
+- `DOCS_PIPELINE_ENABLED=true` and `DOCS_PRODUCTION_ENABLED=false`. Staging publication and scheduled reconciliation are active; production remains off.
 
-On November 18, secret-name checks confirmed the docs repository's `GH_PAT`, `GH_PAT` in all four add-on repositories, and `VERCEL_TOKEN` / `VERCEL_AUTOMATION_BYPASS_SECRET` in the docs repository's `docs-staging` environment. Values were not read or changed. The docs repository's older `GA_ID` secret is unused by the new pipeline. `GH_PAT` is the unified repository secret name for collection and notifications in all five repositories. Actual token permissions and Vercel authentication still need a real workflow run to verify.
+On November 18, secret-name checks confirmed the docs repository's `GH_PAT`, `GH_PAT` in all four add-on repositories, and `VERCEL_TOKEN` / `VERCEL_AUTOMATION_BYPASS_SECRET` in the docs repository's `docs-staging` environment. Values were not read or changed. The docs repository's older `GA_ID` secret is unused by the new pipeline. `GH_PAT` is the unified repository secret name for collection and notifications in all five repositories. Live collection verified the docs GH_PAT against private source repositories and the archive. Deployment and protected-site smoke tests verified both Vercel credentials. Each source GH_PAT still needs a real notification test after its PR merges.
 
 ## Vercel access and project
 
@@ -94,19 +94,19 @@ See [GitHub's PAT instructions](https://docs.github.com/en/authentication/keepin
 
 ## Vercel credentials
 
-These two environment secrets are already present in [docs-staging](https://github.com/poly-hammer/poly-hammer-docs/settings/environments). Their names were verified; successful deployment will verify their values.
+These two environment secrets are already present in [docs-staging](https://github.com/poly-hammer/poly-hammer-docs/settings/environments). Deployment and protected-site smoke tests verified both credentials without displaying their values.
 
 | Environment secret | Purpose |
 | --- | --- |
 | `VERCEL_TOKEN` | Fetch staging project settings and upload/promote deployments |
 | `VERCEL_AUTOMATION_BYPASS_SECRET` | Test protected candidate deployments before promotion |
 
-## Activate staging
+## Operate staging
 
-1. Review/merge the PRs in dependency order. Keep both docs enable variables false during this step.
-2. All required secret names are present: docs `GH_PAT`, source `GH_PAT`, and the two staging Vercel secrets. Verify their effective permissions during bootstrap and the first source notification. The Vercel project, project ID, and origin are configured. Review the pinned deployment CLI advisories described in [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md) before activation.
-3. Set docs repository `DOCS_PIPELINE_ENABLED=true`; leave `DOCS_PRODUCTION_ENABLED=false`. Scheduled and release-triggered production jobs remain off while staging can build.
-4. On docs **main**, run **Publish documentation** with `command=bootstrap`, `channel=staging`, and `site_commit` equal to the full reviewed main SHA. This initializes `docs-state` and collects current source docs. It does not deploy production.
+1. The docs migration and bootstrap fixes are merged. Review the remaining shared-notifier and add-on PRs before enabling source event notifications; staging already collects current main docs through scheduled reconciliation.
+2. All required secret names are present: docs `GH_PAT`, source `GH_PAT`, and the two staging Vercel secrets. Collection, archive writes, deployment, and protected-site tests have passed; verify source notification permissions after the remaining PRs merge. The Vercel project, project ID, and origin are configured. Review the pinned deployment CLI advisories described in [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md) before activation.
+3. Keep docs repository `DOCS_PIPELINE_ENABLED=true` and `DOCS_PRODUCTION_ENABLED=false`. Scheduled and release-triggered production jobs remain off while staging can build.
+4. Initial bootstrap is complete. For a manual refresh, run **Publish documentation** on **main** with `command=sync` and `channel=staging`. Use `bootstrap` with a reviewed site SHA only when initializing a new state branch. Neither action deploys production while its gate is false.
 5. Confirm the protected deployment's page/media rendering, product version selectors, search, Markdown, and `/api/mcp`. Verify protection with a logged-out browser. The workflow smoke tests use the automation bypass secret.
 6. Enable the four source notifiers and exercise a main push. Confirm that staging receives `next` content and production remains disabled.
 
