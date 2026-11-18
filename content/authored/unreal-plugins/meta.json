@@ -1,1 +1,1 @@
-{ "title": "Unreal Plugins", "root": true, "pages": ["index", "poly-hammer-interchange"] }
+{ "title": "Unreal Plugins", "root": true, "pagesIndex": "index", "pages": ["poly-hammer-interchange"] }

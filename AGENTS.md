@@ -1,6 +1,8 @@
-# Polyhammer documentation agent instructions
+# Poly Hammer documentation agent instructions
 
 This repository uses **Fumadocs**, Next.js App Router, React, TypeScript, and the Black theme. Do not introduce MkDocs or use the retired Python build commands.
+
+Use **Poly Hammer** (two words, capital P and H) in all visible text and metadata. Preserve existing domain names, repository slugs, and code identifiers. The documented add-ons are Character DNA, Character Control Rig, Character Assembly, and Poly Hammer Motion; do not publish Poly Hammer Generate documentation.
 
 ## Content ownership
 
