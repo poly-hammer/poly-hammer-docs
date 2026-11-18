@@ -1,7 +1,63 @@
 {
   "channel": "staging",
-  "generation": 0,
-  "products": {},
+  "generation": 1,
+  "products": {
+    "character-assembly": {
+      "latest": null,
+      "next": {
+        "archive": "poly-hammer/poly-hammer-docs-snapshots:765127756",
+        "commit": "3f8125b83b5fcef176efd039f7ba6552308fc4f4",
+        "digest": "1c450e82941cfe200f13275e343bcbcec1d89cdb2ded24508f4a96abe11e53c1",
+        "publishedAt": "2026-11-18T21:47:07.477775Z",
+        "revision": 1
+      },
+      "versions": {}
+    },
+    "character-control-rig": {
+      "latest": null,
+      "next": {
+        "archive": "poly-hammer/poly-hammer-docs-snapshots:765127460",
+        "commit": "bd557d6d7d6222effd11e3740111c2debb284802",
+        "digest": "4b767e1541fb2cb4b8a3dc2e0e52ccad8ab61a40ea1268e396be7e1a1913c567",
+        "publishedAt": "2026-11-18T21:46:57.602734Z",
+        "revision": 1
+      },
+      "versions": {}
+    },
+    "character-dna": {
+      "latest": null,
+      "next": {
+        "archive": "poly-hammer/poly-hammer-docs-snapshots:765126847",
+        "commit": "71125e9857db2b5a8ffa9426cc1f769d13017fd5",
+        "digest": "f4dd81f02bf2e2ab5e31c1c161da3697cd9688de5558c64c7591ee18e693e10e",
+        "publishedAt": "2026-11-18T21:46:19.487420Z",
+        "revision": 1
+      },
+      "versions": {}
+    },
+    "ph-generate": {
+      "latest": null,
+      "next": {
+        "archive": "poly-hammer/poly-hammer-docs-snapshots:765128134",
+        "commit": "4189da6bacf5905a25da199522706e4d59bc6b26",
+        "digest": "7c5230f58ff97fa757f005aff6bc799bb313fddb110419ab537078ea0d7b718d",
+        "publishedAt": "2026-11-18T21:47:16.903525Z",
+        "revision": 1
+      },
+      "versions": {}
+    },
+    "ph-motion": {
+      "latest": null,
+      "next": {
+        "archive": "poly-hammer/poly-hammer-docs-snapshots:765127918",
+        "commit": "4189da6bacf5905a25da199522706e4d59bc6b26",
+        "digest": "7c5230f58ff97fa757f005aff6bc799bb313fddb110419ab537078ea0d7b718d",
+        "publishedAt": "2026-11-18T21:47:13.034280Z",
+        "revision": 1
+      },
+      "versions": {}
+    }
+  },
   "schemaVersion": 1,
   "siteCommit": "cade00ac759cc8f67eb9846acd0a21e4919d2f04"
 }
