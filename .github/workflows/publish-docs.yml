@@ -12,7 +12,7 @@ on:
         type: string
         default: ''
     secrets:
-      DOCS_GITHUB_TOKEN:
+      GH_PAT:
         required: true
       VERCEL_TOKEN:
         description: Supplied by the selected docs environment
@@ -47,14 +47,14 @@ jobs:
       - id: sync
         name: Verify source events and persist the desired catalog
         env:
-          DOCS_READER_TOKEN: ${{ secrets.DOCS_GITHUB_TOKEN }}
-          DOCS_ARCHIVE_TOKEN: ${{ secrets.DOCS_GITHUB_TOKEN }}
+          DOCS_READER_TOKEN: ${{ secrets.GH_PAT }}
+          DOCS_ARCHIVE_TOKEN: ${{ secrets.GH_PAT }}
           DOCS_STATE_TOKEN: ${{ github.token }}
           SYNC_COMMAND: ${{ inputs.command }}
           SITE_COMMIT: ${{ inputs.site_commit }}
         run: |
           if [ -z "$DOCS_READER_TOKEN" ]; then
-            echo "::error::Configure DOCS_GITHUB_TOKEN as a repository or organization Actions secret."
+            echo "::error::Configure GH_PAT as a repository or organization Actions secret."
             exit 1
           fi
           python scripts/sync_catalog.py "$SYNC_COMMAND" --channel "$DOCS_CHANNEL" --site-commit "$SITE_COMMIT"

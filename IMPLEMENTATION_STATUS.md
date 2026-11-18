@@ -1,6 +1,6 @@
 # Fumadocs implementation status
 
-Updated November 18, 2026 (America/Chicago). The migration uses the docs repository's `DOCS_GITHUB_TOKEN` and each add-on's existing `GH_PAT`, without GitHub Apps or duplicate add-on secrets. All five repository secret names are verified; actual permissions remain to be tested by collection and dispatch runs. Fine-grained and classic tokens are supported. The protected Vercel staging project is configured, its two environment secret names are verified, and the CLI is authenticated; no docs deployment or production cutover has occurred.
+Updated November 18, 2026 (America/Chicago). The migration uses the docs repository's `GH_PAT` and each add-on's existing `GH_PAT`, without GitHub Apps or duplicate add-on secrets. All five repository secret names are verified; actual permissions remain to be tested by collection and dispatch runs. Fine-grained and classic tokens are supported. The protected Vercel staging project is configured, its two environment secret names are verified, and the CLI is authenticated; no docs deployment or production cutover has occurred.
 
 ## Branches and worktrees
 
@@ -9,11 +9,11 @@ All worktrees are under `E:\repos\poly-hammer-workflows\.worktrees\`. Original w
 | Repository | Branch | Worktree | Commit |
 | --- | --- | --- | --- |
 | poly-hammer-docs | `codex/fumadocs-site` | `docs-site` | See branch HEAD |
-| character-dna-addon | `codex/fumadocs-dna-docs` | `dna-docs` | `331fa2deade187ccd7950f758703c768aab323c8` |
-| character-control-rig-addon | `codex/fumadocs-control-rig-docs` | `control-rig-docs` | `db79c0102c3d795d4fe31542d0e104da1cc4e5e5` |
-| character-assembly-addon | `codex/fumadocs-assembly-docs` | `assembly-docs` | `b0b0c78145478a11a62131d470cf1a647670c4d9` |
-| ph-motion-addon (Motion and Generate) | `codex/fumadocs-motion-docs` | `motion-docs` | `20a5d7c0ad17887ec329709c59a39c20b0e2569a` |
-| poly-hammer-workflows | `codex/fumadocs-notifications` | `docs-workflows` | `ccb30bb5af689b9e0f8a7e2600fcf537c3c35607` |
+| character-dna-addon | `codex/fumadocs-dna-docs` | `dna-docs` | `d6815df7469a0c4b71576b842535310c1f365d1c` |
+| character-control-rig-addon | `codex/fumadocs-control-rig-docs` | `control-rig-docs` | `a24e8ba512500e9868835dbc6dc2b3a8182f1992` |
+| character-assembly-addon | `codex/fumadocs-assembly-docs` | `assembly-docs` | `bad1b92a2deb453cb93ccd9277da54ffa5eb521d` |
+| ph-motion-addon (Motion and Generate) | `codex/fumadocs-motion-docs` | `motion-docs` | `f73e503757248bbe030d6f8a6f4a35b543da8f77` |
+| poly-hammer-workflows | `codex/fumadocs-notifications` | `docs-workflows` | `e013b6ffe4ccf1d562f51fc98bbde3f06b856a73` |
 | poly-hammer-utils | `codex/fumadocs-release-identity` | `docs-utils` | `2354d851722599b4b16ad414b764eb50ab3ff66e` |
 
 All branches are pushed; [STAGING_SETUP.md](STAGING_SETUP.md) links all seven open PRs. The utility/workflow pins are available remotely. Merge without squashing or update callers to the reviewed resulting commits. Control Rig's new 0.5.0 main release was merged into its documentation branch, retaining its new authoring content and converting the added callout to MDX.
@@ -46,6 +46,6 @@ All branches are pushed; [STAGING_SETUP.md](STAGING_SETUP.md) links all seven op
 
 Follow [STAGING_SETUP.md](STAGING_SETUP.md) and [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md): verify configured GitHub token permissions and set up production Vercel resources/credentials, canonical origins, and analytics; review/merge the PRs in dependency order; bootstrap staging and real release history; resolve historical missing docs/media and ambiguous old Motion tags; verify legacy sitemap URLs/anchors; test a real cross-repository main event and stable release; rehearse rollback; then switch DNS.
 
-Created private `poly-hammer/poly-hammer-docs-snapshots`, the main-only `docs-staging` GitHub environment, and the non-secret archive/team/project/origin variables. On November 16, the user authorized Vercel CLI login; the authenticated Owner account created `polyhammer-docs-staging` (`prj_Id78qUcRHvH0zxvJY1aGfHnDdPbl`) in team `team_2AUg4TXhG3hWfKBugsYxrB2T`. The project uses Node.js 24, Next.js, standard resources, all-deployment authentication, and assigned hostname `polyhammer-docs-staging.vercel.app`. The migration worktree is linked to it. MCP read checks pass, but MCP project creation still returns 403; CLI operations work. Publication remains disabled with `DOCS_PIPELINE_ENABLED=false` and `DOCS_PRODUCTION_ENABLED=false`. Both Vercel secret names are verified in `docs-staging`; their values remain untested until deployment. The docs repository DOCS_GITHUB_TOKEN and all four add-on GH_PAT secret names are verified. No additional staging secret names are missing; effective permissions remain untested until real workflow runs. No documentation deployment, production domain mapping, or production DNS change has occurred.
+Created private `poly-hammer/poly-hammer-docs-snapshots`, the main-only `docs-staging` GitHub environment, and the non-secret archive/team/project/origin variables. On November 16, the user authorized Vercel CLI login; the authenticated Owner account created `polyhammer-docs-staging` (`prj_Id78qUcRHvH0zxvJY1aGfHnDdPbl`) in team `team_2AUg4TXhG3hWfKBugsYxrB2T`. The project uses Node.js 24, Next.js, standard resources, all-deployment authentication, and assigned hostname `polyhammer-docs-staging.vercel.app`. The migration worktree is linked to it. MCP read checks pass, but MCP project creation still returns 403; CLI operations work. Publication remains disabled with `DOCS_PIPELINE_ENABLED=false` and `DOCS_PRODUCTION_ENABLED=false`. Both Vercel secret names are verified in `docs-staging`; their values remain untested until deployment. The docs repository GH_PAT and all four add-on GH_PAT secret names are verified. No additional staging secret names are missing; effective permissions remain untested until real workflow runs. No documentation deployment, production domain mapping, or production DNS change has occurred.
 
 The add-ons still carry unused MkDocs development dependencies in their existing locked Python environments. The runtime/docs workflows no longer use them; remove those packages when refreshing locks in full checkouts with their native wheels available. The source utility checkout also lacks Motion/Generate packager modules; verify the currently installed packaging distribution before enabling those product release jobs.

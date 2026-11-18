@@ -1,6 +1,6 @@
 # Staging setup and credential checklist
 
-Updated November 18, 2026 (America/Chicago). GitHub authentication uses the docs repository's `DOCS_GITHUB_TOKEN` and each add-on's existing `GH_PAT`; no GitHub Apps or duplicate add-on secrets are needed. All five repository secret names are verified. Both Vercel secrets are confirmed in `docs-staging`. The Vercel CLI is authenticated and the protected staging project is configured. The docs migration PR remains open, no docs deployment is live, and production DNS is unchanged.
+Updated November 18, 2026 (America/Chicago). GitHub authentication uses the docs repository's `GH_PAT` and each add-on's existing `GH_PAT`; no GitHub Apps or duplicate add-on secrets are needed. All five repository secret names are verified. Both Vercel secrets are confirmed in `docs-staging`. The Vercel CLI is authenticated and the protected staging project is configured. The docs migration PR remains open, no docs deployment is live, and production DNS is unchanged.
 
 ## Pull requests
 
@@ -27,7 +27,7 @@ The docs CI matrix passed on Linux for both staging and production, including bu
 - Docs repository variables `VERCEL_STAGING_PROJECT_ID=prj_Id78qUcRHvH0zxvJY1aGfHnDdPbl` and `DOCS_STAGING_URL=https://polyhammer-docs-staging.vercel.app`. The hostname is assigned and verified, but no documentation deployment serves it yet.
 - `DOCS_PIPELINE_ENABLED=false` and `DOCS_PRODUCTION_ENABLED=false`. These remain off until setup and review are complete.
 
-On November 18, secret-name checks confirmed the docs repository's `DOCS_GITHUB_TOKEN`, `GH_PAT` in all four add-on repositories, and `VERCEL_TOKEN` / `VERCEL_AUTOMATION_BYPASS_SECRET` in the docs repository's `docs-staging` environment. Values were not read or changed. The docs repository's older `GA_ID` and `GH_PAT` secrets are unused by the new pipeline; the add-ons' `GH_PAT` secrets are used for notifications. Actual token permissions and Vercel authentication still need a real workflow run to verify.
+On November 18, secret-name checks confirmed the docs repository's `GH_PAT`, `GH_PAT` in all four add-on repositories, and `VERCEL_TOKEN` / `VERCEL_AUTOMATION_BYPASS_SECRET` in the docs repository's `docs-staging` environment. Values were not read or changed. The docs repository's older `GA_ID` secret is unused by the new pipeline. `GH_PAT` is the unified repository secret name for collection and notifications in all five repositories. Actual token permissions and Vercel authentication still need a real workflow run to verify.
 
 ## Vercel access and project
 
@@ -55,11 +55,11 @@ The project ID and assigned origin above are already saved in GitHub. The isolat
 
 ## GitHub credentials already configured
 
-The docs repository uses **`DOCS_GITHUB_TOKEN`** for collection and archive writes. Each add-on reuses its existing **`GH_PAT`** for notifications. These values do not need to match. Both fine-grained and classic personal access tokens work with the same workflows. No GitHub App IDs, keys, installations, or extra add-on secrets are needed.
+The docs repository uses **`GH_PAT`** for collection and archive writes. Each add-on reuses its existing **`GH_PAT`** for notifications. These values do not need to match. Both fine-grained and classic personal access tokens work with the same workflows. No GitHub App IDs, keys, installations, or extra add-on secrets are needed.
 
 ### Docs repository token permissions
 
-The configured `DOCS_GITHUB_TOKEN` needs source reads and archive writes. For a new or replacement fine-grained token, open [New fine-grained personal access token](https://github.com/settings/personal-access-tokens/new), choose an expiration and resource owner **poly-hammer**, and select these five repositories:
+The configured `GH_PAT` needs source reads and archive writes. For a new or replacement fine-grained token, open [New fine-grained personal access token](https://github.com/settings/personal-access-tokens/new), choose an expiration and resource owner **poly-hammer**, and select these five repositories:
 
 | Repository | What the pipeline does |
 | --- | --- |
@@ -79,12 +79,12 @@ The source workflow explicitly maps the existing secret into the reusable workfl
 
 ```yaml
 secrets:
-  DOCS_GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+  GH_PAT: ${{ secrets.GH_PAT }}
 ```
 
 ### Secret placement and rotation
 
-Keep `DOCS_GITHUB_TOKEN` as a repository Actions secret in `poly-hammer-docs`, and `GH_PAT` in `character-dna-addon`, `character-control-rig-addon`, `character-assembly-addon`, and `ph-motion-addon`. No duplicate `DOCS_GITHUB_TOKEN` is required in add-ons, and the archive repository needs no stored secret. Do not move these secrets only into `docs-staging`: the collector and notifiers run outside that environment.
+Keep `GH_PAT` as a repository Actions secret in `poly-hammer-docs`, and `GH_PAT` in `character-dna-addon`, `character-control-rig-addon`, `character-assembly-addon`, and `ph-motion-addon`. No extra documentation secret is needed, and the archive repository needs no stored secret. Do not move these secrets only into `docs-staging`: the collector and notifiers run outside that environment.
 
 Both token types depend on the issuing account retaining repository access and any required organization approval or SSO authorization. Classic tokens with `repo` scope also work for collection but have broader access. The docs automation needs no `workflow` or `admin:org` scope; the archive contains no workflow files. Rotate each affected secret before expiry, keeping existing package-release consumers in mind if a `GH_PAT` is replaced.
 
@@ -104,7 +104,7 @@ These two environment secrets are already present in [docs-staging](https://gith
 ## Activate staging
 
 1. Review/merge the PRs in dependency order. Keep both docs enable variables false during this step.
-2. All required secret names are present: docs `DOCS_GITHUB_TOKEN`, source `GH_PAT`, and the two staging Vercel secrets. Verify their effective permissions during bootstrap and the first source notification. The Vercel project, project ID, and origin are configured. Review the pinned deployment CLI advisories described in [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md) before activation.
+2. All required secret names are present: docs `GH_PAT`, source `GH_PAT`, and the two staging Vercel secrets. Verify their effective permissions during bootstrap and the first source notification. The Vercel project, project ID, and origin are configured. Review the pinned deployment CLI advisories described in [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md) before activation.
 3. Set docs repository `DOCS_PIPELINE_ENABLED=true`; leave `DOCS_PRODUCTION_ENABLED=false`. Scheduled and release-triggered production jobs remain off while staging can build.
 4. On docs **main**, run **Publish documentation** with `command=bootstrap`, `channel=staging`, and `site_commit` equal to the full reviewed main SHA. This initializes `docs-state` and collects current source docs. It does not deploy production.
 5. Confirm the protected deployment's page/media rendering, product version selectors, search, Markdown, and `/api/mcp`. Verify protection with a logged-out browser. The workflow smoke tests use the automation bypass secret.
