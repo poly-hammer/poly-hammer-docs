@@ -8,7 +8,15 @@
     ".git",
     "uv.lock",
     "repos/",
-    "docs/character-dna-addon/"
+    "node_modules/",
+    ".next/",
+    ".source/",
+    ".cache/",
+    ".docs-build/",
+    ".vercel/",
+    "package-lock.json",
+    "content/synced/",
+    "public/"
   ],
   "words": [
     "selectattr",
@@ -36,7 +44,22 @@
     "dotenv",
     "venv",
     "iconify",
-    "oklch"
+    "oklch",
+    "fumadocs",
+    "mdx",
+    "llms",
+    "mcp",
+    "aeo",
+    "vercel",
+    "orama",
+    "noindex",
+    "nextjs",
+    "frontmatter",
+    "prebuilt",
+    "allowlist",
+    "sha",
+    "repo",
+    "repos"
   ],
   "enabledLanguageIds": [
     "markdown",

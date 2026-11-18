@@ -1,0 +1,9 @@
+{
+  "sources": {
+    "character-dna": "../character-dna-addon",
+    "character-control-rig": "../character-control-rig-addon",
+    "character-assembly": "../character-assembly-addon",
+    "ph-motion": "../ph-motion-addon",
+    "ph-generate": "../ph-motion-addon"
+  }
+}

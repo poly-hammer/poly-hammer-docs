@@ -1,0 +1,8 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/black.css';
+@import 'fumadocs-ui/css/preset.css';
+
+:root { --fd-layout-width: 1440px; }
+body { font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+figcaption { color: var(--color-fd-muted-foreground); font-size: .875rem; margin-top: .5rem; }
+video { max-height: 75vh; }

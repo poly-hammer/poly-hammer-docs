@@ -1,0 +1,16 @@
+{
+  "/character-control-rig-addon/getting-started": "/blender-addons/character-control-rig/latest",
+  "/character-control-rig-addon/concepts": "/blender-addons/character-control-rig/latest/rig-building",
+  "/character-control-rig-addon/guides/adjusting-the-metarig": "/blender-addons/character-control-rig/latest/rig-building",
+  "/character-control-rig-addon/guides/export-body-animation": "/blender-addons/character-control-rig/latest/export-animation",
+  "/character-control-rig-addon/guides/export-face-board-animation": "/blender-addons/character-control-rig/latest/export-animation",
+  "/character-control-rig-addon/guides/import-body-fk-animation": "/blender-addons/character-control-rig/latest/import-animation",
+  "/character-control-rig-addon/guides/import-face-board-animation": "/blender-addons/character-control-rig/latest/import-animation",
+  "/character-control-rig-addon/guides/multi-character-scenes": "/blender-addons/character-control-rig/latest/rig-building",
+  "/character-control-rig-addon/reference/operators": "/blender-addons/character-control-rig/latest/rig-building",
+  "/character-control-rig-addon/reference/properties": "/blender-addons/character-control-rig/latest/rig-building",
+  "/character-control-rig-addon/reference/bone-mappings": "/blender-addons/character-control-rig/latest/import-animation",
+  "/character-control-rig-addon/contributing/development": "/blender-addons/character-control-rig/latest",
+  "/ph-motion-addon/ph-generate": "/blender-addons/ph-generate/latest",
+  "/poly-hammer-interchange/media/:path*": "/assets/interchange/:path*"
+}

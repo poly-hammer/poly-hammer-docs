@@ -1,48 +1,9 @@
-// See https://go.microsoft.com/fwlink/?LinkId=733558
-// for the documentation about the tasks.json format
 {
-	"version": "2.0.0",
-	"tasks": [
-        {
-            "label": "Mkdocs Serve",
-            "command": "uv run python scripts/sync_docs.py ${input:force-flag}; uv run mkdocs serve --watch-theme --dev-addr localhost:8080 --livereload --watch docs --watch mkdocs.yml",
-            "type": "shell",
-            "group": {
-                "kind": "build"
-            },
-            "presentation": {
-                "reveal": "always",
-                "panel": "shared",
-                "focus": true
-            }
-        },
-        {
-            "label": "Mkdocs Build",
-            "command": "uv run python scripts/sync_docs.py ${input:force-flag}; uv run mkdocs build",
-            "type": "shell",
-            "group": {
-                "kind": "build"
-            }
-        },
-        {
-            "label": "Pre-commit",
-            "command": "uv run pre-commit run --all-files",
-            "type": "shell",
-            "group": {
-                "kind": "test"
-            }
-        }
-	],
-    "inputs": [
-        {
-            "id": "force-flag",
-            "type": "pickString",
-            "description": "Re-clone repos even if already cached?",
-            "options": [
-                { "label": "No — use cached clones (fast)", "value": "" },
-                { "label": "Yes — force re-clone (--force)", "value": "--force" }
-            ],
-            "default": ""
-        }
-    ]
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "Fumadocs: Prepare", "type": "shell", "command": "npm run docs:prepare", "group": "build" },
+    { "label": "Fumadocs: Preview", "type": "shell", "command": "npm run dev", "dependsOn": "Fumadocs: Prepare", "group": "build", "isBackground": true },
+    { "label": "Fumadocs: Validate", "type": "shell", "command": "npm run docs:validate", "dependsOn": "Fumadocs: Prepare", "group": "test" },
+    { "label": "Fumadocs: Build", "type": "shell", "command": "npm run build", "dependsOn": "Fumadocs: Validate", "group": "build" }
+  ]
 }

@@ -9,19 +9,19 @@ repos:
         args: [--unsafe]
       - id: check-merge-conflict
       - id: end-of-file-fixer
-        exclude: ^docs/(character-dna-addon|repos)/
+        exclude: ^(content/synced|public/docs-assets|\.docs-build)/
       - id: trailing-whitespace
-        exclude: ^docs/(character-dna-addon|repos)/
+        exclude: ^(content/synced|public/docs-assets|\.docs-build)/
       - id: mixed-line-ending
         args: ["--fix=lf"]
-        exclude: ^docs/(character-dna-addon|repos)/
+        exclude: ^(content/synced|public/docs-assets|\.docs-build)/
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.47.0
     hooks:
       - id: markdownlint
         args: ["--fix", "--disable", "MD013", "MD033", "MD041", "--"]
-        exclude: ^docs/(character-dna-addon|repos)/
+        exclude: ^(content/synced|public/docs-assets|\.docs-build)/
 
   - repo: https://github.com/streetsidesoftware/cspell-cli
     rev: v9.4.0
