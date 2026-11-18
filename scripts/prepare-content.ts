@@ -51,7 +51,7 @@ if (local) {
   }
 }
 catalog = CatalogSchema.parse(catalog);
-const oldPrefixes = Object.fromEntries(registry.sources.filter(s => s.id !== 'ph-generate').map(s => [`/${s.repository.split('/')[1]}`, `/${s.mount}`]));
+const oldPrefixes = Object.fromEntries(registry.sources.map(s => [`/${s.repository.split('/')[1]}`, `/${s.mount}`]));
 function externalLink(target: string): string {
   let value = target.replace(/^https:\/\/docs\.polyhammer\.com(?=\/)/, '');
   for (const [old, mount] of Object.entries(oldPrefixes)) if (value === old || value.startsWith(old + '/') || value.startsWith(old + '#')) value = mount + '/latest' + value.slice(old.length);
@@ -77,7 +77,7 @@ for (const source of registry.sources) {
     for (const file of all) if (/\.(?:png|jpe?g|gif|webp|avif|svg|ico|webm|mp4|pdf)$/i.test(file)) {
       const destination = path.join('public', assetBase, path.relative(directory, file));
       fs.mkdirSync(path.dirname(destination), { recursive: true }); fs.copyFileSync(file, destination);
-      if (source.id !== 'ph-generate' && version === (product.latest ?? 'next')) {
+      if (version === (product.latest ?? 'next')) {
         const relativeAsset = path.relative(directory, file).replaceAll('\\', '/');
         assetRedirects.push({ source: `/${source.repository.split('/')[1]}/${relativeAsset}`, destination: `${assetBase}/${relativeAsset}`, permanent: false });
       }
@@ -98,7 +98,6 @@ for (const source of registry.sources) {
         }
         const fragment = target.match(/[?#].*$/)?.[0] ?? '';
         if (/\.mdx?$/.test(resolved)) {
-          if (!pageSet.has(resolved) && /^ph-generate\.mdx?$/.test(resolved)) return `/blender-addons/ph-generate/latest/${fragment}`;
           if (!pageSet.has(resolved)) throw new Error(`Document not in product snapshot: ${relative} -> ${target}`);
           return `/${source.mount}/${version}/${slug(resolved, source)}${fragment}`;
         }

@@ -7,8 +7,8 @@ import { DocsSearch } from '@/components/search';
 import { Analytics } from '@/components/analytics';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl), title: { default: siteName, template: '%s | Polyhammer' },
-  description: 'Versioned documentation for Polyhammer Blender add-ons, Unreal plugins, Portal, and CLI.',
+  metadataBase: new URL(siteUrl), title: { default: siteName, template: '%s | Poly Hammer' },
+  description: 'Versioned documentation for Poly Hammer Blender add-ons, Unreal plugins, Portal, and CLI.',
   robots: { index: isProduction, follow: true }, icons: { icon: '/assets/favicon.ico' },
 };
 export default function Layout({ children }: { children: ReactNode }) {

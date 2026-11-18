@@ -1,4 +1,6 @@
-# Polyhammer documentation migration plan
+# Poly Hammer documentation migration plan
+
+**Scope correction (November 18):** Publish four add-ons: Character DNA, Character Control Rig, Character Assembly, and Poly Hammer Motion. Poly Hammer Generate is not planned for release and is excluded from the site, catalog, search, and agent exports. The inventory below records the initial audit; Generate pages found then are not migration targets. Use **Poly Hammer** in all visible branding. The sidebar uses **Home** and clickable section headings without repeated overview children.
 
 **Prepared:** November 14, 2026
 
@@ -10,7 +12,7 @@
 
 ## 1. Objective and agreed scope
 
-Rebuild the Polyhammer documentation site using **Next.js, Fumadocs UI and Fumadocs MDX, the Fumadocs Black theme, and Vercel**. Replace the existing MkDocs build and deployment pipeline with explicit documentation synchronization, independent staging and production snapshots, and historical documentation versions for Blender add-ons.
+Rebuild the Poly Hammer documentation site using **Next.js, Fumadocs UI and Fumadocs MDX, the Fumadocs Black theme, and Vercel**. Replace the existing MkDocs build and deployment pipeline with explicit documentation synchronization, independent staging and production snapshots, and historical documentation versions for Blender add-ons.
 
 The user authorized choosing GitHub Pages or Vercel; this plan selects Vercel for separate deployment targets, prebuilt uploads, deployment validation, promotion, and rollback.
 
@@ -20,8 +22,8 @@ The site will have four main sections:
 
 1. Blender Add-ons.
 2. Unreal Plugins.
-3. Polyhammer Portal.
-4. Polyhammer CLI.
+3. Poly Hammer Portal.
+4. Poly Hammer CLI.
 
 Blender add-on documentation remains authored beside the add-on code and is synchronized on repository events. Unreal, Portal, and CLI documentation remains authored directly in the docs repository initially. The source registry must allow additional event-driven documentation sources later.
 
@@ -75,7 +77,7 @@ The current central theme is **mkdocs-shadcn**. The verified upstream maintenanc
 
 - Character DNA's `plans/test-suite-refactor.md`, `pro-features/mesh-editor.md`, and `workflows/custom-topology-metadata.md` are absent from its current navigation but appear in the live sitemap. Preserve existing published content by default; record any deliberate retirement before cutover. Navigation exclusion is not a publication or privacy boundary.
 - Motion's development guide links to `../../native/README.md`, outside `docs/`. Move the public explanation into `docs/`, summarize it, or use an appropriate repository link. Do not widen the synchronizer to arbitrary source files to satisfy this link.
-- Motion and Generate share one repository and have separate release jobs. Define product-specific version ownership before enabling their production version catalog.
+- Motion uses `ph-motion/` release tags in its repository. Ignore unrelated product tags; only Motion is registered for documentation publication.
 - Character Control Rig has undergone a page reorganization. Include older guide URLs in the redirect inventory even if they no longer occur in the current sitemap.
 
 ## 3. Markdown compatibility and conversion
@@ -139,8 +141,8 @@ The legacy adapter can be removed only when no retained snapshot requires it, or
 | --- | --- | --- |
 | Blender Add-ons | `/blender-addons/` | Synced add-on sources; centrally authored section landing page |
 | Unreal Plugins | `/unreal-plugins/` | Docs repository; Interchange is the first plugin |
-| Polyhammer Portal | `/portal/` | Docs repository |
-| Polyhammer CLI | `/cli/` | Docs repository |
+| Poly Hammer Portal | `/portal/` | Docs repository |
+| Poly Hammer CLI | `/cli/` | Docs repository |
 
 Each add-on gets a product landing page, current documentation, and independent version catalog. Portal, Unreal, and CLI remain unversioned initially. A CLI landing page can identify the scope of future documentation without inventing unsupported instructions.
 
@@ -165,7 +167,7 @@ Use the actual Black preset, with dark mode as the default and a retained theme 
 @import 'fumadocs-ui/css/preset.css';
 ```
 
-Preserve the Polyhammer logo, favicon, relevant section icons, footer/social links, analytics, responsive navigation, page table of contents, code highlighting/copying, and useful Markdown-copy or raw-document access. Replace the homepage with clear entry cards for the four sections. Avoid porting the old stylesheet wholesale; preserve intentional behavior through small components and theme overrides. [Fumadocs themes](https://www.fumadocs.dev/docs/ui/theme).
+Preserve the Poly Hammer logo, favicon, relevant section icons, footer/social links, analytics, responsive navigation, page table of contents, code highlighting/copying, and useful Markdown-copy or raw-document access. Replace the homepage with clear entry cards for the four sections. Avoid porting the old stylesheet wholesale; preserve intentional behavior through small components and theme overrides. [Fumadocs themes](https://www.fumadocs.dev/docs/ui/theme).
 
 Remove particle backgrounds, cursor effects, animation-related opacity/navigation scripts, obsolete Jinja templates, and MkDocs-specific monkey patches after cutover.
 
@@ -450,7 +452,7 @@ Update release creation so that:
 - Published versions are not silently moved or deleted/recreated to overwrite identity.
 - A manual release must meet the same exact-source and production-readiness contract.
 
-For Motion and Generate, choose product-specific tags/metadata and docs mappings, or define an explicit aggregate release. One product's release must not publish unreleased documentation for the other product merely because they share a repository.
+For Motion, use the `ph-motion/` tag prefix and its registered documentation mapping. Unrelated product tags in the same repository must not trigger a new Motion version. Generate has no documentation registration or publication route.
 
 ### 10.5 Concurrency, idempotency, and reconciliation
 
@@ -612,7 +614,7 @@ These are implementation inputs, not reasons to delay preparing this plan:
 
 - Confirm staging hostname availability and Vercel access-protection/account capabilities.
 - Confirm exact initial stable release commits and the oldest historical versions worth backfilling first.
-- Define Motion versus Generate version/tag ownership and cross-product compatibility rules.
+- Preserve Motion's `ph-motion/` version ownership and exclude unpublished products.
 - Record any intentional retirement of already published non-navigation pages; preserve them by default until decided.
 - Select operational owners and notification destinations for failed docs releases.
 - Confirm archive backup/access policy and the explicit process for docs-only corrections.
@@ -644,6 +646,6 @@ Official references were consulted on November 14, 2026. Recheck exact APIs and 
 - [GitHub workflow concurrency](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency)
 - [Vercel GitHub Actions example](https://github.com/vercel/examples/tree/main/ci-cd/github-actions)
 - [Vercel deployment and promotion options](https://vercel.com/docs/cli/deploy)
-- [Current Polyhammer sitemap](https://docs.polyhammer.com/sitemap.xml)
+- [Current Poly Hammer sitemap](https://docs.polyhammer.com/sitemap.xml)
 
 Local evidence includes `mkdocs.yml`, `pyproject.toml`, `scripts/sync_docs.py`, `scripts/hooks.py`, `.github/workflows/docs.yml`, `overrides/`, and authored `docs/` in `E:\repos\poly-hammer-docs`; documentation and workflows in the four inspected add-on repositories; release workflows in `E:\repos\poly-hammer-workflows`; and release helpers in `E:\repos\poly-hammer-utils`.

@@ -1,4 +1,4 @@
-# Polyhammer documentation
+# Poly Hammer documentation
 
 The site uses **Fumadocs with the Black theme**, Next.js, and Vercel. It serves both human documentation and version-aware agent interfaces. See [the migration plan](FUMADOCS_MIGRATION_PLAN.md) and [deployment runbook](DEPLOYMENT_RUNBOOK.md).
 
@@ -11,7 +11,7 @@ npm ci
 cp docs.local.example.json docs.local.json
 ```
 
-Edit the ignored `docs.local.json` to point at the add-on checkouts or their separate worktrees. Paths may be absolute or relative to this repository. Only the `docs/` directory is used. Motion and Generate can point to the same repository.
+Edit the ignored `docs.local.json` to point at the add-on checkouts or their separate worktrees. Paths may be absolute or relative to this repository. Only the `docs/` directory is used. The registered products are Character DNA, Character Control Rig, Character Assembly, and Poly Hammer Motion.
 
 ```sh
 npm run docs:prepare

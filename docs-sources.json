@@ -4,7 +4,6 @@
     { "id": "character-dna", "title": "Character DNA", "repository": "poly-hammer/character-dna-addon", "directory": "docs", "branch": "main", "mount": "blender-addons/character-dna", "tagPrefix": "", "include": ["**"], "private": false },
     { "id": "character-control-rig", "title": "Character Control Rig", "repository": "poly-hammer/character-control-rig-addon", "directory": "docs", "branch": "main", "mount": "blender-addons/character-control-rig", "tagPrefix": "", "include": ["**"], "private": true },
     { "id": "character-assembly", "title": "Character Assembly", "repository": "poly-hammer/character-assembly-addon", "directory": "docs", "branch": "main", "mount": "blender-addons/character-assembly", "tagPrefix": "", "include": ["**"], "private": true },
-    { "id": "ph-motion", "title": "Polyhammer Motion", "repository": "poly-hammer/ph-motion-addon", "directory": "docs", "branch": "main", "mount": "blender-addons/ph-motion", "tagPrefix": "ph-motion/", "include": ["**"], "exclude": ["ph-generate.md", "ph-generate.mdx"], "private": true },
-    { "id": "ph-generate", "title": "Polyhammer Generate", "repository": "poly-hammer/ph-motion-addon", "directory": "docs", "branch": "main", "mount": "blender-addons/ph-generate", "tagPrefix": "ph-generate/", "include": ["ph-generate.md", "ph-generate.mdx", "contributing/polyhammer-client.md", "contributing/polyhammer-client.mdx"], "entry": "ph-generate", "private": true }
+    { "id": "ph-motion", "title": "Poly Hammer Motion", "repository": "poly-hammer/ph-motion-addon", "directory": "docs", "branch": "main", "mount": "blender-addons/ph-motion", "tagPrefix": "ph-motion/", "include": ["**"], "exclude": ["ph-generate.md", "ph-generate.mdx"], "private": true }
   ]
 }

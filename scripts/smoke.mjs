@@ -17,6 +17,9 @@ async function rpc(method, params) {
   return message.result;
 }
 const versions = await (await get('/api/versions')).json();
+assert(!versions.products['ph-generate'], 'Unpublished product must not appear in the version catalog');
+await get('/blender-addons/ph-generate/next', 404);
+await get('/blender-addons/ph-generate/next.md', 404);
 for (const path of ['/', '/blender-addons', '/unreal-plugins', '/portal', '/cli', '/agents']) {
   const html = await (await get(path)).text();
   assert.match(html, /rel="canonical"/);
@@ -29,7 +32,7 @@ const full = await (await get('/llms-full.txt')).text();
 assert.match(full, /Canonical URL:/);
 if (process.env.DOCS_SITE_URL) assert(index.includes(new URL(process.env.DOCS_SITE_URL).origin));
 assert.match(await (await get('/agents.md')).text(), /Streamable HTTP/);
-assert((await (await get('/api/search?query=Polyhammer')).json()).length > 0);
+assert((await (await get('/api/search?query=Poly%20Hammer')).json()).length > 0);
 await rpc('initialize', { protocolVersion: '2025-11-25', capabilities: {}, clientInfo: { name: 'polyhammer-docs-smoke', version: '1.0' } });
 const tools = await rpc('tools/list', {});
 assert.deepEqual(tools.tools.map(tool => tool.name).sort(), ['list_docs', 'list_versions', 'read_doc', 'search_docs']);

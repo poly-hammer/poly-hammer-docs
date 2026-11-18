@@ -1,5 +1,7 @@
 # Fumadocs implementation status
 
+Current product scope: Character DNA, Character Control Rig, Character Assembly, and **Poly Hammer Motion**. Poly Hammer Generate is not planned for release and has been removed from registration, navigation, and exports. Visible branding is **Poly Hammer**. The sidebar uses **Home** and section headings without duplicate overview entries. The inventory and branch table below also record earlier migration work.
+
 Updated November 18, 2026 (America/Chicago). The protected Fumadocs staging site is deployed. Live collection verified the docs repository's `GH_PAT` for private-source reads and archive writes; Vercel deployment and protection-bypass credentials passed live smoke tests. All five repository secret names are `GH_PAT`. Source event-notifier permissions still need a real notification after their PRs merge. Production remains disabled.
 
 ## Branches and worktrees

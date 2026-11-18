@@ -1,1 +1,1 @@
-{ "title": "Blender Add-ons", "root": true, "pages": ["index", "character-dna", "character-control-rig", "character-assembly", "ph-motion", "ph-generate"] }
+{ "title": "Blender Add-ons", "root": true, "pagesIndex": "index", "pages": ["character-dna", "character-control-rig", "character-assembly", "ph-motion"] }

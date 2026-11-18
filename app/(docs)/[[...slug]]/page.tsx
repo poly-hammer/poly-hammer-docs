@@ -29,7 +29,7 @@ export default async function Page({ params }: Props) {
   const Content = page.data.body;
   const version = page.data.version, product = page.data.product;
   const latest = product ? catalog.products[product]?.latest : undefined;
-  const schema = { '@context': 'https://schema.org', '@type': 'TechArticle', headline: page.data.title, description: page.data.description, url: absoluteUrl(page.url), inLanguage: 'en', publisher: { '@type': 'Organization', name: 'Polyhammer', url: 'https://polyhammer.com' }, ...(page.data.updatedAt ? { dateModified: page.data.updatedAt } : {}), ...(version ? { version } : {}) };
+  const schema = { '@context': 'https://schema.org', '@type': 'TechArticle', headline: page.data.title, description: page.data.description, url: absoluteUrl(page.url), inLanguage: 'en', publisher: { '@type': 'Organization', name: 'Poly Hammer', url: 'https://polyhammer.com' }, ...(page.data.updatedAt ? { dateModified: page.data.updatedAt } : {}), ...(version ? { version } : {}) };
   const breadcrumbs = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Documentation', item: absoluteUrl('/') }, { '@type': 'ListItem', position: 2, name: page.data.title, item: absoluteUrl(page.url) }] };
   return <DocsPage toc={page.data.toc} full={page.data.full}>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([schema, breadcrumbs]).replace(/</g, '\\u003c') }} />
