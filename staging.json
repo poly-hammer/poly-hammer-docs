@@ -1,6 +1,6 @@
 {
   "channel": "staging",
-  "generation": 7,
+  "generation": 8,
   "products": {
     "character-assembly": {
       "latest": null,
@@ -48,5 +48,5 @@
     }
   },
   "schemaVersion": 1,
-  "siteCommit": "255040e49c352d2a9ad2fc620ade0945237870b3"
+  "siteCommit": "5eb53ecb20ce8564a3fbe14635639ade911f2b89"
 }
