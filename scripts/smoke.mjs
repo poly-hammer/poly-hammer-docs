@@ -20,20 +20,21 @@ const versions = await (await get('/api/versions')).json();
 const home = await (await get('/')).text();
 const initialDnaVersion = versions.products['character-dna']?.latest ?? (versions.products['character-dna']?.unreleased ? 'next' : null);
 const buttonLabels = html => [...html.matchAll(/<button\b[^>]*>([\s\S]*?)<\/button>/g)].map(match => match[1].replace(/<[^>]*>/g, ''));
-for (const route of [
-  ...(initialDnaVersion ? [`/blender-addons/character-dna/${initialDnaVersion}`] : []),
-  '/unreal-plugins/poly-hammer-interchange/getting-started', '/portal/blender-extension-repo', '/cli', '/agents',
-]) {
+for (const route of ['/blender-addons', '/unreal-plugins', '/portal', '/cli', '/agents']) {
   assert(home.includes(`href="${route}"`), `Missing section entry link: ${route}`);
-  const html = await (await get(route)).text();
+  await get(route);
   await get(`${route}.md`);
-  if (route.startsWith('/blender-addons/')) {
-    const labels = buttonLabels(html);
-    assert(labels.some(text => text.includes('Blender Addons')), 'Missing Blender section dropdown');
-    assert(labels.some(text => text.includes('Character DNA')), 'Missing Blender product dropdown');
-    assert(labels.some(text => text.includes(initialDnaVersion === 'next' ? 'Next (unreleased)' : initialDnaVersion)), 'Missing Blender version dropdown');
-  }
 }
+if (initialDnaVersion) {
+  const labels = buttonLabels(await (await get(`/blender-addons/character-dna/${initialDnaVersion}`)).text());
+  assert(labels.some(text => text.includes('Blender Addons')), 'Missing Blender section dropdown');
+  assert(labels.some(text => text.includes('Character DNA')), 'Missing Blender product dropdown');
+  assert(labels.some(text => text.includes(initialDnaVersion === 'next' ? 'Next (unreleased)' : initialDnaVersion)), 'Missing Blender version dropdown');
+}
+const unrealLanding = await (await get('/unreal-plugins.md')).text();
+assert(unrealLanding.includes('/unreal-plugins/poly-hammer-interchange/getting-started'), 'Unreal selection page must link to the plugin docs');
+const portalLanding = await (await get('/portal.md')).text();
+assert(portalLanding.includes('Poly Hammer Portal') && portalLanding.includes('/portal/blender-extension-repo'), 'Portal home must introduce the product and link to setup');
 const interchange = await (await get('/unreal-plugins/poly-hammer-interchange/getting-started')).text();
 const buttons = buttonLabels(interchange);
 assert(buttons.some(text => text.includes('Unreal Plugins')), 'Missing Unreal section dropdown');
