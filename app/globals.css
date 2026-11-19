@@ -25,10 +25,11 @@
   --color-fd-ring: var(--ph-menu-foreground);
 }
 
-.docs-page-header {
-  --docs-header-gutter: 1rem;
+#nd-docs-layout {
   position: relative;
   isolation: isolate;
+}
+.docs-page-header {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -36,7 +37,12 @@
 .docs-header-art {
   position: absolute;
   z-index: -1;
-  inset: -3.5rem calc(-1 * var(--docs-header-gutter)) 0;
+  /* The article and transparent TOC share one background; the left menu stays solid. */
+  grid-column: 3 / -1;
+  grid-row: 1 / -1;
+  inset: 0 0 auto;
+  height: 26rem;
+  max-height: 70vh;
   overflow: hidden;
   pointer-events: none;
   user-select: none;
@@ -48,12 +54,6 @@
   inset: 0;
   width: 100%;
   height: 100%;
-}
-@media (min-width: 768px) {
-  .docs-page-header { --docs-header-gutter: 1.5rem; }
-}
-@media (min-width: 1280px) {
-  .docs-page-header { --docs-header-gutter: 2rem; }
 }
 body { font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
 figcaption { color: var(--color-fd-muted-foreground); font-size: .875rem; margin-top: .5rem; }

@@ -5,7 +5,6 @@ import { source } from '@/lib/source';
 import { catalog, resolveProductVersion } from '@/lib/published';
 import { absoluteUrl, isProduction } from '@/lib/site';
 import { getMDXComponents } from '@/components/mdx';
-import { HeaderPolygons } from '@/components/header-polygons';
 
 type Props = { params: Promise<{ slug?: string[] }> };
 function getPage(slug: string[]) { return source.getPage(slug); }
@@ -35,7 +34,6 @@ export default async function Page({ params }: Props) {
   return <DocsPage toc={page.data.toc} full={page.data.full}>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([schema, breadcrumbs]).replace(/</g, '\\u003c') }} />
     <header className="docs-page-header">
-      <HeaderPolygons />
       {version === 'next' && <p className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm">Unreleased development documentation.</p>}
       {version && version !== 'next' && latest && version !== latest && <p className="rounded-lg border p-3 text-sm">You are reading {product} {version}. <a className="underline" href={`/blender-addons/${product}/latest`}>Read the latest version ({latest}).</a></p>}
       <DocsTitle>{page.data.title}</DocsTitle><DocsDescription>{page.data.description}</DocsDescription>

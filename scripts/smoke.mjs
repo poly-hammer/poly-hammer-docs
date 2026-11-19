@@ -17,6 +17,27 @@ async function rpc(method, params) {
   return message.result;
 }
 const versions = await (await get('/api/versions')).json();
+const home = await (await get('/')).text();
+const initialDnaVersion = versions.products['character-dna']?.latest ?? (versions.products['character-dna']?.unreleased ? 'next' : null);
+const buttonLabels = html => [...html.matchAll(/<button\b[^>]*>([\s\S]*?)<\/button>/g)].map(match => match[1].replace(/<[^>]*>/g, ''));
+for (const route of [
+  ...(initialDnaVersion ? [`/blender-addons/character-dna/${initialDnaVersion}`] : []),
+  '/unreal-plugins/poly-hammer-interchange/getting-started', '/portal/blender-extension-repo', '/cli', '/agents',
+]) {
+  assert(home.includes(`href="${route}"`), `Missing section entry link: ${route}`);
+  const html = await (await get(route)).text();
+  await get(`${route}.md`);
+  if (route.startsWith('/blender-addons/')) {
+    const labels = buttonLabels(html);
+    assert(labels.some(text => text.includes('Blender Addons')), 'Missing Blender section dropdown');
+    assert(labels.some(text => text.includes('Character DNA')), 'Missing Blender product dropdown');
+    assert(labels.some(text => text.includes(initialDnaVersion === 'next' ? 'Next (unreleased)' : initialDnaVersion)), 'Missing Blender version dropdown');
+  }
+}
+const interchange = await (await get('/unreal-plugins/poly-hammer-interchange/getting-started')).text();
+const buttons = buttonLabels(interchange);
+assert(buttons.some(text => text.includes('Unreal Plugins')), 'Missing Unreal section dropdown');
+assert(buttons.some(text => text.includes('Poly Hammer Interchange')), 'Missing Unreal plugin dropdown');
 assert(!versions.products['ph-generate'], 'Unpublished product must not appear in the version catalog');
 await get('/blender-addons/ph-generate/next', 404);
 await get('/blender-addons/ph-generate/next.md', 404);
