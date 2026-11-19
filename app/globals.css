@@ -7,13 +7,13 @@
   --ph-gold: #cba135;
   --ph-menu-foreground: #795b16;
   --ph-menu-hover: #e9dfc4;
-  --ph-header-line: rgb(150 114 29 / 24%);
+  --ph-header-line: rgb(150 114 29 / 36%);
   --ph-header-glow: rgb(203 161 53 / 9%);
 }
 .dark {
   --ph-menu-foreground: #cba135;
   --ph-menu-hover: #30291a;
-  --ph-header-line: rgb(203 161 53 / 28%);
+  --ph-header-line: rgb(203 161 53 / 45%);
   --ph-header-glow: rgb(203 161 53 / 10%);
 }
 
@@ -43,30 +43,17 @@
   background: radial-gradient(ellipse at 85% 0%, var(--ph-header-glow), transparent 75%);
   mask-image: linear-gradient(to bottom, black, rgb(0 0 0 / 75%) 45%, transparent 100%);
 }
-.docs-header-art svg { width: 100%; height: 100%; }
-.docs-polygon {
-  fill: none;
-  stroke: var(--ph-header-line);
-  stroke-width: 1;
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: docs-polygon-drift 24s ease-in-out infinite alternate;
-}
-.docs-polygon-left { animation-delay: -8s; opacity: .55; }
-.docs-polygon-middle { animation-delay: -16s; opacity: .35; }
-.docs-polygon-right { animation-duration: 30s; }
-@keyframes docs-polygon-drift {
-  from { transform: translate3d(0, 0, 0) rotate(-2deg); }
-  to { transform: translate3d(8px, 12px, 0) rotate(2deg); }
+.docs-header-art canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 @media (min-width: 768px) {
   .docs-page-header { --docs-header-gutter: 1.5rem; }
 }
 @media (min-width: 1280px) {
   .docs-page-header { --docs-header-gutter: 2rem; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .docs-polygon { animation: none; }
 }
 body { font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
 figcaption { color: var(--color-fd-muted-foreground); font-size: .875rem; margin-top: .5rem; }
