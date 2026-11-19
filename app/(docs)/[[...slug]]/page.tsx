@@ -5,6 +5,7 @@ import { source } from '@/lib/source';
 import { catalog, resolveProductVersion } from '@/lib/published';
 import { absoluteUrl, isProduction } from '@/lib/site';
 import { getMDXComponents } from '@/components/mdx';
+import { HeaderPolygons } from '@/components/header-polygons';
 
 type Props = { params: Promise<{ slug?: string[] }> };
 function getPage(slug: string[]) { return source.getPage(slug); }
@@ -33,10 +34,13 @@ export default async function Page({ params }: Props) {
   const breadcrumbs = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Documentation', item: absoluteUrl('/') }, { '@type': 'ListItem', position: 2, name: page.data.title, item: absoluteUrl(page.url) }] };
   return <DocsPage toc={page.data.toc} full={page.data.full}>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([schema, breadcrumbs]).replace(/</g, '\\u003c') }} />
-    {version === 'next' && <p className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm">Unreleased development documentation.</p>}
-    {version && version !== 'next' && latest && version !== latest && <p className="rounded-lg border p-3 text-sm">You are reading {product} {version}. <a className="underline" href={`/blender-addons/${product}/latest`}>Read the latest version ({latest}).</a></p>}
-    <DocsTitle>{page.data.title}</DocsTitle><DocsDescription>{page.data.description}</DocsDescription>
-    <div className="flex gap-4 text-sm text-fd-muted-foreground mb-4"><MarkdownCopyButton markdownUrl={`${page.url === '/' ? '/index' : page.url}.md`} /><a href={`${page.url === '/' ? '/index' : page.url}.md`}>Read Markdown</a>{version && <span>{version}</span>}</div>
+    <header className="docs-page-header">
+      <HeaderPolygons />
+      {version === 'next' && <p className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm">Unreleased development documentation.</p>}
+      {version && version !== 'next' && latest && version !== latest && <p className="rounded-lg border p-3 text-sm">You are reading {product} {version}. <a className="underline" href={`/blender-addons/${product}/latest`}>Read the latest version ({latest}).</a></p>}
+      <DocsTitle>{page.data.title}</DocsTitle><DocsDescription>{page.data.description}</DocsDescription>
+      <div className="flex flex-wrap items-center gap-4 text-sm text-fd-muted-foreground mb-4"><MarkdownCopyButton markdownUrl={`${page.url === '/' ? '/index' : page.url}.md`} /><a href={`${page.url === '/' ? '/index' : page.url}.md`}>Read Markdown</a>{version && <span>{version}</span>}</div>
+    </header>
     <DocsBody><Content components={getMDXComponents()} /></DocsBody>
   </DocsPage>;
 }
