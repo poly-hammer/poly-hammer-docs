@@ -34,6 +34,8 @@ assert(!index.includes('/plans/'), 'Internal plans must not enter the agent inde
 assert(!full.includes('/plans/'), 'Internal plans must not enter the Markdown bundle');
 assert(!full.includes('internalplanfixture'));
 assert(!(await (await get('/api/search?query=internalplanfixture')).json()).length);
+assert(!full.includes('unpublishedfeaturefixture'));
+assert(!(await (await get('/api/search?query=unpublishedfeaturefixture')).json()).length);
 if (process.env.DOCS_SITE_URL) assert(index.includes(new URL(process.env.DOCS_SITE_URL).origin));
 assert.match(await (await get('/agents.md')).text(), /Streamable HTTP/);
 assert((await (await get('/api/search?query=Poly%20Hammer')).json()).length > 0);
@@ -41,6 +43,20 @@ await rpc('initialize', { protocolVersion: '2025-11-25', capabilities: {}, clien
 const tools = await rpc('tools/list', {});
 assert.deepEqual(tools.tools.map(tool => tool.name).sort(), ['list_docs', 'list_versions', 'read_doc', 'search_docs']);
 assert(!(await rpc('tools/call', { name: 'list_versions', arguments: {} })).isError);
+const dna = versions.products['character-dna'];
+if (dna) {
+  for (const page of ['pro-features/mesh-editor', 'workflows/custom-topology-metadata']) {
+    assert(!index.includes(`/${page}`) && !full.includes(`/${page}`), `Unpublished page leaked into agent exports: ${page}`);
+    for (const version of [...dna.versions, ...(dna.unreleased ? ['next'] : []), 'latest']) {
+      const route = `/blender-addons/character-dna/${version}/${page}`;
+      await get(route, 404);
+      await get(`${route}.md`, 404);
+      const hidden = await rpc('tools/call', { name: 'read_doc', arguments: { url: route } });
+      assert(hidden.isError);
+      assert.match(hidden.content[0].text, /Document not found/);
+    }
+  }
+}
 for (const [product, entry] of Object.entries(versions.products)) {
   const version = entry.latest ?? (entry.unreleased ? 'next' : null);
   if (!version) continue;
@@ -57,6 +73,7 @@ for (const [product, entry] of Object.entries(versions.products)) {
   const pages = JSON.parse(docs.content[0].text).documents;
   assert(pages.length > 0);
   assert(pages.every(page => !page.url.includes('/plans/')), 'Internal plans must not enter the MCP catalog');
+  assert(pages.every(page => !/\/(?:pro-features\/mesh-editor|workflows\/custom-topology-metadata)$/.test(page.url)), 'Unpublished features must not enter the MCP catalog');
   assert(pages.every(page => page.version === version));
   const read = await rpc('tools/call', { name: 'read_doc', arguments: { url: pages[0].url } });
   assert(!read.isError);

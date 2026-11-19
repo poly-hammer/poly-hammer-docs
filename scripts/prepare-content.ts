@@ -8,7 +8,7 @@ import { CatalogSchema, compareVersions, type Catalog, type Snapshot } from '../
 
 const root = process.cwd();
 const registry = JSON.parse(fs.readFileSync('docs-sources.json', 'utf8')) as { sources: Source[] };
-type Source = { id: string; title: string; repository: string; directory: string; mount: string; include: string[]; exclude?: string[]; entry?: string; private?: boolean };
+type Source = { id: string; title: string; repository: string; directory: string; mount: string; include: string[]; exclude?: string[]; entry?: string; private?: boolean; legacyDescriptions?: Record<string, string> };
 function walk(directory: string): string[] { return fs.readdirSync(directory, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name)).flatMap(entry => { if (entry.isDirectory() && entry.name.toLowerCase() === 'plans') return []; if (entry.isSymbolicLink()) throw new Error(`Symlink in docs: ${entry.name}`); return entry.isDirectory() ? walk(path.join(directory, entry.name)) : [path.join(directory, entry.name)]; }); }
 function sha(directory: string): string { return execFileSync('git', ['-c', `safe.directory=${directory}`, '-C', directory, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(); }
 function write(file: string, value: string) { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, value); }
@@ -105,7 +105,9 @@ for (const source of registry.sources) {
       };
       let body = parsed.content.replace(/(!?\[[^\]]*\]\()([^\s)]+)([^)]*\))/g, (_, begin, target, end) => `${begin}${rewrite(target)}${end}`);
       body = body.replace(/\b(src|poster|href)="([^"]+)"/g, (_, key, target) => `${key}=${JSON.stringify(rewrite(target, true))}`);
-      const metadata = { ...parsed.metadata, title: parsed.title, description: parsed.description, product: source.id, version, channel: catalog.channel, sourceCommit: record.commit, updatedAt: record.publishedAt };
+      // Authored frontmatter takes precedence over summaries for legacy snapshots.
+      const description = parsed.metadata.description == null ? source.legacyDescriptions?.[relative] ?? parsed.description : parsed.description;
+      const metadata = { ...parsed.metadata, title: parsed.title, description, product: source.id, version, channel: catalog.channel, sourceCommit: record.commit, updatedAt: record.publishedAt };
       write(path.join(productFolder, version, relative.replace(/\.mdx?$/, '') === source.entry ? 'index.mdx' : relative.replace(/\.md$/, '.mdx')), `---\n${YAML.stringify(metadata)}---\n\n${body}`);
       count++;
     }
