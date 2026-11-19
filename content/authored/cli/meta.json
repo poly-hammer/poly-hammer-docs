@@ -1,1 +1,1 @@
-{ "title": "Poly Hammer CLI", "icon": "cli", "root": true, "pagesIndex": "index", "pages": [] }
+{ "title": "Poly Hammer CLI", "icon": "cli", "root": true, "pages": ["index"] }
