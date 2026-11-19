@@ -10,7 +10,7 @@ export function DocVideo({ src, title, poster, ...playback }: VideoProps) {
 }
 export function DocImage({ src, alt, width }: { src: string; alt: string; width?: string }) {
   if (asMarkdown()) return md`![${alt}](${absoluteUrl(src)})`;
-  return <img src={src} alt={alt} width={width} loading="lazy" className="max-w-full rounded-lg mx-auto" />;
+  return <img src={src} alt={alt} width={width} loading="lazy" className="min-w-0 max-w-full h-auto rounded-lg mx-auto" />;
 }
 export function YouTubeEmbed({ src, title }: { src: string; title: string }) {
   if (asMarkdown()) return md`[Video tutorial: ${title}](${src})`;
