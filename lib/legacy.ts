@@ -18,6 +18,15 @@ function normalizeMarkdownText(content: string, context?: LegacyContext): string
     const start = node.position?.start.offset, end = node.position?.end.offset;
     if (start === undefined || end === undefined) return;
     const raw = content.slice(start, end);
+    if (node.type === 'image') {
+      const suffix = /^[ \t]*(?:\n[ \t]*)?\{:\s*[^}\n]+\}/.exec(content.slice(end));
+      if (suffix) {
+        const attrs = attributes(suffix[0]);
+        const width = attrs.width ?? /(?:^|;)\s*width\s*:\s*(\d+)(?:px)?\s*(?:;|$)/i.exec(attrs.style ?? '')?.[1];
+        edits.push({ start, end, value: `<DocImage src=${quote(node.url)} alt=${quote(node.alt ?? '')}${width ? ` width=${quote(width)}` : ''} />` });
+      }
+      return SKIP;
+    }
     if (node.type === 'link' && context?.private && raw.startsWith('[') && raw.includes('](') && !/^(?:[a-z]+:|[/#])/i.test(node.url)) {
       const target = posix.normalize(posix.join(posix.dirname(context.relativePage), decodeURIComponent(node.url.split(/[?#]/)[0])));
       const repositoryPath = posix.normalize(posix.join(context.directory, target));
@@ -34,9 +43,11 @@ function normalizeMarkdownText(content: string, context?: LegacyContext): string
       return SKIP;
     }
     if (node.type !== 'text') return;
+    // Remove MkDocs attributes before escaping braces, without touching code examples.
+    const prose = raw.replace(/(^|[^\\])\{:\s*[^}\n]+\}/g, '$1');
     // Preserve code, HTML, and existing Markdown escapes; only escape prose.
     const entities: Record<string, string> = { '<': '&lt;', '{': '&#123;', '}': '&#125;' };
-    const value = raw.replace(/(\\*)([<{}])/g, (_, slashes: string, character: string) =>
+    const value = prose.replace(/(\\*)([<{}])/g, (_, slashes: string, character: string) =>
       slashes + (slashes.length % 2 ? character : entities[character]));
     if (value !== raw) edits.push({ start, end, value });
   });
@@ -87,8 +98,6 @@ export function normalizeLegacy(input: string, context?: LegacyContext): { title
     const attrs = attributes(raw);
     return `<YouTubeEmbed src=${quote(attrs.src)} title=${quote(attrs.title ?? 'Video tutorial')} />`;
   });
-  content = content.replace(/!\[([^\]]*)\]\(([^)]+)\)\{:[^}\n]*\}/g, (_, alt, src) => `<DocImage src=${quote(src)} alt=${quote(alt)} />`);
-  content = content.replace(/\{:\s*[^}\n]+\}/g, '');
   content = content.replace(/<img\b([^>]*?)\/?\s*>/gi, (_, raw) => {
     const attrs = attributes(raw);
     return `<DocImage src=${quote(attrs.src)} alt=${quote(attrs.alt ?? '')}${attrs.width ? ` width=${quote(attrs.width)}` : ''} />`;
@@ -104,7 +113,7 @@ export function normalizeLegacy(input: string, context?: LegacyContext): { title
   content = content.replace(/<!--([\s\S]*?)-->/g, '{/*$1*/}').replace(/<br\s*\/?\s*>/gi, '<br />');
   content = content.replace(/CODEBLOCKTOKEN(\d+)ENDTOKEN/g, (_, i) => code[Number(i)]);
   const paragraph = content.split(/\n\s*\n/).find(p => p.trim() && !/^(?:<|#|```|\||- )/.test(p.trim())) ?? title;
-  const description = String(parsed.data.description ?? paragraph.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/[*_`]/g, '').replace(/\s+/g, ' ').slice(0, 190));
+  const description = String(parsed.data.description ?? paragraph.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/[*_`]/g, '').replace(/\s+/g, ' ').trim());
   return { title, description, content: content.trim() + '\n', metadata: parsed.data };
 }
 

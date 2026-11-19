@@ -21,6 +21,7 @@ for (const file of files) {
     if (typeof data.title !== 'string' || typeof data.description !== 'string' || !data.description.trim()) throw new Error('title and description are required');
     const tree = unified().use(remarkParse).use(remarkMdx).use(remarkGfm).parse(content);
     visit(tree, (node: any) => {
+      if (node.type === 'text' && /\{:\s*[^}\n]+\}/.test(node.value)) throw new Error('Unconverted MkDocs attribute list in published text');
       if (node.type === 'mdxjsEsm' || node.type === 'mdxFlowExpression' || node.type === 'mdxTextExpression') throw new Error(`Executable MDX is not allowed (${node.type})`);
       if (node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement') {
         if (!allowed.has(node.name)) throw new Error(`Unsupported component: ${node.name}`);
