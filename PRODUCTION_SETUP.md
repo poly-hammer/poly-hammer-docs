@@ -24,7 +24,9 @@ Staging remains a different project. No DNS records, live-domain assignments, or
 
 The publication configuration check runs before collection changes a catalog. It rejects missing production values, a disabled production gate, publication from another branch, or production settings that point at staging. This also catches GitHub expression fallbacks when a production variable is empty.
 
-## Credentials the owner must configure
+## Production credentials
+
+Both required secret names were verified in `docs-production` after the owner configured them on November 21. Their values were not read. The instructions below describe their scope and replacement procedure; credential access verification is separate from a deployment.
 
 Open [GitHub environments](https://github.com/poly-hammer/poly-hammer-docs/settings/environments), select **docs-production**, and add these environment secrets directly. They cannot be retrieved or copied out of the existing staging environment.
 
@@ -36,6 +38,8 @@ Open [GitHub environments](https://github.com/poly-hammer/poly-hammer-docs/setti
 Keep both values out of chat, repository files, commands with literal secret arguments, and build artifacts. The existing repository `GH_PAT` is still used for collection; no extra PAT or GitHub App is needed. Vercel's documented [automation bypass](https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation) applies only to tests against the protected project.
 
 Secrets are accessible only after environment approval. The workflow's settings and deployment jobs both use `docs-production`; GitHub may request approval at both points. Do not approve either on the owner's behalf. Self-review is allowed so the owner can approve a manually triggered run using the same GitHub account. See [GitHub environment rules](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments).
+
+After adding the secrets, run **Check production credentials (no deployment)** on `main` and have the owner approve that specific environment request. This workflow is deliberately available while `DOCS_PRODUCTION_ENABLED=false`: it makes one read-only project API call, checks the team/runtime/Git settings, and checks that the bypass value is present. It does not collect content, write catalogs, build, deploy, promote, or change domains. Reading settings does not prove deployment-write permissions; the bypass secret's actual HTTP authorization also cannot be verified until an approved deployment exists.
 
 ## Remaining release-content verification
 
