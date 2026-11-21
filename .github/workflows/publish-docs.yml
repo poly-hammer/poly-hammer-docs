@@ -47,6 +47,14 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: '3.13'
+      - name: Verify channel isolation before changing catalogs
+        env:
+          DOCS_PRODUCTION_ENABLED: ${{ vars.DOCS_PRODUCTION_ENABLED }}
+          VERCEL_STAGING_PROJECT_ID: ${{ vars.VERCEL_STAGING_PROJECT_ID }}
+          VERCEL_PRODUCTION_PROJECT_ID: ${{ vars.VERCEL_PRODUCTION_PROJECT_ID }}
+          DOCS_STAGING_URL: ${{ vars.DOCS_STAGING_URL }}
+          DOCS_PRODUCTION_URL: ${{ vars.DOCS_PRODUCTION_URL }}
+        run: python scripts/check_publication_config.py
       - id: sync
         name: Verify source events and persist the desired catalog
         env:

@@ -1,6 +1,6 @@
 # Poly Hammer documentation
 
-The site uses **Fumadocs with the Black theme**, Next.js, and Vercel. It serves both human documentation and version-aware agent interfaces. See [the migration plan](FUMADOCS_MIGRATION_PLAN.md) and [deployment runbook](DEPLOYMENT_RUNBOOK.md).
+The site uses **Fumadocs with the Black theme**, Next.js, and Vercel. It serves both human documentation and version-aware agent interfaces. See [the migration plan](FUMADOCS_MIGRATION_PLAN.md), [deployment runbook](DEPLOYMENT_RUNBOOK.md), and [production setup status](PRODUCTION_SETUP.md).
 
 ## Local development
 

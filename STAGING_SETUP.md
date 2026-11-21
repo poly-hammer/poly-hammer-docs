@@ -112,4 +112,4 @@ These two environment secrets are already present in [docs-staging](https://gith
 5. Confirm the protected deployment's page/media rendering, product version selectors, search, Markdown, and `/api/mcp`. Verify protection with a logged-out browser. The workflow smoke tests use the automation bypass secret.
 6. All four source notifiers are enabled and their main-push dispatches have succeeded. Confirm each new event updates the corresponding `next` snapshot in `docs-state`; production remains disabled.
 
-Historical stable-version backfill and the production project's credentials/domain are subsequent steps in the runbook. Enable `DOCS_PRODUCTION_ENABLED` only once that separate project and release-history policy are ready. No production credentials or DNS changes are needed to start staging.
+The separate production project and protected GitHub environment are now provisioned; see [PRODUCTION_SETUP.md](PRODUCTION_SETUP.md) for exact settings, pending credentials, historical backfill, and the approval sequence. Production has no deployment and `DOCS_PRODUCTION_ENABLED` remains false. No production credentials or DNS changes are needed to operate staging.
