@@ -4,6 +4,8 @@
 
 **Prepared:** November 14, 2026
 
+**Update (November 21):** All four addon Fumadocs migrations are merged into main and main-event notification permissions are verified. Production remains disabled. Docs PR #91 implements per-channel hidden-path settings; `DOCS_PRODUCTION_HIDDEN_PATHS=["cli","blender-addons/ph-motion"]` excludes unreleased CLI/Motion from every publication interface. Staging continues to show both. The dated inventory and earlier status below are historical; see STAGING_SETUP.md for current operations.
+
 **Target repository:** `E:\repos\poly-hammer-docs`
 
 **Status (November 18):** The Fumadocs site is deployed to the protected [Vercel staging hostname](https://polyhammer-docs-staging.vercel.app). The docs repository's `GH_PAT` successfully read all four source repositories and wrote documentation-only snapshots for five products. Vercel deployment and automation-bypass credentials passed live HTTP, Markdown, search, and MCP checks. Staging uses current main documentation as `next`; historical release backfill remains pending. `DOCS_PIPELINE_ENABLED=true` and `DOCS_PRODUCTION_ENABLED=false`; the production docs domain and DNS are unchanged. Docs PR #76 and bootstrap fixes #77/#78 are merged. The shared notifier and four add-on migration PRs remain open, and their event notifications are not yet enabled. See [STAGING_SETUP.md](STAGING_SETUP.md) and [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md).

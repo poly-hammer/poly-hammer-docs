@@ -1,6 +1,8 @@
 # Staging setup and credential checklist
 
-Updated November 18, 2026 (America/Chicago). The protected [staging site](https://polyhammer-docs-staging.vercel.app) is deployed and passed HTTP, Markdown, search, and MCP checks. All repositories use `GH_PAT`; the docs collector's permissions and both staging Vercel credentials are verified. Production remains disabled, and production DNS is unchanged.
+Updated November 21, 2026 (America/Chicago). All four addon Fumadocs migrations are merged into main and all four main-event notification workflows succeeded with their existing `GH_PAT`. The protected [staging site](https://polyhammer-docs-staging.vercel.app) uses current main documentation. Production remains disabled, and production DNS is unchanged.
+
+Docs PR #91 adds publication visibility controls. `DOCS_PRODUCTION_HIDDEN_PATHS` is configured as `["cli","blender-addons/ph-motion"]`; staging's default is `[]`. Hidden documentation is absent from routes, navigation, search, Markdown, MCP, and copied addon media. See README for changing the setting and rebuilding.
 
 ## Pull requests
 
@@ -12,9 +14,9 @@ Updated November 18, 2026 (America/Chicago). The protected [staging site](https:
 | character-dna-addon | [#384: Fumadocs documentation and agent guidance](https://github.com/poly-hammer/character-dna-addon/pull/384) |
 | character-control-rig-addon | [#56: Fumadocs documentation and agent guidance](https://github.com/poly-hammer/character-control-rig-addon/pull/56) |
 | character-assembly-addon | [#7: Fumadocs documentation and agent guidance](https://github.com/poly-hammer/character-assembly-addon/pull/7) |
-| ph-motion-addon | [#10: Motion/Generate documentation and agent guidance](https://github.com/poly-hammer/ph-motion-addon/pull/10) |
+| ph-motion-addon | [#10: Motion documentation and agent guidance](https://github.com/poly-hammer/ph-motion-addon/pull/10) |
 
-Review and merge utilities, shared workflows, the docs site, then the four add-on branches. Preserve the pinned utility/workflow commits with a merge commit, or update all callers after a squash merge. The Control Rig branch incorporates the new 0.5.0 main release and retains its updated import documentation.
+All addon PRs in the table are merged. DNA and Control Rig incorporated current main; Assembly was already current, and Motion's migration was previously merged. The current addon release workflows were retained instead of obsolete migration pins. Shared-workflows PR #5 remains separate; all four working docs notifiers pin its available commit `e013b6ffe4ccf1d562f51fc98bbde3f06b856a73`.
 
 The docs CI matrix passed on Linux for both staging and production, including builds and HTTP/MCP smoke tests, after fixing optional dependency lock entries. DNA spelling checks now recognize Fumadocs and its legacy image filename. Check each PR's latest status before merging; the wider Blender/native CI suites run independently.
 
@@ -27,7 +29,7 @@ The docs CI matrix passed on Linux for both staging and production, including bu
 - Docs repository variables `VERCEL_STAGING_PROJECT_ID=prj_Id78qUcRHvH0zxvJY1aGfHnDdPbl` and `DOCS_STAGING_URL=https://polyhammer-docs-staging.vercel.app`. The hostname serves the verified protected staging deployment.
 - `DOCS_PIPELINE_ENABLED=true` and `DOCS_PRODUCTION_ENABLED=false`. Staging publication and scheduled reconciliation are active; production remains off.
 
-On November 18, secret-name checks confirmed the docs repository's `GH_PAT`, `GH_PAT` in all four add-on repositories, and `VERCEL_TOKEN` / `VERCEL_AUTOMATION_BYPASS_SECRET` in the docs repository's `docs-staging` environment. Values were not read or changed. The docs repository's older `GA_ID` secret is unused by the new pipeline. `GH_PAT` is the unified repository secret name for collection and notifications in all five repositories. Live collection verified the docs GH_PAT against private source repositories and the archive. Deployment and protected-site smoke tests verified both Vercel credentials. Each source GH_PAT still needs a real notification test after its PR merges.
+On November 18, secret-name checks confirmed the docs repository's `GH_PAT`, `GH_PAT` in all four add-on repositories, and `VERCEL_TOKEN` / `VERCEL_AUTOMATION_BYPASS_SECRET` in the docs repository's `docs-staging` environment. Values were not read or changed. The docs repository's older `GA_ID` secret is unused by the new pipeline. `GH_PAT` is the unified repository secret name for collection and notifications in all five repositories. Live collection verified the docs GH_PAT against private source repositories and the archive. Deployment and protected-site smoke tests verified both Vercel credentials. All four source GH_PATs were verified by successful main-event notification runs on November 21.
 
 ## Vercel access and project
 
@@ -66,7 +68,7 @@ The configured `GH_PAT` needs source reads and archive writes. For a new or repl
 | `character-dna-addon` | Read its docs folder and release metadata |
 | `character-control-rig-addon` | Read its docs folder and release metadata |
 | `character-assembly-addon` | Read its docs folder and release metadata |
-| `ph-motion-addon` | Read Motion/Generate docs and release metadata |
+| `ph-motion-addon` | Read Motion docs and release metadata |
 | `poly-hammer-docs-snapshots` | Read/write immutable documentation release assets |
 
 Set repository **Contents: Read and write**. Metadata read access is automatic; other permissions can remain unset. The write permission is needed for archive assets and applies to all five selected repositories, although the collector only reads source docs. Complete organization approval if pending. A token configured with the earlier six-repository recommendation remains compatible; the collector uses the built-in `GITHUB_TOKEN` for the docs repository itself.
@@ -88,7 +90,7 @@ Keep `GH_PAT` as a repository Actions secret in `poly-hammer-docs`, and `GH_PAT`
 
 Both token types depend on the issuing account retaining repository access and any required organization approval or SSO authorization. Classic tokens with `repo` scope also work for collection but have broader access. The docs automation needs no `workflow` or `admin:org` scope; the archive contains no workflow files. Rotate each affected secret before expiry, keeping existing package-release consumers in mind if a `GH_PAT` is replaced.
 
-The built-in docs `GITHUB_TOKEN` writes `docs-state`; npm/MDX build jobs and Vercel do not receive either PAT. Set each source's `DOCS_PIPELINE_ENABLED=true` only after staging bootstrap works. Motion and Generate share one source repository.
+The built-in docs `GITHUB_TOKEN` writes `docs-state`; npm/MDX build jobs and Vercel do not receive either PAT. All four sources have `DOCS_PIPELINE_ENABLED=true`. Only Motion is registered from its repository.
 
 See [GitHub's PAT instructions](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) and [repository-dispatch permissions](https://docs.github.com/en/rest/repos/repos#create-a-repository-dispatch-event).
 
@@ -103,11 +105,11 @@ These two environment secrets are already present in [docs-staging](https://gith
 
 ## Operate staging
 
-1. The docs migration and bootstrap fixes are merged. Review the remaining shared-notifier and add-on PRs before enabling source event notifications; staging already collects current main docs through scheduled reconciliation.
-2. All required secret names are present: docs `GH_PAT`, source `GH_PAT`, and the two staging Vercel secrets. Collection, archive writes, deployment, and protected-site tests have passed; verify source notification permissions after the remaining PRs merge. The Vercel project, project ID, and origin are configured. Review the pinned deployment CLI advisories described in [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md) before activation.
+1. The docs site and all addon migrations are merged. Source events and scheduled reconciliation collect current main docs. The shared notifier is pinned to its reviewed immutable commit.
+2. All required secret names are present: docs `GH_PAT`, source `GH_PAT`, and the two staging Vercel secrets. Collection, archive writes, deployment, and protected-site tests have passed; all four source notification permissions are also verified. The Vercel project, project ID, and origin are configured. Review the pinned deployment CLI advisories described in [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md) before activation.
 3. Keep docs repository `DOCS_PIPELINE_ENABLED=true` and `DOCS_PRODUCTION_ENABLED=false`. Scheduled and release-triggered production jobs remain off while staging can build.
 4. Initial bootstrap is complete. For a manual refresh, run **Publish documentation** on **main** with `command=sync` and `channel=staging`. Use `bootstrap` with a reviewed site SHA only when initializing a new state branch. Neither action deploys production while its gate is false.
 5. Confirm the protected deployment's page/media rendering, product version selectors, search, Markdown, and `/api/mcp`. Verify protection with a logged-out browser. The workflow smoke tests use the automation bypass secret.
-6. Enable the four source notifiers and exercise a main push. Confirm that staging receives `next` content and production remains disabled.
+6. All four source notifiers are enabled and their main-push dispatches have succeeded. Confirm each new event updates the corresponding `next` snapshot in `docs-state`; production remains disabled.
 
 Historical stable-version backfill and the production project's credentials/domain are subsequent steps in the runbook. Enable `DOCS_PRODUCTION_ENABLED` only once that separate project and release-history policy are ready. No production credentials or DNS changes are needed to start staging.
