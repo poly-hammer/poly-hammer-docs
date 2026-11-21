@@ -1,4 +1,4 @@
-import catalogData from '../.docs-build/catalog.json';
+import catalogData from '../.docs-build/published-catalog.json';
 import { CatalogSchema, selectedVersion } from './catalog';
 import { source } from './source';
 

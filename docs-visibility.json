@@ -1,0 +1,5 @@
+{
+  "production": ["cli", "blender-addons/ph-motion"],
+  "staging": [],
+  "local": []
+}

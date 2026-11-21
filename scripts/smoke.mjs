@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import visibilityDefaults from '../docs-visibility.json' with { type: 'json' };
 
 const base = process.env.DOCS_TEST_URL ?? 'http://localhost:3005';
 const headers = process.env.VERCEL_AUTOMATION_BYPASS_SECRET ? { 'x-vercel-protection-bypass': process.env.VERCEL_AUTOMATION_BYPASS_SECRET } : {};
@@ -17,10 +19,21 @@ async function rpc(method, params) {
   return message.result;
 }
 const versions = await (await get('/api/versions')).json();
+await rpc('initialize', { protocolVersion: '2025-11-25', capabilities: {}, clientInfo: { name: 'polyhammer-docs-smoke', version: '1.0' } });
+const inputs = fs.existsSync('.docs-build/catalog.json') ? JSON.parse(fs.readFileSync('.docs-build/catalog.json', 'utf8')) : {};
+const build = fs.existsSync('.docs-build/site.json') ? JSON.parse(fs.readFileSync('.docs-build/site.json', 'utf8')) : {};
+const hiddenPaths = inputs.hiddenPaths ?? build.hiddenPaths ?? (process.env.DOCS_HIDDEN_PATHS ? JSON.parse(process.env.DOCS_HIDDEN_PATHS) : visibilityDefaults[versions.channel]);
+const visible = route => !hiddenPaths.some(prefix => route === `/${prefix}` || route.startsWith(`/${prefix}/`));
 const home = await (await get('/')).text();
 const initialDnaVersion = versions.products['character-dna']?.latest ?? (versions.products['character-dna']?.unreleased ? 'next' : null);
 const buttonLabels = html => [...html.matchAll(/<button\b[^>]*>([\s\S]*?)<\/button>/g)].map(match => match[1].replace(/<[^>]*>/g, ''));
 for (const route of ['/blender-addons', '/unreal-plugins', '/portal', '/cli', '/agents']) {
+  if (!visible(route)) {
+    assert(!home.includes(`href="${route}"`), `Hidden section remains in navigation: ${route}`);
+    await get(route, 404);
+    await get(`${route}.md`, 404);
+    continue;
+  }
   assert(home.includes(`href="${route}"`), `Missing section entry link: ${route}`);
   await get(route);
   await get(`${route}.md`);
@@ -31,18 +44,22 @@ if (initialDnaVersion) {
   assert(labels.some(text => text.includes('Character DNA')), 'Missing Blender product dropdown');
   assert(labels.some(text => text.includes(initialDnaVersion === 'next' ? 'Next (unreleased)' : initialDnaVersion)), 'Missing Blender version dropdown');
 }
-const unrealLanding = await (await get('/unreal-plugins.md')).text();
-assert(unrealLanding.includes('/unreal-plugins/poly-hammer-interchange/getting-started'), 'Unreal selection page must link to the plugin docs');
-const portalLanding = await (await get('/portal.md')).text();
-assert(portalLanding.includes('Poly Hammer Portal') && portalLanding.includes('/portal/blender-extension-repo'), 'Portal home must introduce the product and link to setup');
-const interchange = await (await get('/unreal-plugins/poly-hammer-interchange/getting-started')).text();
-const buttons = buttonLabels(interchange);
-assert(buttons.some(text => text.includes('Unreal Plugins')), 'Missing Unreal section dropdown');
-assert(buttons.some(text => text.includes('Poly Hammer Interchange')), 'Missing Unreal plugin dropdown');
+if (visible('/unreal-plugins/poly-hammer-interchange')) {
+  const unrealLanding = await (await get('/unreal-plugins.md')).text();
+  assert(unrealLanding.includes('/unreal-plugins/poly-hammer-interchange/getting-started'), 'Unreal selection page must link to the plugin docs');
+  const interchange = await (await get('/unreal-plugins/poly-hammer-interchange/getting-started')).text();
+  const buttons = buttonLabels(interchange);
+  assert(buttons.some(text => text.includes('Unreal Plugins')), 'Missing Unreal section dropdown');
+  assert(buttons.some(text => text.includes('Poly Hammer Interchange')), 'Missing Unreal plugin dropdown');
+}
+if (visible('/portal')) {
+  const portalLanding = await (await get('/portal.md')).text();
+  assert(portalLanding.includes('Poly Hammer Portal') && portalLanding.includes('/portal/blender-extension-repo'), 'Portal home must introduce the product and link to setup');
+}
 assert(!versions.products['ph-generate'], 'Unpublished product must not appear in the version catalog');
 await get('/blender-addons/ph-generate/next', 404);
 await get('/blender-addons/ph-generate/next.md', 404);
-for (const path of ['/', '/blender-addons', '/unreal-plugins', '/portal', '/cli', '/agents']) {
+for (const path of ['/', '/blender-addons', '/unreal-plugins', '/portal', '/cli', '/agents'].filter(visible)) {
   const html = await (await get(path)).text();
   assert.match(html, /rel="canonical"/);
   assert.match(html, /application\/ld\+json/);
@@ -51,6 +68,37 @@ for (const path of ['/', '/blender-addons', '/unreal-plugins', '/portal', '/cli'
 const index = await (await get('/llms.txt')).text();
 assert.match(index, /\/api\/mcp/);
 const full = await (await get('/llms-full.txt')).text();
+const sitemap = await (await get('/sitemap.xml')).text();
+for (const prefix of hiddenPaths) {
+  assert(!index.includes(`/${prefix}`) && !full.includes(`/${prefix}`) && !sitemap.includes(`/${prefix}`), `Hidden path leaked into exports: ${prefix}`);
+  await get(`/${prefix}`, 404);
+  await get(`/${prefix}.md`, 404);
+  assert((await rpc('tools/call', { name: 'read_doc', arguments: { url: `/${prefix}` } })).isError);
+}
+for (const product of ['character-dna', 'character-control-rig', 'character-assembly', 'ph-motion']) {
+  if (visible(`/blender-addons/${product}`)) continue;
+  assert(!versions.products[product], `Hidden product leaked into version catalog: ${product}`);
+  await get(`/docs-assets/${product}/${'c'.repeat(64)}/visibility-fixture.svg`, 404);
+  await get(`/api/docs?product=${product}&version=latest`, 400);
+  for (const version of ['latest', 'next', '0.15.0', '0.14.0']) {
+    await get(`/blender-addons/${product}/${version}`, 404);
+    await get(`/blender-addons/${product}/${version}.md`, 404);
+    assert((await rpc('tools/call', { name: 'read_doc', arguments: { url: `/blender-addons/${product}/${version}` } })).isError);
+  }
+  const listed = await rpc('tools/call', { name: 'list_versions', arguments: { product } });
+  assert.deepEqual(JSON.parse(listed.content[0].text), []);
+  assert((await rpc('tools/call', { name: 'search_docs', arguments: { product, query: 'install' } })).isError);
+}
+if (!visible('/blender-addons/ph-motion')) {
+  await get('/ph-motion-addon/index', 404);
+  await get('/ph-motion/index', 404);
+}
+for (const [route, query] of [['/cli', 'Poly Hammer CLI'], ['/blender-addons/ph-motion', 'Poly Hammer Motion']]) {
+  if (visible(route)) continue;
+  assert(!full.includes(query), `Hidden product name leaked into Markdown: ${query}`);
+  const found = await (await get(`/api/search?query=${encodeURIComponent(query)}`)).json();
+  assert(found.every(result => !result.url.startsWith(route)), `Search exposes hidden documentation: ${route}`);
+}
 assert.match(full, /Canonical URL:/);
 assert(!index.includes('/plans/'), 'Internal plans must not enter the agent index');
 assert(!full.includes('/plans/'), 'Internal plans must not enter the Markdown bundle');
@@ -59,9 +107,8 @@ assert(!(await (await get('/api/search?query=internalplanfixture')).json()).leng
 assert(!full.includes('unpublishedfeaturefixture'));
 assert(!(await (await get('/api/search?query=unpublishedfeaturefixture')).json()).length);
 if (process.env.DOCS_SITE_URL) assert(index.includes(new URL(process.env.DOCS_SITE_URL).origin));
-assert.match(await (await get('/agents.md')).text(), /Streamable HTTP/);
+if (visible('/agents')) assert.match(await (await get('/agents.md')).text(), /Streamable HTTP/);
 assert((await (await get('/api/search?query=Poly%20Hammer')).json()).length > 0);
-await rpc('initialize', { protocolVersion: '2025-11-25', capabilities: {}, clientInfo: { name: 'polyhammer-docs-smoke', version: '1.0' } });
 const tools = await rpc('tools/list', {});
 assert.deepEqual(tools.tools.map(tool => tool.name).sort(), ['list_docs', 'list_versions', 'read_doc', 'search_docs']);
 assert(!(await rpc('tools/call', { name: 'list_versions', arguments: {} })).isError);

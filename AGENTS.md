@@ -7,6 +7,7 @@ Use **Poly Hammer** (two words, capital P and H) in all visible text and metadat
 ## Content ownership
 
 - Author Portal, Unreal plugin, CLI, and shared pages in `content/authored/`.
+- `content/published/` is the generated, visibility-filtered copy of central content. Never author there. `DOCS_HIDDEN_PATHS` is a JSON array of route prefixes; the pipeline pins each channel's visibility policy before building. Production defaults exclude CLI and Motion; do not reintroduce hidden products through cards, metadata, search, Markdown, MCP, redirects, or media.
 - Blender add-on documentation is owned by each add-on repository's `docs/` folder. Change its source repository, not generated `content/synced/` or `public/docs-assets/`.
 - Keep internal plans outside `docs/`. Directories named `plans` are excluded from collection and publication, including historical snapshots and local previews.
 - Use **Blender Addons** for the section name. Major navigation icons inherit text color to work in both themes; mark decorative icons as hidden from assistive technology.

@@ -8,7 +8,7 @@ import { Analytics } from '@/components/analytics';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl), title: { default: siteName, template: '%s | Poly Hammer' },
-  description: 'Versioned documentation for Poly Hammer Blender Addons, Unreal plugins, Portal, and CLI.',
+  description: 'Versioned documentation for Poly Hammer tools and workflows.',
   robots: { index: isProduction, follow: true }, icons: { icon: '/assets/favicon.ico' },
 };
 export default function Layout({ children }: { children: ReactNode }) {

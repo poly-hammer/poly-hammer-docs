@@ -23,6 +23,9 @@ on:
 env:
   DOCS_ARCHIVE_REPO: ${{ github.repository_owner }}/${{ vars.DOCS_ARCHIVE_REPO_NAME }}
   DOCS_CHANNEL: ${{ inputs.channel }}
+  # Non-secret repository variables; JSON [] explicitly publishes all registered paths.
+  DOCS_PRODUCTION_HIDDEN_PATHS: ${{ vars.DOCS_PRODUCTION_HIDDEN_PATHS }}
+  DOCS_STAGING_HIDDEN_PATHS: ${{ vars.DOCS_STAGING_HIDDEN_PATHS }}
   DOCS_SITE_URL: ${{ inputs.channel == 'production' && vars.DOCS_PRODUCTION_URL || vars.DOCS_STAGING_URL }}
   NEXT_PUBLIC_GA_ID: ${{ inputs.channel == 'production' && vars.DOCS_GA_ID || '' }}
   VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { HiddenPathsSchema } from './visibility';
 
 export const versionPattern = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
 export const shaPattern = /^[a-f0-9]{40}$/;
@@ -25,6 +26,7 @@ export const CatalogSchema = z.object({
   channel: z.enum(['local', 'staging', 'production']),
   siteCommit: z.string().regex(shaPattern),
   generation: z.number().int().nonnegative(),
+  hiddenPaths: HiddenPathsSchema.optional(),
   products: z.record(z.string().regex(/^[a-z0-9-]+$/), ProductSchema),
 }).strict().superRefine((catalog, ctx) => {
   if (catalog.channel === 'production' && Object.values(catalog.products).some(p => p.next)) ctx.addIssue({ code: 'custom', message: 'Production cannot contain unreleased snapshots' });

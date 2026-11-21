@@ -16,6 +16,7 @@ node_modules/
 .vercel/
 *.tsbuildinfo
 content/synced/
+content/published/
 public/docs-assets/
 .docs-build/
 docs.local.json

@@ -13,6 +13,7 @@ for (const product of ['character-dna', 'character-control-rig', 'character-asse
     if (version === 'next') Object.assign(entry, { next: record }); else (entry.versions as Record<string, typeof record>)[version] = record;
     const directory = path.join('.docs-build/snapshots', product, version);
     fs.mkdirSync(directory, { recursive: true });
+    fs.writeFileSync(path.join(directory, 'visibility-fixture.svg'), '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><path d="M0 0h1v1H0z"/></svg>');
     // Simulate an older snapshot that accidentally included internal planning material.
     const plans = path.join(directory, 'plans');
     fs.mkdirSync(plans, { recursive: true });

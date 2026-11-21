@@ -3,6 +3,8 @@ import type { ReactNode } from 'react';
 import { SectionIcon } from '@/components/section-icon';
 import { HeaderPolygons } from '@/components/header-polygons';
 import { source } from '@/lib/source';
+import { hiddenPaths } from '@/lib/site';
+import { isPathVisible } from '@/lib/visibility';
 
 export default function Layout({ children }: { children: ReactNode }) {
   return <DocsLayout tree={source.getPageTree()} tabs={{
@@ -13,7 +15,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   }} nav={{ title: <><img src="/assets/poly-hammer-icon.svg" alt="" width={24} height={24} className="dark:hidden" /><img src="/assets/poly-hammer-icon-light.svg" alt="" width={24} height={24} className="hidden dark:block" /> Poly Hammer</> }} links={[
     { text: 'Blender Addons', url: '/blender-addons', icon: <SectionIcon name="blender" /> }, { text: 'Unreal Plugins', url: '/unreal-plugins', icon: <SectionIcon name="unreal" /> },
     { text: 'Portal', url: '/portal', icon: <SectionIcon name="portal" /> }, { text: 'CLI', url: '/cli', icon: <SectionIcon name="cli" /> }, { text: 'Agent Access', url: '/agents', icon: <SectionIcon name="agent" /> },
-  ]} sidebar={{ footer: <div className="flex flex-col gap-2">
+  ].filter(link => isPathVisible(link.url, hiddenPaths))} sidebar={{ footer: <div className="flex flex-col gap-2">
     <a href="https://polyhammer.com" className="mt-2 flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm font-medium text-fd-muted-foreground transition-colors hover:bg-fd-accent/50 hover:text-fd-accent-foreground focus-visible:outline-2 focus-visible:outline-fd-ring" aria-label="Main website — Poly Hammer">
       Main website
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg>
