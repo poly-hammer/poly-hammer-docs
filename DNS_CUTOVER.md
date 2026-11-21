@@ -21,8 +21,8 @@ Recheck the actual Route 53 record before editing and save its complete configur
 
 ## Finish the site before switching traffic
 
-1. Complete the production approval and historical backfill checks in [PRODUCTION_SETUP.md](PRODUCTION_SETUP.md). Keep CLI and Motion hidden. Confirm the final site SHA, release catalog, media, legacy redirects, search, Markdown, MCP, and the production version dropdown.
-2. As part of the approved launch preparation, open [the production project's Domains settings](https://vercel.com/poly-hammers-projects/polyhammer-docs-production/settings/domains), add **docs.polyhammer.com** to its production environment, and copy the exact DNS target Vercel displays. Adding the project domain does not change Route 53 records. If Vercel requests ownership verification, follow its specific TXT instructions yourself before continuing; do not remove the existing traffic-routing A record yet.
+1. Complete the production approval and initial release checks in [PRODUCTION_SETUP.md](PRODUCTION_SETUP.md). Keep CLI and Motion hidden. Confirm the final site SHA, release catalog, media, legacy redirects, search, Markdown, MCP, and the production version dropdown.
+2. Open [the production project's Domains settings](https://vercel.com/poly-hammers-projects/polyhammer-docs-production/settings/domains) and select **docs.polyhammer.com**. It is already attached and ownership-verified for the approved review deployment. Confirm the exact DNS target Vercel displays. Adding the project domain did not change Route 53 records. If Vercel requests new ownership verification, follow its specific TXT instructions yourself before continuing; do not remove the existing traffic-routing A record yet.
 3. Confirm these GitHub Actions **repository variables**:
 
    | Variable | Value before cutover |
@@ -34,7 +34,7 @@ Recheck the actual Route 53 record before editing and save its complete configur
 4. After reviewing the final production build, change **only this production project's** Deployment Protection to **Standard Protection**, which permits custom-domain visitors and keeps deployment URLs protected. Keep staging protected. Confirm the protected Vercel hostname still works for authorized review. The public domain must permit anonymous human readers and MCP clients at launch. [Vercel protection modes](https://vercel.com/docs/deployment-protection/methods-to-protect-deployments/vercel-authentication)
 5. Save the tested deployment ID/URL and successful workflow run. Keep the old GitHub Pages deployment and custom-domain association intact for rollback. Verify the `docs` TTL remains 300; if lowering it from a larger value, wait out the old TTL before switching traffic.
 
-Vercel supplies a project-specific CNAME target for a subdomain. **Copy the target shown for this project; do not guess a shared Vercel hostname or use the staging project's target.** The target is intentionally not filled in here because the live custom domain has not been attached. [Vercel custom-domain configuration](https://vercel.com/docs/domains/working-with-domains/add-a-domain)
+Vercel's API returned **`9278c7d5103146f3.vercel-dns-016.com.`** as this production project's preferred CNAME target on November 21, 2026. Reconfirm that value in Domains settings immediately before cutover in case Vercel changes its recommendation. Use the project-specific target, not the staging project's target. [Vercel custom-domain configuration](https://vercel.com/docs/domains/working-with-domains/add-a-domain)
 
 ## Switch DNS yourself
 
@@ -46,7 +46,7 @@ Vercel supplies a project-specific CNAME target for a subdomain. **Copy the targ
    | Record name | `docs` |
    | Type | `CNAME` |
    | Alias toggle | Off |
-   | Value | Exact production-project CNAME target copied from Vercel |
+   | Value | `9278c7d5103146f3.vercel-dns-016.com.` (reconfirm in Vercel before saving) |
    | TTL | `300` |
    | Routing policy | Simple, unless the existing zone deliberately uses another policy |
 
@@ -73,4 +73,4 @@ After propagation and the agreed rollback window, open [GitHub Pages settings](h
 
 If the new public site fails, set `DOCS_PRODUCTION_ENABLED=false` to stop further publication. Ensure GitHub Pages is still published and has `docs.polyhammer.com` configured; restore that association first if it was removed. Replace the new Route 53 CNAME with the exact saved A record (and any other saved record that was intentionally removed), initially using its saved TTL. The observed original A values are listed above. Verify DNS, HTTPS, and the old site while caches refresh. Preserve the Vercel deployment and its logs for investigation.
 
-No DNS mutation, project-domain attachment, GitHub Pages domain removal, or production deployment was performed while preparing this checklist.
+The custom domain is attached to the production Vercel project for the separately approved review deployment. DNS and GitHub Pages remain unchanged; only the owner performs this final traffic cutover.

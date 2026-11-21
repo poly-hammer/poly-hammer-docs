@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { waitForDocs } from './wait-for-docs.mjs';
 import visibilityDefaults from '../docs-visibility.json' with { type: 'json' };
 
 const base = process.env.DOCS_TEST_URL ?? 'http://localhost:3005';
@@ -17,6 +18,9 @@ async function rpc(method, params) {
   const message = JSON.parse(text.startsWith('event:') || text.startsWith('data:') ? text.split('\n').find(line => line.startsWith('data:')).slice(5) : text);
   assert(!message.error, `MCP ${method}: ${JSON.stringify(message.error)}`);
   return message.result;
+}
+if (process.env.DOCS_WAIT_FOR_READY === 'true') {
+  await waitForDocs(new URL('/api/versions', base), headers);
 }
 const versions = await (await get('/api/versions')).json();
 await rpc('initialize', { protocolVersion: '2025-11-25', capabilities: {}, clientInfo: { name: 'polyhammer-docs-smoke', version: '1.0' } });
