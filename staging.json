@@ -1,6 +1,6 @@
 {
   "channel": "staging",
-  "generation": 19,
+  "generation": 20,
   "hiddenPaths": [],
   "products": {
     "character-assembly": {
@@ -49,5 +49,5 @@
     }
   },
   "schemaVersion": 1,
-  "siteCommit": "b6f055f793ccff1833d091722119a598d6166b80"
+  "siteCommit": "90dce4674340aafe780d09a213829add40efe14f"
 }
