@@ -9,9 +9,9 @@ import { visit } from 'unist-util-visit';
 import { compile } from '@mdx-js/mdx';
 
 function walk(directory: string): string[] { return fs.existsSync(directory) ? fs.readdirSync(directory, { withFileTypes: true }).flatMap(entry => entry.isDirectory() ? walk(path.join(directory, entry.name)) : [path.join(directory, entry.name)]) : []; }
-const files = ['content/authored', 'content/synced'].flatMap(walk).filter(file => /\.mdx?$/.test(file));
-const routes = new Set(files.map(file => '/' + file.replaceAll('\\', '/').replace(/^content\/(?:authored|synced)\//, '').replace(/\.mdx?$/, '').replace(/(?:^|\/)index$/, '')).map(route => route === '' ? '/' : route));
-const catalog = JSON.parse(fs.readFileSync('.docs-build/catalog.json', 'utf8'));
+const files = ['content/published', 'content/synced'].flatMap(walk).filter(file => /\.mdx?$/.test(file));
+const routes = new Set(files.map(file => '/' + file.replaceAll('\\', '/').replace(/^content\/(?:published|synced)\//, '').replace(/\.mdx?$/, '').replace(/(?:^|\/)index$/, '')).map(route => route === '' ? '/' : route));
+const catalog = JSON.parse(fs.readFileSync('.docs-build/published-catalog.json', 'utf8'));
 const fixture = Object.values(catalog.products).some((product: any) => Object.values(product.versions).some((record: any) => record.archive === 'test-only'));
 const errors: string[] = [];
 const allowed = new Set(['Callout', 'DocVideo', 'DocImage', 'YouTubeEmbed', 'Cards', 'Card', 'div', 'br', 'kbd', 'a', 'span', 'sup', 'sub', 'mark']);

@@ -42,6 +42,7 @@ GitHub does not provide a docs-directory-only repository token. The collector tr
 | --- | --- | --- |
 | Docs repository variable | `DOCS_PIPELINE_ENABLED` | `true` after setup and bootstrap planning |
 | Docs repository variable | `DOCS_PRODUCTION_ENABLED` | Keep `false` during staging setup; enable only after production resources and historical backfill are ready |
+| Docs repository variables | `DOCS_PRODUCTION_HIDDEN_PATHS`, `DOCS_STAGING_HIDDEN_PATHS` | JSON arrays of relative route prefixes. Production defaults to `["cli", "blender-addons/ph-motion"]`; staging defaults to `[]`. Explicit `[]` enables all registered content. See README for rebuilding after changes. |
 | Docs repository variable | `DOCS_ARCHIVE_REPO_NAME` | `poly-hammer-docs-snapshots` |
 | Docs repository secret | `GH_PAT` | Source reads and snapshot archive writes; name verified |
 | Each add-on repository secret | `GH_PAT` | Existing PAT with dispatch access to `poly-hammer-docs`; all four names verified |

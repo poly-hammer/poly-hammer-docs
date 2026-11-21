@@ -12,7 +12,8 @@ export default createMDX()({
   },
   async rewrites() { return { beforeFiles: [{ source: '/:path*.md', destination: '/markdown/:path*' }], afterFiles: [], fallback: [] }; },
   async redirects() {
-    const catalog = fs.existsSync('.docs-build/catalog.json') ? JSON.parse(fs.readFileSync('.docs-build/catalog.json', 'utf8')) : { products: {} };
+    const catalog = fs.existsSync('.docs-build/published-catalog.json') ? JSON.parse(fs.readFileSync('.docs-build/published-catalog.json', 'utf8')) : { products: {} };
+    const hidden = fs.existsSync('.docs-build/site.json') ? JSON.parse(fs.readFileSync('.docs-build/site.json', 'utf8')).hiddenPaths ?? [] : [];
     const versions = Object.entries(catalog.products).flatMap(([product, entry]) => {
       const version = entry.latest ?? (entry.next ? 'next' : null);
       return version ? [
@@ -29,6 +30,6 @@ export default createMDX()({
       { source: '/poly-hammer-interchange/:path*', destination: '/unreal-plugins/poly-hammer-interchange/:path*', permanent: true },
       { source: '/ph-motion-addon/:path*', destination: '/blender-addons/ph-motion/latest/:path*', permanent: true },
       { source: '/ph-motion/:path*', destination: '/blender-addons/ph-motion/latest/:path*', permanent: true },
-    ];
+    ].filter(({ destination }) => !hidden.some(path => destination === `/${path}` || destination.startsWith(`/${path}/`)));
   },
 });

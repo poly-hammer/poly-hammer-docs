@@ -55,6 +55,20 @@ CI uses synthetic two-version fixtures for untrusted pull requests and never gra
 
 ## CI/CD
 
+### Hide unreleased documentation
+
+Production defaults in `docs-visibility.json` hide `cli` and `blender-addons/ph-motion`. Staging and local previews show both. Hidden paths are omitted from compiled content, navigation/cards, routes, redirects, search, Markdown, MCP, and the sitemap; hidden addon media is not copied into the public build. Source Markdown and immutable release archives are retained.
+
+Set the docs repository's **Actions variable** `DOCS_PRODUCTION_HIDDEN_PATHS` (or `DOCS_STAGING_HIDDEN_PATHS`) to a JSON array of relative route prefixes, for example:
+
+```json
+["cli", "blender-addons/ph-motion"]
+```
+
+Use `[]` explicitly to show everything registered; an unset/empty variable uses `docs-visibility.json`. You can hide a whole section (`unreal-plugins`) or a product folder (`unreal-plugins/poly-hammer-interchange`). No leading slash, wildcard, or URL is allowed. For a local build, use the environment variable `DOCS_HIDDEN_PATHS` with the same JSON value before `npm run docs:prepare`.
+
+Run **Publish documentation → sync** for the chosen channel after changing a variable. The policy is pinned in the catalog, so a visibility-only change triggers a rebuild and failed builds are retried. It takes effect only after that build passes and is deployed. Do not set this only in Vercel: CI produces the tested artifact before upload. Production remains disabled until explicitly enabled; its first deployment must use a reviewed site commit containing this feature.
+
 Add-on main pushes notify staging; stable published releases notify production. An hourly reconciliation repairs missed notifications and retries failed publications. Python reads GitHub directory trees and downloads approved docs/media blobs only. A dedicated archive repository holds immutable content-addressed bundles; `docs-state` holds durable catalogs and deployment records. Production retains its approved site commit until explicit promotion, so releasing an add-on cannot publish unrelated central edits.
 
 The docs repository uses its `GH_PAT` repository secret for source reads and archive writes. Each add-on reuses its existing `GH_PAT` repository secret, passing it to the notifier's `GH_PAT` input. No additional add-on secret is needed. Fine-grained PATs with the documented repository permissions or classic PATs with `repo` scope are supported. See [STAGING_SETUP.md](STAGING_SETUP.md) for access requirements and verification status. Build jobs never receive these tokens.

@@ -5,6 +5,8 @@ import { execFileSync } from 'node:child_process';
 import YAML from 'yaml';
 import { normalizeLegacy, sourceTarget } from '../lib/legacy.js';
 import { CatalogSchema, compareVersions, type Catalog, type Snapshot } from '../lib/catalog.js';
+import { HiddenPathsSchema, isPathVisible, visibleContent, visibleMeta } from '../lib/visibility.js';
+import visibilityDefaults from '../docs-visibility.json';
 
 const root = process.cwd();
 const registry = JSON.parse(fs.readFileSync('docs-sources.json', 'utf8')) as { sources: Source[] };
@@ -14,7 +16,7 @@ function sha(directory: string): string { return execFileSync('git', ['-c', `saf
 function write(file: string, value: string) { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, value); }
 function selected(source: Source, file: string) { return !source.exclude?.includes(file) && (source.include.includes('**') || source.include.includes(file)); }
 function slug(relative: string, source: Source): string { const value = relative.replace(/\.mdx?$/, '').replace(/(?:^|\/)index$/, ''); return value === source.entry ? '' : value; }
-const previousGenerated = ['content/synced', 'public/docs-assets'];
+const previousGenerated = ['content/synced', 'content/published', 'public/docs-assets'];
 for (const relative of previousGenerated) {
   const destination = path.resolve(root, relative);
   if (!destination.startsWith(root + path.sep)) throw new Error('Generated directory escaped workspace');
@@ -51,6 +53,31 @@ if (local) {
   }
 }
 catalog = CatalogSchema.parse(catalog);
+// CI publishes the collector's pinned policy. Local/fixture builds may select it directly.
+const configuredHidden = process.env.DOCS_HIDDEN_PATHS?.trim();
+const hiddenPaths = HiddenPathsSchema.parse(catalog.hiddenPaths ?? (configuredHidden ? JSON.parse(configuredHidden) : visibilityDefaults[catalog.channel]));
+const authoredFiles = walk('content/authored');
+const knownPaths = [...registry.sources.map(source => source.mount), ...authoredFiles.filter(file => /\.mdx?$/.test(file)).map(file => path.relative('content/authored', file).replaceAll('\\', '/').replace(/\.mdx?$/, '').replace(/(?:^|\/)index$/, ''))];
+for (const hidden of hiddenPaths) if (!knownPaths.some(route => route === hidden || route.startsWith(hidden + '/'))) throw new Error(`Unknown hidden documentation path: ${hidden}`);
+if (catalog.hiddenPaths && configuredHidden && JSON.stringify(hiddenPaths) !== JSON.stringify(HiddenPathsSchema.parse(JSON.parse(configuredHidden)))) throw new Error('Visibility differs from the collected catalog; reconcile before building');
+const publicCatalog: Catalog = { ...catalog, products: Object.fromEntries(Object.entries(catalog.products).filter(([id]) => {
+  const source = registry.sources.find(source => source.id === id);
+  return source && isPathVisible(source.mount, hiddenPaths);
+})) };
+delete publicCatalog.hiddenPaths;
+// Compile only publishable authored files; originals remain available in the repository.
+for (const file of authoredFiles) {
+  const relative = path.relative('content/authored', file).replaceAll('\\', '/');
+  const route = relative.replace(/\.(?:mdx?|json)$/, '').replace(/(?:^|\/)meta$/, '');
+  if (!isPathVisible(route, hiddenPaths)) continue;
+  let value = fs.readFileSync(file, 'utf8');
+  if (relative.endsWith('meta.json')) value = JSON.stringify(visibleMeta(JSON.parse(value), path.posix.dirname(relative) === '.' ? '' : path.posix.dirname(relative), hiddenPaths), null, 2);
+  else if (/\.mdx?$/.test(relative)) {
+    const frontmatter = value.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n/)?.[0] ?? '';
+    value = frontmatter + visibleContent(value.slice(frontmatter.length), hiddenPaths);
+  }
+  write(path.join('content/published', relative), value);
+}
 const oldPrefixes = Object.fromEntries(registry.sources.map(s => [`/${s.repository.split('/')[1]}`, `/${s.mount}`]));
 function externalLink(target: string): string {
   let value = target.replace(/^https:\/\/docs\.polyhammer\.com(?=\/)/, '');
@@ -60,7 +87,7 @@ function externalLink(target: string): string {
 let count = 0;
 const assetRedirects: { source: string; destination: string; permanent: false }[] = [];
 for (const source of registry.sources) {
-  const product = catalog.products[source.id];
+  const product = publicCatalog.products[source.id];
   if (!product) continue;
   const versions = [...Object.keys(product.versions).sort((a, b) => compareVersions(b, a)), ...(product.next ? ['next'] : [])];
   const productFolder = path.join('content/synced', source.mount);
@@ -70,7 +97,7 @@ for (const source of registry.sources) {
     const record: Snapshot = version === 'next' ? product.next! : product.versions[version];
     if (!fs.existsSync(directory)) throw new Error(`Missing snapshot ${source.id}/${version}`);
     const all = walk(directory);
-    const pages = all.filter(file => /\.mdx?$/.test(file) && selected(source, path.relative(directory, file).replaceAll('\\', '/')));
+    const pages = all.filter(file => /\.mdx?$/.test(file) && selected(source, path.relative(directory, file).replaceAll('\\', '/')) && isPathVisible(`${source.mount}/${version}/${slug(path.relative(directory, file).replaceAll('\\', '/'), source)}`, hiddenPaths));
     const pageSet = new Set(pages.map(file => path.relative(directory, file).replaceAll('\\', '/')));
     if (!pages.length) throw new Error(`Empty product documentation ${source.id}`);
     const assetBase = `/docs-assets/${source.id}/${record.digest}`;
@@ -108,14 +135,14 @@ for (const source of registry.sources) {
       // Authored frontmatter takes precedence over summaries for legacy snapshots.
       const description = parsed.metadata.description == null ? source.legacyDescriptions?.[relative] ?? parsed.description : parsed.description;
       const metadata = { ...parsed.metadata, title: parsed.title, description, product: source.id, version, channel: catalog.channel, sourceCommit: record.commit, updatedAt: record.publishedAt };
-      write(path.join(productFolder, version, relative.replace(/\.mdx?$/, '') === source.entry ? 'index.mdx' : relative.replace(/\.md$/, '.mdx')), `---\n${YAML.stringify(metadata)}---\n\n${body}`);
+      write(path.join(productFolder, version, relative.replace(/\.mdx?$/, '') === source.entry ? 'index.mdx' : relative.replace(/\.md$/, '.mdx')), `---\n${YAML.stringify(metadata)}---\n\n${visibleContent(body, hiddenPaths)}`);
       count++;
     }
     for (const file of all.filter(file => path.basename(file) === 'meta.json')) {
       const relative = path.relative(directory, file);
       const metadata = JSON.parse(fs.readFileSync(file, 'utf8'));
       if (source.entry) continue;
-      write(path.join(productFolder, version, relative), JSON.stringify(metadata, null, 2));
+      write(path.join(productFolder, version, relative), JSON.stringify(visibleMeta(metadata, `${source.mount}/${version}/${path.dirname(relative).replaceAll('\\', '/')}`.replace(/\/\.$/, ''), hiddenPaths), null, 2));
     }
     const metaFile = path.join(productFolder, version, 'meta.json');
     const existing = fs.existsSync(metaFile) ? JSON.parse(fs.readFileSync(metaFile, 'utf8')) : {};
@@ -123,9 +150,10 @@ for (const source of registry.sources) {
   }
 }
 write('.docs-build/catalog.json', JSON.stringify(catalog, null, 2) + '\n');
+write('.docs-build/published-catalog.json', JSON.stringify(publicCatalog, null, 2) + '\n');
 write('.docs-build/legacy-assets.json', JSON.stringify(assetRedirects, null, 2) + '\n');
 const siteUrl = new URL(process.env.DOCS_SITE_URL ?? 'http://localhost:3000');
 if (!['http:', 'https:'].includes(siteUrl.protocol) || siteUrl.username || siteUrl.password || siteUrl.pathname !== '/' || siteUrl.search || siteUrl.hash) throw new Error('DOCS_SITE_URL must be an HTTP(S) origin');
 if (catalog.channel === 'production' && siteUrl.protocol !== 'https:' && siteUrl.hostname !== 'localhost') throw new Error('Production requires an HTTPS origin');
-write('.docs-build/site.json', JSON.stringify({ channel: catalog.channel, siteUrl: siteUrl.origin }, null, 2) + '\n');
-console.log(`Prepared ${count} versioned pages for ${catalog.channel}; ${Object.keys(catalog.products).length} products.`);
+write('.docs-build/site.json', JSON.stringify({ channel: catalog.channel, siteUrl: siteUrl.origin, hiddenPaths }, null, 2) + '\n');
+console.log(`Prepared ${count} versioned pages for ${catalog.channel}; ${Object.keys(publicCatalog.products).length} visible products.`);

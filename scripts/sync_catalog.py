@@ -17,6 +17,7 @@ from pathlib import Path
 import urllib.parse
 
 from docs_pipeline import APIError, GitHub, SHA, add_release, archive_snapshot, fetch_docs, materialize, resolve_commit, stable_version
+from visibility import hidden_paths, set_visibility, visible
 
 
 def encoded(value):
@@ -130,9 +131,11 @@ def reconcile_production(catalog, sources, exclusions, reader, archiver, archive
     return catalog
 
 
-def reconcile_staging(previous, production, sources, reader, archiver, archive_repo, site_commit):
+def reconcile_staging(previous, production, sources, reader, archiver, archive_repo, site_commit, hidden=None):
     result = copy.deepcopy(production)
     result.update(channel="staging", siteCommit=site_commit, generation=previous["generation"])
+    if hidden is not None:
+        result["hiddenPaths"] = hidden
     for source in sources:
         commit = resolve_commit(reader, source["repository"], source["branch"])
         old = previous["products"].get(source["id"], {}).get("next")
@@ -164,6 +167,8 @@ def main():
         return
     reader, archiver = GitHub(os.environ["DOCS_READER_TOKEN"]), GitHub(os.environ["DOCS_ARCHIVE_TOKEN"])
     sources = json.loads(Path("docs-sources.json").read_text())["sources"]
+    hidden = hidden_paths(args.channel, os.environ.get("DOCS_HIDDEN_PATHS") or os.environ.get(f"DOCS_{args.channel.upper()}_HIDDEN_PATHS"))
+    visible_sources = [source for source in sources if visible(source["mount"], hidden)]
     exclusions = json.loads(Path("docs-release-exclusions.json").read_text())
     if any(not reason.strip() for reason in exclusions.values()):
         raise ValueError("Historical exclusions require a reviewed explanation")
@@ -183,14 +188,15 @@ def main():
         state.write({"production.json": production, "staging.json": staging}, "Initialize documentation catalogs")
     previous = state.read(f"{args.channel}.json")
     if args.channel == "production":
-        catalog = reconcile_production(copy.deepcopy(production), sources, exclusions, reader, archiver, archive_repo)
+        catalog = reconcile_production(copy.deepcopy(production), visible_sources, exclusions, reader, archiver, archive_repo)
+        set_visibility(catalog, hidden)
         if args.site_commit:
             commit = verify_site_commit(state.api, repository, args.site_commit)
             if commit != catalog["siteCommit"]:
                 catalog["siteCommit"] = commit
                 catalog["generation"] += 1
     else:
-        catalog = reconcile_staging(previous, production, sources, reader, archiver, archive_repo, resolve_commit(state.api, repository, "main"))
+        catalog = reconcile_staging(previous, production, sources, reader, archiver, archive_repo, resolve_commit(state.api, repository, "main"), hidden)
     if catalog != previous:
         state.write({f"{args.channel}.json": catalog}, f"Reconcile {args.channel} documentation {catalog['generation']}")
     deployment = state.read(f"{args.channel}-deployment.json")
@@ -198,7 +204,9 @@ def main():
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output / "catalog.json").write_bytes(encoded(catalog))
     if changed:
-        materialize(archiver, archive_repo, catalog, args.output)
+        # Keep the complete immutable journal; send only visible products to the build.
+        selected = {source["id"] for source in visible_sources}
+        materialize(archiver, archive_repo, {**catalog, "products": {key: value for key, value in catalog["products"].items() if key in selected}}, args.output)
     if os.environ.get("GITHUB_OUTPUT"):
         with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
             output.write(f"changed={str(changed).lower()}\nsite_commit={catalog['siteCommit']}\ngeneration={catalog['generation']}\n")

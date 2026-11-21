@@ -11,7 +11,7 @@ const schema = pageSchema.extend({
 });
 
 export const authored = defineDocs({
-  dir: 'content/authored',
+  dir: 'content/published',
   docs: { schema, postprocess: { includeProcessedMarkdown: true } },
 });
 export const synced = defineDocs({
