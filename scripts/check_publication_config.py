@@ -29,6 +29,9 @@ def validate(env):
     host = origin(url)
     if project != env.get("VERCEL_PROJECT_ID") or url != env.get("DOCS_SITE_URL"):
         raise ValueError("Resolved publication settings do not match the selected channel")
+    verification = env.get("DOCS_VERIFY_URL", "")
+    if verification and (channel != "production" or not origin(verification).endswith(".vercel.app")):
+        raise ValueError("A pre-cutover verification URL must be a production Vercel hostname")
     if channel == "production":
         if env.get("DOCS_PRODUCTION_ENABLED") != "true":
             raise ValueError("Production is disabled; explicit approval is required before enabling it")
@@ -38,6 +41,10 @@ def validate(env):
             raise ValueError("Configure VERCEL_STAGING_PROJECT_ID for channel isolation")
         if project == staging_project or host == staging_host:
             raise ValueError("Production and staging must use separate projects and hostnames")
+        if verification and origin(verification) == staging_host:
+            raise ValueError("Production verification cannot target staging")
+        if verification and origin(verification) == staging_host:
+            raise ValueError("Production verification cannot target staging")
 
 
 if __name__ == "__main__":

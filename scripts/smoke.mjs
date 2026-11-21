@@ -25,6 +25,12 @@ const build = fs.existsSync('.docs-build/site.json') ? JSON.parse(fs.readFileSyn
 const hiddenPaths = inputs.hiddenPaths ?? build.hiddenPaths ?? (process.env.DOCS_HIDDEN_PATHS ? JSON.parse(process.env.DOCS_HIDDEN_PATHS) : visibilityDefaults[versions.channel]);
 const visible = route => !hiddenPaths.some(prefix => route === `/${prefix}` || route.startsWith(`/${prefix}/`));
 const home = await (await get('/')).text();
+if (build.siteUrl) {
+  const canonical = home.match(/<link\b[^>]*\brel="canonical"[^>]*>/)?.[0].match(/\bhref="([^"]+)"/)?.[1];
+  assert(canonical, 'Missing homepage canonical URL');
+  assert.equal(new URL(canonical).origin, new URL(build.siteUrl).origin,
+    'The tested hostname must serve the intended canonical origin, including before DNS cutover');
+}
 const initialDnaVersion = versions.products['character-dna']?.latest ?? (versions.products['character-dna']?.unreleased ? 'next' : null);
 const buttonLabels = html => [...html.matchAll(/<button\b[^>]*>([\s\S]*?)<\/button>/g)].map(match => match[1].replace(/<[^>]*>/g, ''));
 for (const route of ['/blender-addons', '/unreal-plugins', '/portal', '/cli', '/agents']) {

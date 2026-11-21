@@ -36,6 +36,18 @@ class PublicationConfigTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     validate(env)
 
+    def test_pre_cutover_verification_keeps_the_canonical_origin(self):
+        env = {**self.settings(), "DOCS_VERIFY_URL": "https://production.vercel.app"}
+        validate(env)
+        self.assertEqual(env["DOCS_SITE_URL"], "https://docs.example.com")
+        for url in ["https://external.example.com", "http://production.vercel.app", "https://production.vercel.app/path"]:
+            with self.subTest(url=url), self.assertRaises(ValueError):
+                validate({**env, "DOCS_VERIFY_URL": url})
+        with self.assertRaises(ValueError):
+            validate({**self.settings("staging"), "DOCS_VERIFY_URL": "https://production.vercel.app"})
+        with self.assertRaisesRegex(ValueError, "cannot target staging"):
+            validate({**env, "DOCS_STAGING_URL": "https://staging.vercel.app", "DOCS_VERIFY_URL": "https://staging.vercel.app"})
+
     def test_shared_project_or_hostname_is_rejected(self):
         for setting, resolved, staging in [
             ("VERCEL_PRODUCTION_PROJECT_ID", "VERCEL_PROJECT_ID", "VERCEL_STAGING_PROJECT_ID"),
