@@ -1,15 +1,15 @@
 {
   "channel": "staging",
-  "generation": 20,
+  "generation": 21,
   "hiddenPaths": [],
   "products": {
     "character-assembly": {
       "latest": null,
       "next": {
         "archive": "poly-hammer/poly-hammer-docs-snapshots:775574693",
-        "commit": "53d2d2f67af04381ef411bc1b273d0241efa4240",
+        "commit": "d87da04962b36aa48df302d706fa045807534a82",
         "digest": "20394717e939172fa06f7afd81da4a3da899959e9d98df33f97239af33467f49",
-        "publishedAt": "2026-11-21T12:51:46.311204Z",
+        "publishedAt": "2026-11-21T13:09:09.050709Z",
         "revision": 1
       },
       "versions": {}
