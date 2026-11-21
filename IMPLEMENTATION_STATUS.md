@@ -2,7 +2,7 @@
 
 Current product scope: Character DNA, Character Control Rig, Character Assembly, and **Poly Hammer Motion**. Poly Hammer Generate is not planned for release and has been removed from registration, navigation, and exports. Visible branding is **Poly Hammer**. The sidebar uses **Home** and section headings without duplicate overview entries. The inventory and branch table below also record earlier migration work.
 
-Updated November 18, 2026 (America/Chicago). The protected Fumadocs staging site is deployed. Live collection verified the docs repository's `GH_PAT` for private-source reads and archive writes; Vercel deployment and protection-bypass credentials passed live smoke tests. All five repository secret names are `GH_PAT`. Source event-notifier permissions still need a real notification after their PRs merge. Production remains disabled.
+Updated November 21, 2026 (America/Chicago). DNA #384, Control Rig #56, Assembly #7, and Motion #10 are merged into their main branches. All four main-event notifiers succeeded with `GH_PAT`. Docs #91 adds per-channel visibility: production hides CLI and Motion; staging includes both. Sixteen TypeScript tests, seventeen Python tests, and all three documentation CI configurations passed. Addon runtime CI continues independently; the integrated documentation PRs do not change application code or versions relative to main. Production remains disabled.
 
 ## Branches and worktrees
 
@@ -18,7 +18,7 @@ All worktrees are under `E:\repos\poly-hammer-workflows\.worktrees\`. Original w
 | poly-hammer-workflows | `codex/fumadocs-notifications` | `docs-workflows` | `e013b6ffe4ccf1d562f51fc98bbde3f06b856a73` |
 | poly-hammer-utils | `codex/fumadocs-release-identity` | `docs-utils` | `2354d851722599b4b16ad414b764eb50ab3ff66e` |
 
-All branches are pushed. Utility PR #3, docs PR #76, and staging compatibility/artifact fixes #77/#78 are merged. The shared-workflows PR and four add-on documentation PRs remain open; [STAGING_SETUP.md](STAGING_SETUP.md) links them. The utility/workflow pins are available remotely. Merge without squashing or update callers to the reviewed resulting commits. Control Rig's new 0.5.0 main release was merged into its documentation branch, retaining its new authoring content and converting the added callout to MDX.
+The table records original migration commits. All four addon documentation PRs and docs PRs through #91 are now merged; [STAGING_SETUP.md](STAGING_SETUP.md) links them. Shared-workflows PR #5 remains separate, but its immutable notifier commit is available remotely and used successfully by all four addons. Current main addon code, versions, and release workflows were preserved during integration.
 
 ## Implemented
 
