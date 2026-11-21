@@ -1,15 +1,15 @@
 {
   "channel": "staging",
-  "generation": 18,
+  "generation": 19,
   "hiddenPaths": [],
   "products": {
     "character-assembly": {
       "latest": null,
       "next": {
-        "archive": "poly-hammer/poly-hammer-docs-snapshots:765127756",
-        "commit": "3f8125b83b5fcef176efd039f7ba6552308fc4f4",
-        "digest": "1c450e82941cfe200f13275e343bcbcec1d89cdb2ded24508f4a96abe11e53c1",
-        "publishedAt": "2026-11-18T21:47:07.477775Z",
+        "archive": "poly-hammer/poly-hammer-docs-snapshots:775574693",
+        "commit": "53d2d2f67af04381ef411bc1b273d0241efa4240",
+        "digest": "20394717e939172fa06f7afd81da4a3da899959e9d98df33f97239af33467f49",
+        "publishedAt": "2026-11-21T12:51:46.311204Z",
         "revision": 1
       },
       "versions": {}
@@ -17,10 +17,10 @@
     "character-control-rig": {
       "latest": null,
       "next": {
-        "archive": "poly-hammer/poly-hammer-docs-snapshots:765127460",
-        "commit": "bd557d6d7d6222effd11e3740111c2debb284802",
-        "digest": "4b767e1541fb2cb4b8a3dc2e0e52ccad8ab61a40ea1268e396be7e1a1913c567",
-        "publishedAt": "2026-11-18T21:46:57.602734Z",
+        "archive": "poly-hammer/poly-hammer-docs-snapshots:775574262",
+        "commit": "3da85b494e9468a17cd765231fcd260aa6bdfae0",
+        "digest": "3cafbb21566b05a6ab34359058f80bd795d78748abecf2773631524fedabcae3",
+        "publishedAt": "2026-11-21T12:51:30.509321Z",
         "revision": 1
       },
       "versions": {}
@@ -28,10 +28,10 @@
     "character-dna": {
       "latest": null,
       "next": {
-        "archive": "poly-hammer/poly-hammer-docs-snapshots:765126847",
-        "commit": "71125e9857db2b5a8ffa9426cc1f769d13017fd5",
-        "digest": "f4dd81f02bf2e2ab5e31c1c161da3697cd9688de5558c64c7591ee18e693e10e",
-        "publishedAt": "2026-11-18T21:46:19.487420Z",
+        "archive": "poly-hammer/poly-hammer-docs-snapshots:775573092",
+        "commit": "a52f2b6ecc4fe109c22a7983bc5ea082ca815ff7",
+        "digest": "1266b506df4569026b7751ea740d32b5ea2fabb12ae380687e89495ef772c326",
+        "publishedAt": "2026-11-21T12:50:28.226944Z",
         "revision": 1
       },
       "versions": {}
