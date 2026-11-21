@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "products": {
+    "character-dna": {
+      "tag": "0.15.1",
+      "releaseId": 448038280,
+      "releaseCommit": "71125e9857db2b5a8ffa9426cc1f769d13017fd5",
+      "docsCommit": "3533cd1260a9bd4b2806aaa4c64ead70766a1674",
+      "approvedAt": "2026-11-21T13:45:20Z",
+      "reason": "Owner-approved migration baseline: use current main documentation for the current stable release once; all subsequent releases use their tag snapshots."
+    },
+    "character-control-rig": {
+      "tag": "0.5.2",
+      "releaseId": 448841106,
+      "releaseCommit": "bd557d6d7d6222effd11e3740111c2debb284802",
+      "docsCommit": "3da85b494e9468a17cd765231fcd260aa6bdfae0",
+      "approvedAt": "2026-11-21T13:45:20Z",
+      "reason": "Owner-approved migration baseline: use current main documentation for the current stable release once; all subsequent releases use their tag snapshots."
+    },
+    "character-assembly": {
+      "tag": "0.4.3",
+      "releaseId": 425791776,
+      "releaseCommit": "7f33482b572edc96905957c6837b3a8f39d9699b",
+      "docsCommit": "d87da04962b36aa48df302d706fa045807534a82",
+      "approvedAt": "2026-11-21T13:45:20Z",
+      "reason": "Owner-approved migration baseline: use current main documentation for the current stable release once; all subsequent releases use their tag snapshots."
+    }
+  }
+}

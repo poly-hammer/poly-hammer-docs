@@ -9,7 +9,7 @@ const catalog: Catalog = { schemaVersion: 1, channel, siteCommit: execFileSync('
 for (const product of ['character-dna', 'character-control-rig', 'character-assembly', 'ph-motion']) {
   const entry = catalog.products[product] = { latest: '0.15.0', versions: {} };
   for (const version of ['0.15.0', '0.14.0', ...(channel === 'staging' ? ['next'] : [])]) {
-    const record = { commit: 'a'.repeat(40), digest: (version === '0.14.0' ? 'b' : 'c').repeat(64), archive: 'test-only', publishedAt: '2026-11-14T00:00:00Z', revision: 1, ...(version === 'next' ? {} : { releaseId: version === '0.14.0' ? 14 : 15, tag: version }) };
+    const record = { commit: 'a'.repeat(40), digest: (version === '0.14.0' ? 'b' : 'c').repeat(64), archive: 'test-only', publishedAt: '2026-11-14T00:00:00Z', revision: 1, ...(version === 'next' ? {} : { releaseId: version === '0.14.0' ? 14 : 15, tag: version }), ...(product === 'character-dna' && version === '0.15.0' ? { releaseCommit: 'd'.repeat(40), bootstrap: { kind: 'initial-main' as const, sourceBranch: 'main' as const, approvedAt: '2026-11-21T13:45:20Z', reason: 'Synthetic initial-main fixture; never deploy.' } } : {}) };
     if (version === 'next') Object.assign(entry, { next: record }); else (entry.versions as Record<string, typeof record>)[version] = record;
     const directory = path.join('.docs-build/snapshots', product, version);
     fs.mkdirSync(directory, { recursive: true });

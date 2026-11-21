@@ -11,9 +11,18 @@ export const SnapshotSchema = z.object({
   archive: z.string().min(1),
   releaseId: z.number().int().positive().optional(),
   tag: z.string().optional(),
+  releaseCommit: z.string().regex(shaPattern).optional(),
+  bootstrap: z.object({
+    kind: z.literal('initial-main'),
+    sourceBranch: z.literal('main'),
+    approvedAt: z.iso.datetime(),
+    reason: z.string().trim().min(1),
+  }).strict().optional(),
   publishedAt: z.iso.datetime(),
   revision: z.number().int().positive().default(1),
-}).strict();
+}).strict().superRefine((snapshot, ctx) => {
+  if (snapshot.bootstrap && (!snapshot.releaseCommit || !snapshot.releaseId || !snapshot.tag)) ctx.addIssue({ code: 'custom', message: 'Initial main snapshots require separate release provenance' });
+});
 export const ProductSchema = z.object({
   latest: z.string().regex(versionPattern).nullable(),
   versions: z.record(z.string().regex(versionPattern), SnapshotSchema),
@@ -49,7 +58,7 @@ export function addRelease(input: Catalog, product: string, version: string, sna
   const entry = catalog.products[product] ?? { latest: null, versions: {} };
   const previous = entry.versions[version];
   if (previous) {
-    if (previous.commit !== verified.commit || previous.digest !== verified.digest || previous.releaseId !== verified.releaseId) throw new Error('Published version identity changed; use an explicit documentation revision');
+    if (previous.commit !== verified.commit || previous.digest !== verified.digest || previous.releaseId !== verified.releaseId || previous.tag !== verified.tag || previous.releaseCommit !== verified.releaseCommit || JSON.stringify(previous.bootstrap) !== JSON.stringify(verified.bootstrap)) throw new Error('Published version identity changed; use an explicit documentation revision');
     return catalog;
   }
   entry.versions[version] = verified;
@@ -65,4 +74,13 @@ export function selectedVersion(catalog: Catalog, product: string, version?: str
   if (version === 'next') return catalog.channel !== 'production' && entry.next ? 'next' : undefined;
   if (!version || version === 'latest') return entry.latest ?? (catalog.channel !== 'production' && entry.next ? 'next' : undefined);
   return entry.versions[version] ? version : undefined;
+}
+
+export function versionProvenance(product: z.infer<typeof ProductSchema>) {
+  return Object.fromEntries(Object.entries(product.versions).map(([version, snapshot]) => [version, {
+    kind: snapshot.bootstrap?.kind ?? 'release-tag',
+    docsCommit: snapshot.commit,
+    releaseCommit: snapshot.releaseCommit ?? snapshot.commit,
+    ...(snapshot.bootstrap ? { approvedAt: snapshot.bootstrap.approvedAt, note: snapshot.bootstrap.reason } : {}),
+  }]));
 }

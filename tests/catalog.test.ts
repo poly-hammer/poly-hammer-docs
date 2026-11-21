@@ -1,9 +1,19 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { addRelease, CatalogSchema, compareVersions, selectedVersion, type Catalog, type Snapshot } from '../lib/catalog.js';
+import { addRelease, CatalogSchema, compareVersions, selectedVersion, versionProvenance, type Catalog, type Snapshot } from '../lib/catalog.js';
 
 const snapshot: Snapshot = { commit: 'a'.repeat(40), digest: 'b'.repeat(64), archive: 'archive/v1.zip', releaseId: 1, tag: '0.15.0', publishedAt: '2026-11-14T12:00:00Z', revision: 1 };
 const empty: Catalog = { schemaVersion: 1, channel: 'production', siteCommit: 'c'.repeat(40), generation: 0, products: {} };
+
+test('initial main baseline has distinct immutable release provenance', () => {
+  const initial: Snapshot = { ...snapshot, releaseCommit: 'f'.repeat(40), bootstrap: { kind: 'initial-main', sourceBranch: 'main', approvedAt: '2026-11-21T13:45:20Z', reason: 'Approved migration baseline' } };
+  const catalog = addRelease(empty, 'dna', '0.15.0', initial);
+  assert.equal(versionProvenance(catalog.products.dna)['0.15.0'].kind, 'initial-main');
+  assert.equal(versionProvenance(catalog.products.dna)['0.15.0'].releaseCommit, 'f'.repeat(40));
+  assert.throws(() => addRelease(catalog, 'dna', '0.15.0', { ...initial, releaseCommit: 'e'.repeat(40) }));
+  assert.throws(() => addRelease(empty, 'dna', '0.15.0', { ...initial, releaseCommit: undefined }));
+  assert.equal(versionProvenance(addRelease(empty, 'dna', '0.15.0', snapshot).products.dna)['0.15.0'].kind, 'release-tag');
+});
 
 test('releasing one product preserves every other product and the approved site commit', () => {
   const first = addRelease(empty, 'dna', '0.15.0', snapshot);

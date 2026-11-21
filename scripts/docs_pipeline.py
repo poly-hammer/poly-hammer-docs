@@ -274,7 +274,7 @@ def add_release(catalog: dict, product: str, version: str, record: dict) -> bool
     entry = catalog["products"].setdefault(product, {"latest": None, "versions": {}})
     previous = entry["versions"].get(version)
     if previous:
-        if any(previous[key] != record[key] for key in ("commit", "digest", "releaseId", "tag")):
+        if any(previous.get(key) != record.get(key) for key in ("commit", "digest", "releaseId", "tag", "releaseCommit", "bootstrap")):
             raise ValueError("Published version identity changed")
         return False
     entry["versions"][version] = record

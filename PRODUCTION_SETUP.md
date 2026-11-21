@@ -1,6 +1,6 @@
 # Production setup status
 
-Prepared on November 21, 2026. **No production deployment has been created. Do not deploy, enable production publication, or move the live domain until the owner explicitly approves the launch.**
+Prepared on November 21, 2026. The owner has now **authorized a production Vercel deployment for review**, using the initial-release policy below. **DNS cutover remains owner-operated and is not authorized for the agent.** Keep the new project access-protected during review.
 
 ## Configured resources
 
@@ -46,9 +46,9 @@ The owner approved [credential check 44908535570](https://github.com/poly-hammer
 
 ## Remaining release-content verification
 
-The production catalog is initialized but still empty (generation 0), with an old bootstrap site pin. It has no successful production deployment record. The first approved run must supply the full reviewed **main commit SHA containing the current visibility feature and publication checks**; do not reuse the bootstrap pin or run an unqualified first sync.
+Before initial publication, the production catalog is generation 0 with an old bootstrap site pin. The first approved run must supply the full reviewed **main commit SHA containing the initial-main baseline policy, visibility feature, and publication checks**. The collector refuses a first production sync without an explicit site commit.
 
-A paginated release inventory found these stable releases. This inventory is not a claim that their historical Markdown and assets have been built successfully:
+A paginated release inventory found the following history. The owner explicitly chose only the newest release of each product for initial publication:
 
 | Product | Stable releases | Newest | Oldest |
 | --- | ---: | --- | --- |
@@ -56,13 +56,13 @@ A paginated release inventory found these stable releases. This inventory is not
 | Character Control Rig | 13 | 0.5.2 | 0.1.5 |
 | Character Assembly | 7 | 0.4.3 | 0.2.0 |
 
-The first production sync checks and archives these exact released snapshots, then validates every generated page and media link. It must fail on unsupported content rather than substitute current main. Any exclusions require an explicit reviewed reason in `docs-release-exclusions.json`. Motion is excluded by the production visibility policy. The local Markdown remains intact, and staging still shows CLI and Motion.
+`docs-release-bootstrap.json` pins current-main documentation for the three newest releases, as explicitly authorized by the owner. It records the release ID/tag commit separately from the docs commit and approval timestamp. The first sync validates those identities, archives the docs snapshots, and validates every generated page and media link. The 31 older releases are excluded in `docs-release-exclusions.json`. Future releases always use tag docs, and later main changes cannot alter these baselines. Markdown, `/api/versions`, and MCP disclose the initial-main provenance. Motion remains hidden in production; staging still shows CLI and Motion.
 
-## First publication, only after approval
+## Approved review publication
 
 1. Confirm both environment secrets are present, this setup change is reviewed on main, and the exact site SHA and historical-release policy are approved. Confirm `DOCS_PRODUCTION_HIDDEN_PATHS` still hides CLI and Motion. During approved launch preparation, attach the final custom domain to the production project as described in [DNS_CUTOVER.md](DNS_CUTOVER.md), without changing its traffic-routing DNS record. Both the canonical domain and verification hostname must be configured on this project before promotion.
 2. After explicit owner approval, set `DOCS_PRODUCTION_ENABLED=true` and run **Publish documentation** on `main` with `channel=production`, `command=sync`, and `site_commit=<full approved main SHA>`. State already exists; do not bootstrap again. Enabling the gate also permits scheduled and release-event production jobs, so perform the manual sync immediately and check any queued runs before approving them.
-3. The owner reviews the requested environment approvals. The workflow collects immutable release snapshots, builds without source/deployment secrets, uploads with `--skip-domain`, tests HTML/Markdown/search/MCP and hidden routes, then promotes that exact build to the configured Vercel aliases. Canonical URLs already use the final domain, while `DOCS_PRODUCTION_VERIFY_URL` directs pre-cutover HTTP tests to the temporary hostname. Both aliases are checked against the same project and deployment. Even this pre-cutover step is a production deployment and is **not authorized yet**.
+3. Release the required environment gates for the explicitly authorized review run after its source changes pass review and CI. The workflow collects the pinned initial snapshots, builds without source/deployment secrets, uploads with `--skip-domain`, tests HTML/Markdown/search/MCP and hidden routes, then promotes that exact build to the configured Vercel aliases. Canonical URLs already use the final domain, while `DOCS_PRODUCTION_VERIFY_URL` directs pre-cutover HTTP tests to the temporary hostname. Both aliases are checked against the same project and deployment. This review deployment is authorized; DNS changes remain excluded.
 4. Review the running production artifact, historical version selectors, legacy redirects, media, and agent interfaces. Verify no `next`, CLI, or Motion content is exposed. Resolve any build or smoke-test failures before moving the live domain.
 5. **Leave DNS cutover to the owner as the final traffic switch.** Follow [DNS_CUTOVER.md](DNS_CUTOVER.md) for Route 53, the exact Vercel target, public protection settings, verification, GitHub Pages cleanup, and rollback. The canonical origin is already built correctly, so no canonical-URL rebuild is needed after switching DNS. Remove `DOCS_PRODUCTION_VERIFY_URL` after public verification so subsequent checks use the live domain.
 6. Stable release events and scheduled reconciliation then update production using its pinned site SHA. Main pushes still update staging. The GitHub required reviewer remains in place until the owner explicitly chooses a different approval policy.

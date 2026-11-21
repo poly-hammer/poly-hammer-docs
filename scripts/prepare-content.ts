@@ -134,7 +134,7 @@ for (const source of registry.sources) {
       body = body.replace(/\b(src|poster|href)="([^"]+)"/g, (_, key, target) => `${key}=${JSON.stringify(rewrite(target, true))}`);
       // Authored frontmatter takes precedence over summaries for legacy snapshots.
       const description = parsed.metadata.description == null ? source.legacyDescriptions?.[relative] ?? parsed.description : parsed.description;
-      const metadata = { ...parsed.metadata, title: parsed.title, description, product: source.id, version, channel: catalog.channel, sourceCommit: record.commit, updatedAt: record.publishedAt };
+      const metadata = { ...parsed.metadata, title: parsed.title, description, product: source.id, version, channel: catalog.channel, sourceCommit: record.commit, updatedAt: record.bootstrap?.approvedAt ?? record.publishedAt };
       write(path.join(productFolder, version, relative.replace(/\.mdx?$/, '') === source.entry ? 'index.mdx' : relative.replace(/\.md$/, '.mdx')), `---\n${YAML.stringify(metadata)}---\n\n${visibleContent(body, hiddenPaths)}`);
       count++;
     }
