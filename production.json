@@ -1,7 +1,75 @@
 {
   "channel": "production",
-  "generation": 0,
-  "products": {},
+  "generation": 5,
+  "hiddenPaths": [
+    "blender-addons/ph-motion",
+    "cli"
+  ],
+  "products": {
+    "character-assembly": {
+      "latest": "0.4.3",
+      "versions": {
+        "0.4.3": {
+          "archive": "poly-hammer/poly-hammer-docs-snapshots:775752856",
+          "bootstrap": {
+            "approvedAt": "2026-11-21T13:45:20Z",
+            "kind": "initial-main",
+            "reason": "Owner-approved migration baseline: use current main documentation for the current stable release once; all subsequent releases use their tag snapshots.",
+            "sourceBranch": "main"
+          },
+          "commit": "d87da04962b36aa48df302d706fa045807534a82",
+          "digest": "20394717e939172fa06f7afd81da4a3da899959e9d98df33f97239af33467f49",
+          "publishedAt": "2026-10-27T17:43:28Z",
+          "releaseCommit": "7f33482b572edc96905957c6837b3a8f39d9699b",
+          "releaseId": 425791776,
+          "revision": 1,
+          "tag": "0.4.3"
+        }
+      }
+    },
+    "character-control-rig": {
+      "latest": "0.5.2",
+      "versions": {
+        "0.5.2": {
+          "archive": "poly-hammer/poly-hammer-docs-snapshots:775752337",
+          "bootstrap": {
+            "approvedAt": "2026-11-21T13:45:20Z",
+            "kind": "initial-main",
+            "reason": "Owner-approved migration baseline: use current main documentation for the current stable release once; all subsequent releases use their tag snapshots.",
+            "sourceBranch": "main"
+          },
+          "commit": "3da85b494e9468a17cd765231fcd260aa6bdfae0",
+          "digest": "3cafbb21566b05a6ab34359058f80bd795d78748abecf2773631524fedabcae3",
+          "publishedAt": "2026-11-17T15:41:38Z",
+          "releaseCommit": "bd557d6d7d6222effd11e3740111c2debb284802",
+          "releaseId": 448841106,
+          "revision": 1,
+          "tag": "0.5.2"
+        }
+      }
+    },
+    "character-dna": {
+      "latest": "0.15.1",
+      "versions": {
+        "0.15.1": {
+          "archive": "poly-hammer/poly-hammer-docs-snapshots:775751550",
+          "bootstrap": {
+            "approvedAt": "2026-11-21T13:45:20Z",
+            "kind": "initial-main",
+            "reason": "Owner-approved migration baseline: use current main documentation for the current stable release once; all subsequent releases use their tag snapshots.",
+            "sourceBranch": "main"
+          },
+          "commit": "3533cd1260a9bd4b2806aaa4c64ead70766a1674",
+          "digest": "1266b506df4569026b7751ea740d32b5ea2fabb12ae380687e89495ef772c326",
+          "publishedAt": "2026-11-17T03:00:38Z",
+          "releaseCommit": "71125e9857db2b5a8ffa9426cc1f769d13017fd5",
+          "releaseId": 448038280,
+          "revision": 1,
+          "tag": "0.15.1"
+        }
+      }
+    }
+  },
   "schemaVersion": 1,
-  "siteCommit": "cade00ac759cc8f67eb9846acd0a21e4919d2f04"
+  "siteCommit": "25fd1b3d176340a5d02dd3a5e0c032f55f9aacf2"
 }
