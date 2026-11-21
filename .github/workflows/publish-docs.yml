@@ -198,6 +198,7 @@ jobs:
       - name: Verify the published channel hostname
         env:
           DOCS_TEST_URL: ${{ env.DOCS_VERIFY_URL || env.DOCS_SITE_URL }}
+          DOCS_WAIT_FOR_READY: 'true'
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: node scripts/smoke.mjs
       - name: Record successful publication
