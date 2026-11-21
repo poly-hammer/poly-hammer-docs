@@ -41,11 +41,17 @@ class Vercel:
             raise RuntimeError(f"Vercel {method} {path}: HTTP {error.code}") from None
 
 
-def promote(api, project_id, team_id, deployment_url, site_url, *, timeout=180,
+def promote(api, project_id, team_id, deployment_url, site_url, *, verification_url=None, timeout=180,
             sleep=time.sleep, clock=time.monotonic):
     if not re.fullmatch(r"prj_[A-Za-z0-9]+", project_id) or not re.fullmatch(r"team_[A-Za-z0-9]+", team_id):
         raise ValueError("Explicit Vercel project and team IDs are required")
     deployment_host, site_host = hostname(deployment_url), hostname(site_url)
+    site_hosts = {site_host}
+    if verification_url:
+        verification_host = hostname(verification_url)
+        if not verification_host.endswith(".vercel.app"):
+            raise ValueError("Pre-cutover verification must use a Vercel hostname")
+        site_hosts.add(verification_host)
     if not deployment_host.endswith(".vercel.app"):
         raise ValueError("Expected an immutable Vercel deployment URL")
     project_path = f"/v9/projects/{project_id}"
@@ -74,10 +80,12 @@ def promote(api, project_id, team_id, deployment_url, site_url, *, timeout=180,
             raise RuntimeError("Vercel reported a failed hostname promotion")
         target = (current.get("targets") or {}).get("production") or {}
         if target.get("id") == deployment_id:
-            alias = api.request(f"/v4/aliases/{site_host}")
-            if (alias.get("deploymentId") == deployment_id and alias.get("projectId") == project_id
-                    and alias.get("alias") == site_host):
-                print(f"Verified {site_host} serves {deployment_id} in {project_id}")
+            # Vercel alias ownership is checked independently of public DNS, which
+            # the owner switches manually only after reviewing the tested build.
+            aliases = [api.request(f"/v4/aliases/{host}") for host in sorted(site_hosts)]
+            if all(alias.get("deploymentId") == deployment_id and alias.get("projectId") == project_id
+                   and alias.get("alias") == host for host, alias in zip(sorted(site_hosts), aliases)):
+                print(f"Verified Vercel aliases {', '.join(sorted(site_hosts))} target {deployment_id} in {project_id}")
                 return
         sleep(3)
     raise TimeoutError("Vercel did not finish assigning the tested deployment to the site hostname")
@@ -86,4 +94,5 @@ def promote(api, project_id, team_id, deployment_url, site_url, *, timeout=180,
 if __name__ == "__main__":
     team = os.environ["VERCEL_ORG_ID"]
     promote(Vercel(os.environ["VERCEL_TOKEN"], team), os.environ["VERCEL_PROJECT_ID"], team,
-            os.environ["DEPLOYMENT_URL"], os.environ["DOCS_SITE_URL"])
+            os.environ["DEPLOYMENT_URL"], os.environ["DOCS_SITE_URL"],
+            verification_url=os.environ.get("DOCS_VERIFY_URL") or None)

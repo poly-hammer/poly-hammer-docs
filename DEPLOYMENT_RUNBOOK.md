@@ -51,6 +51,7 @@ GitHub does not provide a docs-directory-only repository token. The collector tr
 | Docs repository variable | `VERCEL_ORG_ID` | Poly Hammer Vercel team ID |
 | Docs repository variables | `VERCEL_STAGING_PROJECT_ID`, `VERCEL_PRODUCTION_PROJECT_ID` | Separate project IDs |
 | Docs repository variables | `DOCS_STAGING_URL`, `DOCS_PRODUCTION_URL` | Canonical HTTPS origins, no trailing slash |
+| Docs repository variable | `DOCS_PRODUCTION_VERIFY_URL` | Optional production `.vercel.app` hostname for HTTP checks before the owner's manual DNS cutover; must target the same project/deployment. Remove after cutover. |
 | Docs repository variable | `DOCS_GA_ID` | Existing `G-...` GA4 ID, optional; production only |
 | Each docs GitHub environment secret | `VERCEL_TOKEN` | Scoped deployment credential |
 | Each docs GitHub environment secret | `VERCEL_AUTOMATION_BYPASS_SECRET` | For smoke tests against protected deployment URLs |
@@ -98,6 +99,8 @@ Workflow runs queue up to GitHub's supported concurrency limit. Reconciliation s
 `docs-state/{staging,production}.json` records desired catalogs. `*-deployment.json` records the tested deployment URL, catalog digest, generation, and site commit. A build failure leaves the previous live deployment in service and the desired catalog available for retry. If promotion succeeds but recording fails, a retry may deploy the same desired catalog again; content identity is preserved.
 
 ## Verification and rollback
+
+DNS is the owner's final manual launch step. See [DNS_CUTOVER.md](DNS_CUTOVER.md). Before cutover, the production canonical origin can be `https://docs.polyhammer.com` while `DOCS_PRODUCTION_VERIFY_URL` points HTTP tests at the production project's Vercel hostname. Promotion checks both aliases through Vercel's API against the same project and deployment; it does not change DNS. This permits the final canonical build to be tested before the owner replaces the GitHub Pages DNS record.
 
 Run `node scripts/smoke.mjs` with `DOCS_TEST_URL` set to the deployment URL. In CI the protected URL uses the environment's bypass secret. Check the version dropdown with two releases, same-page/fallback navigation, numbered canonical links, old URL redirects, search scope, copied Markdown, media links, and a real MCP client. Confirm `/next` is 404 on production and absent from its search, agent indexes, sitemap, and page tree. Check mobile/keyboard navigation and screen-reader labels.
 
