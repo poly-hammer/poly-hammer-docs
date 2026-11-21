@@ -25,6 +25,8 @@ Production search and default agent indexes select the latest stable version of 
 
 - Production is a pinned site commit plus independently pinned release snapshots, never a copy of staging.
 - Releases are immutable. A backfilled older release must not move `latest` backwards. Moving a published tag or replacing its source identity must fail.
+- The owner approved a one-time migration baseline in `docs-release-bootstrap.json`: the current stable release of DNA, Control Rig, and Assembly uses an explicitly pinned main docs commit. Preserve its separate release-tag commit and bootstrap provenance in catalogs, Markdown, and MCP. This is not permission to use main for future releases. Older initial releases are explicitly excluded; subsequent releases use their tag commits.
+- The owner approved a one-time migration baseline in `docs-release-bootstrap.json`: the current stable release of DNA, Control Rig, and Assembly uses an explicitly pinned main docs commit. Preserve its separate release-tag commit and bootstrap provenance in catalogs, Markdown, and MCP. This is not permission to use main for future releases. Older initial releases are explicitly excluded; subsequent releases use their tag commits.
 - The Python collector only reads registered docs trees. Build jobs have no source/archive/state/deployment credentials. Review MDX before compilation.
 - Desired state is persisted on `docs-state` before building. Deployment records are written only after smoke tests and promotion. Preserve retry/idempotency, compare-and-swap updates, and scheduled reconciliation.
 - Site changes go to staging on main. Promote a reviewed main commit explicitly when publishing central docs or site code to production.

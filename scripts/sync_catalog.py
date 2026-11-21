@@ -107,12 +107,37 @@ def snapshot(reader, archiver, archive_repo, source, commit, version, published_
     return result
 
 
-def reconcile_production(catalog, sources, exclusions, reader, archiver, archive_repo):
+def validate_bootstraps(data, sources, exclusions):
+    if set(data) != {"schemaVersion", "products"} or data["schemaVersion"] != 1 or not isinstance(data["products"], dict):
+        raise ValueError("Invalid initial release bootstrap manifest")
+    registered = {source["id"]: source for source in sources}
+    fields = {"tag", "releaseId", "releaseCommit", "docsCommit", "approvedAt", "reason"}
+    for product, entry in data["products"].items():
+        if product not in registered or not isinstance(entry, dict) or set(entry) != fields:
+            raise ValueError("Unknown product or invalid bootstrap fields")
+        if (not isinstance(entry["tag"], str) or not stable_version(registered[product], {"tag_name": entry["tag"]})
+                or type(entry["releaseId"]) is not int or entry["releaseId"] <= 0
+                or not all(isinstance(entry[key], str) and SHA.fullmatch(entry[key]) for key in ("docsCommit", "releaseCommit"))
+                or not isinstance(entry["reason"], str) or not entry["reason"].strip()):
+            raise ValueError("Bootstrap requires a stable release, immutable commits, and an approval reason")
+        if not isinstance(entry["approvedAt"], str) or not entry["approvedAt"].endswith("Z"):
+            raise ValueError("Bootstrap approval requires a UTC timestamp")
+        datetime.fromisoformat(entry["approvedAt"])
+        if f"{product}:{entry['tag']}" in exclusions:
+            raise ValueError("An initial release cannot also be excluded")
+    return data["products"]
+
+
+def reconcile_production(catalog, sources, exclusions, reader, archiver, archive_repo, bootstraps=None):
     release_cache = {}
     for source in sources:
         repository = source["repository"]
         if repository not in release_cache:
             release_cache[repository] = list(reader.pages(f"/repos/{repository}/releases"))
+        seed = (bootstraps or {}).get(source["id"])
+        if seed and not any(release["tag_name"] == seed["tag"] and stable_version(source, release)
+                            for release in release_cache[repository]):
+            raise ValueError(f"Initial stable release is unavailable: {source['id']}")
         for release in release_cache[repository]:
             version = stable_version(source, release)
             if not version:
@@ -122,13 +147,25 @@ def reconcile_production(catalog, sources, exclusions, reader, archiver, archive
             if key in exclusions and not previous:
                 continue
             commit = resolve_commit(reader, repository, release["tag_name"])
+            initial = seed if seed and seed["tag"] == release["tag_name"] else None
+            if initial and (release["id"] != initial["releaseId"] or commit != initial["releaseCommit"]):
+                raise ValueError(f"Initial release identity changed: {key}")
             if previous:
-                if (previous["commit"], previous["releaseId"], previous["tag"]) != (commit, release["id"], release["tag_name"]):
+                if (previous.get("releaseCommit", previous["commit"]), previous["releaseId"], previous["tag"]) != (commit, release["id"], release["tag_name"]):
                     raise ValueError(f"Published release identity changed: {key}")
+                if initial and (previous["commit"] != initial["docsCommit"] or previous.get("bootstrap") != bootstrap_provenance(initial)):
+                    raise ValueError(f"Published bootstrap snapshot cannot be replaced: {key}")
                 continue
-            record = snapshot(reader, archiver, archive_repo, source, commit, version, release["published_at"], release)
+            docs_commit = verify_site_commit(reader, repository, initial["docsCommit"]) if initial else commit
+            record = snapshot(reader, archiver, archive_repo, source, docs_commit, version, release["published_at"], release)
+            if initial:
+                record.update(releaseCommit=commit, bootstrap=bootstrap_provenance(initial))
             add_release(catalog, source["id"], version, record)
     return catalog
+
+
+def bootstrap_provenance(initial):
+    return {"kind": "initial-main", "sourceBranch": "main", "approvedAt": initial["approvedAt"], "reason": initial["reason"]}
 
 
 def reconcile_staging(previous, production, sources, reader, archiver, archive_repo, site_commit, hidden=None):
@@ -172,6 +209,7 @@ def main():
     exclusions = json.loads(Path("docs-release-exclusions.json").read_text())
     if any(not reason.strip() for reason in exclusions.values()):
         raise ValueError("Historical exclusions require a reviewed explanation")
+    bootstraps = validate_bootstraps(json.loads(Path("docs-release-bootstrap.json").read_text()), sources, exclusions)
     event_file = os.environ.get("GITHUB_EVENT_PATH")
     if event_file and os.environ.get("GITHUB_EVENT_NAME") == "repository_dispatch":
         event = json.loads(Path(event_file).read_text())
@@ -188,12 +226,15 @@ def main():
         state.write({"production.json": production, "staging.json": staging}, "Initialize documentation catalogs")
     previous = state.read(f"{args.channel}.json")
     if args.channel == "production":
-        catalog = reconcile_production(copy.deepcopy(production), visible_sources, exclusions, reader, archiver, archive_repo)
+        # Validate the site pin before archiving any initial release snapshot.
+        if not production["products"] and not args.site_commit:
+            raise ValueError("First production sync requires an explicit reviewed site commit")
+        site_commit = verify_site_commit(state.api, repository, args.site_commit) if args.site_commit else None
+        catalog = reconcile_production(copy.deepcopy(production), visible_sources, exclusions, reader, archiver, archive_repo, bootstraps)
         set_visibility(catalog, hidden)
-        if args.site_commit:
-            commit = verify_site_commit(state.api, repository, args.site_commit)
-            if commit != catalog["siteCommit"]:
-                catalog["siteCommit"] = commit
+        if site_commit:
+            if site_commit != catalog["siteCommit"]:
+                catalog["siteCommit"] = site_commit
                 catalog["generation"] += 1
     else:
         catalog = reconcile_staging(previous, production, sources, reader, archiver, archive_repo, resolve_commit(state.api, repository, "main"), hidden)

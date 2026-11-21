@@ -143,6 +143,15 @@ for (const [product, entry] of Object.entries(versions.products)) {
   await get(`/blender-addons/${product}/latest`);
   const markdown = await (await get(`${route}.md`)).text();
   assert(markdown.includes(`Version: ${version}`));
+  const provenance = entry.provenance?.[version];
+  if (version !== 'next') assert(provenance && ['initial-main', 'release-tag'].includes(provenance.kind), 'Version provenance is required');
+  if (provenance?.kind === 'initial-main') {
+    assert(markdown.includes('Documentation source: initial main snapshot'));
+    assert(markdown.includes(`Documentation commit: ${provenance.docsCommit}`));
+    assert(markdown.includes(`Release tag commit: ${provenance.releaseCommit}`));
+  }
+  const listedVersions = JSON.parse((await rpc('tools/call', { name: 'list_versions', arguments: { product } })).content[0].text);
+  assert.deepEqual(listedVersions[0].provenance, entry.provenance);
   const docs = await rpc('tools/call', { name: 'list_docs', arguments: { product, version } });
   assert(!docs.isError);
   const pages = JSON.parse(docs.content[0].text).documents;

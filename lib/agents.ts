@@ -1,12 +1,14 @@
 import { source, type DocPage } from './source';
 import { absoluteUrl } from './site';
 import { getMDXComponents } from '@/components/mdx';
-import { publishedPages } from './published';
+import { catalog, publishedPages } from './published';
 
 export async function pageMarkdown(page: DocPage): Promise<string> {
   const rendered = source.getPage(page.slugs, { props: { components: getMDXComponents() } }) ?? page;
   const body = await rendered.data.getText('processed');
-  return `# ${page.data.title}\n\n${page.data.description ?? ''}\n\nCanonical URL: ${absoluteUrl(page.url)}\nProduct: ${page.data.product ?? 'Poly Hammer'}\nVersion: ${page.data.version ?? 'current'}\nChannel: ${page.data.channel ?? 'central'}\n${page.data.updatedAt ? `Updated: ${page.data.updatedAt}\n` : ''}\n${body}\n`;
+  const snapshot = page.data.product && page.data.version ? catalog.products[page.data.product]?.versions[page.data.version] : undefined;
+  const provenance = snapshot?.bootstrap ? `Documentation source: initial main snapshot approved ${snapshot.bootstrap.approvedAt}\nDocumentation commit: ${snapshot.commit}\nRelease tag commit: ${snapshot.releaseCommit}\n${snapshot.bootstrap.reason}\n` : '';
+  return `# ${page.data.title}\n\n${page.data.description ?? ''}\n\nCanonical URL: ${absoluteUrl(page.url)}\nProduct: ${page.data.product ?? 'Poly Hammer'}\nVersion: ${page.data.version ?? 'current'}\nChannel: ${page.data.channel ?? 'central'}\n${page.data.updatedAt ? `Updated: ${page.data.updatedAt}\n` : ''}${provenance}\n${body}\n`;
 }
 export function agentIndex(): string {
   return '# Poly Hammer Documentation\n\n> Official documentation for Poly Hammer tools and workflows.\n\nUse explicit product versions when answering questions about installed addons. `next` means unreleased development documentation. The default index and full bundle select current versions; use the version catalog to discover older releases.\n\n## Agent interfaces\n\n' +
