@@ -8,7 +8,7 @@ __pycache__
 
 # Retired MkDocs clone cache; never used by the Fumadocs pipeline.
 repos/
-
+plans/
 node_modules/
 .next/
 .source/
