@@ -1,6 +1,6 @@
 {
   "channel": "staging",
-  "generation": 35,
+  "generation": 36,
   "hiddenPaths": [],
   "products": {
     "character-assembly": {
@@ -34,10 +34,10 @@
     "character-control-rig": {
       "latest": "0.5.2",
       "next": {
-        "archive": "poly-hammer/poly-hammer-docs-snapshots:789231701",
-        "commit": "e8c74f940ec413df92541f3d38f9a41d37f9bf53",
-        "digest": "4163be744acfe39b95e3d5aba812457275e2a996c52b4894825c0098511f1e62",
-        "publishedAt": "2026-11-26T17:01:49.802189Z",
+        "archive": "poly-hammer/poly-hammer-docs-snapshots:799144544",
+        "commit": "475248a3241b1f8f8e215cd78862853b3849d05c",
+        "digest": "5e1e754c6112d235065579d844c4b98fd052e8530298de9af388eeb46151393d",
+        "publishedAt": "2026-11-27T05:39:45.830240Z",
         "revision": 1
       },
       "versions": {
